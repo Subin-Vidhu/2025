@@ -1,3 +1,7 @@
 venv/
 *.jpg
 __pycache__/
+*.pickle
+*.pkl
+*.mp4
+*.zip
