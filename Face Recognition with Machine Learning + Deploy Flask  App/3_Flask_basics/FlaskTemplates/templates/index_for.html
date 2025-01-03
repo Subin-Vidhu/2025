@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>for loop</title>
+</head>
+<body>
+    <h1>For Loops</h1>
+    <table border="1px" align="center">
+        <tr>
+            <th>Subject</th>
+            <th>Marks</th>
+            <th> pass/fail </th>
+        </tr>
+
+        {% for sub,marks in data.items() %}
+            <tr>
+                <td> {{ sub }} </td>
+                <td> {{ marks }} </td>
+                <td align="center">
+                    {% if marks >= 50 %}
+                        <span style="color:green">P</span>
+                    {% else %}
+                    <span style="color:red">F</span>
+                    {% endif %}
+                </td>
+            </tr>
+        
+        {% endfor %}
+
+    </table>
+
+    
+</body>
+</html>

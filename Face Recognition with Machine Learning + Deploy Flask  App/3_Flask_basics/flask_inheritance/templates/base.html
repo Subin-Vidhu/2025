@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeAi</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('index') }}">click here to route to index</a>
+    <br>
+    <a href="{{ url_for('base') }}"> click here to route to base</a>
+    {% block bodyblock %} 
+
+        <h1 class="change">Welcome to base html</h1>
+        <p> You are in base html</p>
+
+    {% endblock %}
+    
+<script src="{{ url_for('static',filename='js/main.js') }}"></script>
+</body>
+</html>

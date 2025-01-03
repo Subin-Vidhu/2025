@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeAI</title>
+</head>
+<body>
+    <h1>Welcome to {{ name }}</h1>
+
+    <p> Hi {{ name }}, your marks = {{ marks }}</p>
+
+    {% if marks > 50 %}
+        <p> You are Passed</p>
+    
+    {% else %}
+        <p>You are Failed</p>
+    {% endif %}
+
+</body>
+</html>
