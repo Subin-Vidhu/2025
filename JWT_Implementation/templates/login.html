@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .flash-message {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-form">
+            <h2 class="text-center mb-4">Login</h2>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger flash-message">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required autocomplete="username">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+            <p class="text-center mt-3">
+                Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
