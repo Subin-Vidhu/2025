@@ -1,0 +1,1 @@
+- Seems like you need to add credit card to use assemblyai, so was not able to test it.
