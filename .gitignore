@@ -5,10 +5,3 @@ __pycache__/
 *.pkl
 *.mp4
 *.zip
-.env
-node_modules/
-Cursor/GoogleAuth/
-Cursor/Neon_Serverless/
-2025/jwt_implementation/
-Cursor/Security
-JWT_implementation/
