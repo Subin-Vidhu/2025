@@ -24,12 +24,160 @@
         .flash-message {
             margin-bottom: 1rem;
         }
+        #loading-indicator {
+            display: none;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
     </style>
+    <script>
+        // Global variables
+        let keyPairGenerated = false;
+        let generationAttempts = 0;
+        const MAX_ATTEMPTS = 3;
+        let keyPair = null;
+
+        // Convert ArrayBuffer to Base64
+        function arrayBufferToBase64(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        }
+
+        // Generate key pair
+        async function generateKeyPair() {
+            try {
+                generationAttempts++;
+                console.log(`Attempting key generation (attempt ${generationAttempts})`);
+
+                // Generate ECDH key pair
+                keyPair = await window.crypto.subtle.generateKey(
+                    {
+                        name: "ECDH",
+                        namedCurve: "P-256"
+                    },
+                    true,
+                    ["deriveKey", "deriveBits"]
+                );
+
+                // Export public key
+                const publicKeyBuffer = await window.crypto.subtle.exportKey(
+                    "raw",
+                    keyPair.publicKey
+                );
+
+                // Convert to Base64
+                const publicKeyBase64 = arrayBufferToBase64(publicKeyBuffer);
+                
+                // Store in form
+                const publicKeyInput = document.getElementById('public_key');
+                publicKeyInput.value = publicKeyBase64;
+                
+                console.log('Key generation successful');
+                console.log('Public key value:', publicKeyBase64.substring(0, 20) + '...');
+                keyPairGenerated = true;
+
+                // Hide loading indicator
+                document.getElementById('loading-indicator').style.display = 'none';
+                
+                return true;
+            } catch (error) {
+                console.error('Key generation error:', error);
+                document.getElementById('loading-indicator').style.display = 'none';
+                return false;
+            }
+        }
+
+        // Initialize keys
+        async function initializeKeys() {
+            console.log('Initializing keys...');
+            document.getElementById('loading-indicator').style.display = 'block';
+            
+            while (!keyPairGenerated && generationAttempts < MAX_ATTEMPTS) {
+                if (await generateKeyPair()) {
+                    break;
+                }
+                if (!keyPairGenerated) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+            
+            if (!keyPairGenerated) {
+                console.error('Failed to generate keys after multiple attempts');
+                alert('Failed to initialize security. Please refresh the page.');
+            }
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', async () => {
+            console.log('Page loaded, starting initialization');
+            await initializeKeys();
+        });
+
+        // Form validation and submission
+        async function validateForm(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const publicKey = document.getElementById('public_key').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Detailed logging
+            console.log('Form validation details:');
+            console.log('- Username:', username ? 'provided' : 'missing');
+            console.log('- Password:', password ? 'provided' : 'missing');
+            console.log('- Public key:', publicKey ? 'generated' : 'missing');
+            console.log('- Key generation status:', keyPairGenerated);
+            console.log('- Generation attempts:', generationAttempts);
+
+            if (!username || !password) {
+                alert('Please fill in all fields');
+                return false;
+            }
+
+            if (!keyPairGenerated || !publicKey) {
+                document.getElementById('loading-indicator').style.display = 'block';
+                console.log('Key not generated yet, attempting generation...');
+                const success = await generateKeyPair();
+                if (!success) {
+                    alert('Security initialization failed. Please refresh the page.');
+                    return false;
+                }
+            }
+
+            // Double check the public key is set
+            const finalPublicKey = document.getElementById('public_key').value;
+            if (!finalPublicKey) {
+                console.error('Public key is still not set after generation');
+                alert('Security initialization incomplete. Please refresh the page.');
+                return false;
+            }
+
+            // Log form data before submission
+            const formData = new FormData(form);
+            console.log('Submitting form with data:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`- ${key}: ${key === 'password' ? '[REDACTED]' : value}`);
+            }
+
+            form.submit();
+            return true;
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <div class="login-form">
             <h2 class="text-center mb-4">Login</h2>
+            
+            <div id="loading-indicator" class="alert alert-info">
+                Initializing security... Please wait.
+            </div>
+            
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
@@ -37,7 +185,10 @@
                     {% endfor %}
                 {% endif %}
             {% endwith %}
-            <form method="POST" action="{{ url_for('login') }}">
+            
+            <form method="POST" action="{{ url_for('login') }}" onsubmit="return validateForm(event)">
+                <input type="hidden" id="public_key" name="public_key">
+                <input type="hidden" id="server_public_key" value="{{ server_public_key }}">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username" required autocomplete="username">

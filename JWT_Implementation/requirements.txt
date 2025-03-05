@@ -5,3 +5,4 @@ flask-jwt-extended==4.6.0
 werkzeug==3.0.1
 python-decouple==3.8
 flask-login==0.6.3
+cryptography==42.0.2
