@@ -1,0 +1,13 @@
+Statistical Tests Results
+--------------------------------------------------
+
+Right Kidney Results:
+------------------------------
+Paired t-test p-value: 0.7824
+t-statistic: -0.2846
+
+Left Kidney Results:
+------------------------------
+Paired t-test p-value: 0.1273
+t-statistic: -1.6797
+

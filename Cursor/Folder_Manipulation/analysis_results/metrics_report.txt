@@ -1,0 +1,31 @@
+Analysis Metrics:
+--------------------------------------------------
+
+Right Kidney:
+------------------------------
+Mean Absolute Error: 5.0763
+Mean Squared Error: 126.8653
+Root Mean Squared Error: 11.2634
+R-squared Score: 0.8921
+Pearson Correlation: 0.9547
+Spearman Correlation: 0.9597
+Mean Percentage Error: 6.3519
+Mean Volume Difference: -4.5607
+Median Volume Difference: -1.3400
+
+Left Kidney:
+------------------------------
+Mean Absolute Error: 5.3533
+Mean Squared Error: 117.4067
+Root Mean Squared Error: 10.8354
+R-squared Score: 0.9224
+Pearson Correlation: 0.9680
+Spearman Correlation: 0.9042
+Mean Percentage Error: 5.1353
+Mean Volume Difference: -4.6800
+Median Volume Difference: -2.0500
+
+Statistical Tests:
+--------------------------------------------------
+Right Kidney - Paired t-test p-value: 0.0326
+Left Kidney - Paired t-test p-value: 0.0217

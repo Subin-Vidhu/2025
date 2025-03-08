@@ -1,0 +1,3 @@
+Kidney_Side,Number_of_Cases,Mean_Absolute_Error,Root_Mean_Squared_Error,R_squared,Pearson_Correlation,Cases_Exceeding_Threshold
+Right,10,1.988,3.558,0.975,0.991,0
+Left,10,4.577,9.230,0.895,0.965,1
