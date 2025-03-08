@@ -1,2 +1,2 @@
-Case_Number,Slice_Number,AIRA_Right,SREENADH_Right,AIRA_Left,SREENADH_Left,Right_Kidney_Difference,Right_Kidney_Percent_Diff,Right_Kidney_Mean,Left_Kidney_Difference,Left_Kidney_Percent_Diff,Left_Kidney_Mean,AIRA_Total,SREENADH_Total,Total_Volume_Difference,Total_Volume_Percent_Diff,Right_Exceeds_Threshold,Left_Exceeds_Threshold
-N-013,107-199,113.26,105.13,65.03,91.73,8.13,7.18,109.20,-26.70,-41.06,78.38,178.29,196.86,-18.57,-10.42,False,True
+Case_Number,Slice_Number,AIRA_Right,AIRA_Left,SREENADH_Right,SREENADH_Left,Right_Kidney_Difference,Right_Kidney_Percent_Diff,Right_Kidney_Mean,Left_Kidney_Difference,Left_Kidney_Percent_Diff,Left_Kidney_Mean,AIRA_Total,SREENADH_Total,Total_Volume_Difference,Total_Volume_Percent_Diff,Right_Exceeds_Threshold,Left_Exceeds_Threshold
+N-013,107-199,113.26,65.03,105.13,91.73,8.13,7.18,109.20,-26.70,-41.06,78.38,178.29,196.86,-18.57,-10.42,False,True
