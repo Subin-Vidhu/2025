@@ -349,11 +349,14 @@ def create_visualizations(df, output_folder):
                                   y=f"{obs2}_{side}",
                                   scatter_kws={'alpha':0.5})
                         
-                        plt.title(f'{side} Kidney: {obs1} vs {obs2}')
-                        plt.xlabel(f'{obs1} Volume (ml)')
-                        plt.ylabel(f'{obs2} Volume (ml)')
+                        plt.title(f'{side} Kidney: {obs1} vs {obs2}', fontsize=12)
+                        plt.xlabel(f'{obs1} Volume (ml)', fontsize=10)
+                        plt.ylabel(f'{obs2} Volume (ml)', fontsize=10)
+                        plt.xticks(fontsize=10)
+                        plt.yticks(fontsize=10)
                         plt.tight_layout()
-                        plt.savefig(os.path.join(output_folder, f'scatter_comparison_{side.lower()}_{obs1}_vs_{obs2}.png'))
+                        plt.savefig(os.path.join(output_folder, f'scatter_comparison_{side.lower()}_{obs1}_vs_{obs2}.png'),
+                                  dpi=300, bbox_inches='tight')
                         plt.close()
                         
                         # 2. Bland-Altman Plot
@@ -371,43 +374,59 @@ def create_visualizations(df, output_folder):
                                   label=f'95% limits: ±{(1.96*std_diff):.2f}')
                         plt.axhline(y=mean_diff - 1.96*std_diff, color='g', linestyle='--')
                         
-                        plt.title(f'Bland-Altman Plot: {side} Kidney ({obs1} vs {obs2})')
-                        plt.xlabel(f'Mean of {obs1} and {obs2} (ml)')
-                        plt.ylabel(f'Difference ({obs1} - {obs2}) (ml)')
-                        plt.legend()
+                        plt.title(f'Bland-Altman Plot: {side} Kidney ({obs1} vs {obs2})', fontsize=12)
+                        plt.xlabel(f'Mean of {obs1} and {obs2} (ml)', fontsize=10)
+                        plt.ylabel(f'Difference ({obs1} - {obs2}) (ml)', fontsize=10)
+                        plt.legend(fontsize=10)
+                        plt.xticks(fontsize=10)
+                        plt.yticks(fontsize=10)
                         plt.tight_layout()
-                        plt.savefig(os.path.join(output_folder, f'bland_altman_{side.lower()}_{obs1}_vs_{obs2}.png'))
+                        plt.savefig(os.path.join(output_folder, f'bland_altman_{side.lower()}_{obs1}_vs_{obs2}.png'),
+                                  dpi=300, bbox_inches='tight')
                         plt.close()
                         
                         # 3. Box plot
                         plt.figure(figsize=(8, 6))
                         data_to_plot = {
-                            f'{obs1} {side}': valid_data[f"{obs1}_{side}"],
-                            f'{obs2} {side}': valid_data[f"{obs2}_{side}"]
+                            f'{obs1} {side}\n(n={len(valid_data)})': valid_data[f"{obs1}_{side}"],
+                            f'{obs2} {side}\n(n={len(valid_data)})': valid_data[f"{obs2}_{side}"]
                         }
                         plt.boxplot(data_to_plot.values(), labels=data_to_plot.keys())
-                        plt.title(f'Distribution of {side} Kidney Volumes ({obs1} vs {obs2})')
-                        plt.ylabel('Volume (ml)')
-                        plt.xticks(rotation=45)
+                        plt.title(f'Distribution of {side} Kidney Volumes ({obs1} vs {obs2})', fontsize=12)
+                        plt.ylabel('Volume (ml)', fontsize=10)
+                        plt.xticks(rotation=45, ha='right', fontsize=10)
+                        plt.yticks(fontsize=10)
+                        plt.grid(True, alpha=0.3)
                         plt.tight_layout()
-                        plt.savefig(os.path.join(output_folder, f'boxplot_{side.lower()}_{obs1}_vs_{obs2}.png'))
+                        plt.savefig(os.path.join(output_folder, f'boxplot_{side.lower()}_{obs1}_vs_{obs2}.png'),
+                                  dpi=300, bbox_inches='tight')
                         plt.close()
                         
                         # 4. Case-wise comparison
                         plt.figure(figsize=(15, 6))
-                        x = range(len(valid_data))
                         
-                        plt.plot(x, valid_data[f"{obs1}_{side}"], 'b-', label=f'{obs1} {side}', marker='o')
-                        plt.plot(x, valid_data[f"{obs2}_{side}"], 'r--', label=f'{obs2} {side}', marker='s')
+                        plt.plot(valid_data['CASE NO:'], valid_data[f"{obs1}_{side}"], 
+                               color='#FF0000', linestyle='-', marker='o', markersize=8,
+                               label=f'{obs1} {side} (n={len(valid_data)})', linewidth=2)
+                        plt.plot(valid_data['CASE NO:'], valid_data[f"{obs2}_{side}"], 
+                               color='#0000FF', linestyle='--', marker='s', markersize=8,
+                               label=f'{obs2} {side} (n={len(valid_data)})', linewidth=2)
                         
-                        plt.title(f'Case-wise Comparison of {side} Kidney Volumes ({obs1} vs {obs2})')
-                        plt.xlabel('Case Number')
-                        plt.ylabel('Volume (ml)')
-                        plt.legend()
-                        plt.grid(True)
-                        plt.xticks(x, valid_data['CASE NO:'], rotation=45)
+                        plt.title(f'Case-wise Comparison of {side} Kidney Volumes ({obs1} vs {obs2})', 
+                                fontsize=12, pad=20)
+                        plt.xlabel('Case Number', fontsize=10)
+                        plt.ylabel('Volume (ml)', fontsize=10)
+                        plt.legend(fontsize=10)
+                        plt.grid(True, alpha=0.3)
+                        
+                        # Set x-axis ticks to show all case numbers
+                        case_numbers = sorted(list(valid_data['CASE NO:'].unique()))
+                        plt.xticks(case_numbers, case_numbers, rotation=45, ha='right', fontsize=10)
+                        plt.yticks(fontsize=10)
+                        
                         plt.tight_layout()
-                        plt.savefig(os.path.join(output_folder, f'case_comparison_{side.lower()}_{obs1}_vs_{obs2}.png'))
+                        plt.savefig(os.path.join(output_folder, f'case_comparison_{side.lower()}_{obs1}_vs_{obs2}.png'),
+                                  dpi=300, bbox_inches='tight')
                         plt.close()
                     
                     except Exception as e:
@@ -445,33 +464,53 @@ def create_combined_visualizations(df, output_folder):
                 # 1. Combined Case-wise comparison
                 plt.figure(figsize=(15, 8))
                 
-                # Use different colors and line styles for each observer
-                colors = ['b', 'r', 'g', 'm', 'c', 'y', 'k']
-                line_styles = ['-', '--', ':', '-.']
-                markers = ['o', 's', '^', 'D', 'v', '<', '>']
+                # Define distinct colors for each observer
+                observer_colors = {
+                    'AIRA': '#FF0000',      # Bright Red
+                    'SREENADH': '#0000FF',  # Bright Blue
+                    'ANISH': '#00CC00',     # Bright Green
+                    'DOCTOR': '#9933FF'     # Purple
+                }
                 
-                # Plot data for each observer separately
-                for i, observer in enumerate(side_observers):
+                markers = {
+                    'AIRA': 'o',        # Circle
+                    'SREENADH': 's',    # Square
+                    'ANISH': '^',       # Triangle
+                    'DOCTOR': 'D'       # Diamond
+                }
+                
+                # Keep track of all case numbers
+                all_case_numbers = set()
+                
+                # Plot data for each observer
+                for observer in side_observers:
                     # Get valid data for this observer
                     valid_data = df[df[f"{observer}_{side}"].notna()].copy()
-                    x = range(len(valid_data))
-                    
-                    color = colors[i % len(colors)]
-                    style = line_styles[i % len(line_styles)]
-                    marker = markers[i % len(markers)]
-                    
-                    plt.plot(x, valid_data[f"{observer}_{side}"], 
-                            color=color, linestyle=style, marker=marker,
-                            label=f'{observer} {side} (n={len(valid_data)})')
+                    if not valid_data.empty:
+                        color = observer_colors.get(observer, '#000000')
+                        marker = markers.get(observer, 'o')
+                        
+                        plt.plot(valid_data['CASE NO:'], valid_data[f"{observer}_{side}"],
+                                color=color, linestyle='-', marker=marker, markersize=8,
+                                label=f'{observer} {side} (n={len(valid_data)})',
+                                linewidth=2)
+                        all_case_numbers.update(valid_data['CASE NO:'])
                 
-                plt.title(f'Case-wise Comparison of {side} Kidney Volumes (All Available Data)')
-                plt.xlabel('Case Index')
-                plt.ylabel('Volume (ml)')
-                plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-                plt.grid(True)
+                plt.title(f'Case-wise Comparison of {side} Kidney Volumes (All Available Data)',
+                         fontsize=14, pad=20)
+                plt.xlabel('Case Number', fontsize=12)
+                plt.ylabel('Volume (ml)', fontsize=12)
+                plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=10)
+                plt.grid(True, alpha=0.3)
+                
+                # Set x-axis ticks to show all case numbers
+                case_numbers = sorted(list(all_case_numbers))
+                plt.xticks(case_numbers, case_numbers, rotation=45, ha='right', fontsize=10)
+                plt.yticks(fontsize=10)
+                
                 plt.tight_layout()
                 plt.savefig(os.path.join(output_folder, f'combined_case_comparison_{side.lower()}.png'),
-                          bbox_inches='tight')
+                          bbox_inches='tight', dpi=300)
                 plt.close()
                 
                 # 2. Combined Box plot
@@ -482,19 +521,100 @@ def create_combined_visualizations(df, output_folder):
                     for obs in side_observers
                 }
                 plt.boxplot(data_to_plot.values(), labels=data_to_plot.keys())
-                plt.title(f'Distribution of {side} Kidney Volumes (All Available Data)')
-                plt.ylabel('Volume (ml)')
-                plt.xticks(rotation=45)
-                plt.grid(True)
+                plt.title(f'Distribution of {side} Kidney Volumes (All Available Data)',
+                         fontsize=12, pad=20)
+                plt.ylabel('Volume (ml)', fontsize=10)
+                plt.xticks(rotation=45, ha='right', fontsize=10)
+                plt.yticks(fontsize=10)
+                plt.grid(True, alpha=0.3)
                 plt.tight_layout()
                 plt.savefig(os.path.join(output_folder, f'combined_boxplot_{side.lower()}.png'),
-                          bbox_inches='tight')
+                          bbox_inches='tight', dpi=300)
                 plt.close()
             else:
                 print(f"No observers have valid data for {side} kidney")
 
     except Exception as e:
         print(f"Error creating combined visualizations: {str(e)}")
+        raise
+
+def create_combined_kidney_plot(df, output_folder):
+    """Create a combined plot showing all kidney volumes (Left and Right) from all observers"""
+    os.makedirs(output_folder, exist_ok=True)
+    
+    # Get all available observers
+    available_observers = get_available_observers(df)
+    if not available_observers:
+        print("No observers with valid data found.")
+        return
+    
+    try:
+        plt.figure(figsize=(15, 8))
+        
+        # Define distinct colors for each observer
+        observer_colors = {
+            'AIRA': '#FF0000',      # Bright Red
+            'SREENADH': '#0000FF',  # Bright Blue
+            'ANISH': '#00CC00',     # Bright Green
+            'DOCTOR': '#9933FF'     # Purple
+        }
+        
+        markers = {
+            'AIRA': 'o',        # Circle
+            'SREENADH': 's',    # Square
+            'ANISH': '^',       # Triangle
+            'DOCTOR': 'D'       # Diamond
+        }
+        
+        # Keep track of all x values for axis labels
+        all_case_numbers = set()
+        
+        # Plot data for each observer
+        for observer in available_observers:
+            color = observer_colors.get(observer, '#000000')  # Default to black if observer not in dict
+            marker = markers.get(observer, 'o')               # Default to circle if observer not in dict
+            
+            # Plot Right kidney data
+            if f"{observer}_Right" in df.columns:
+                valid_data = df[df[f"{observer}_Right"].notna()].copy()
+                if not valid_data.empty:
+                    plt.plot(valid_data['CASE NO:'], valid_data[f"{observer}_Right"],
+                            color=color, linestyle='-', marker=marker, markersize=8,
+                            label=f'{observer} Right (n={len(valid_data)})',
+                            linewidth=2)
+                    all_case_numbers.update(valid_data['CASE NO:'])
+            
+            # Plot Left kidney data
+            if f"{observer}_Left" in df.columns:
+                valid_data = df[df[f"{observer}_Left"].notna()].copy()
+                if not valid_data.empty:
+                    plt.plot(valid_data['CASE NO:'], valid_data[f"{observer}_Left"],
+                            color=color, linestyle='--', marker=marker, markersize=8,
+                            label=f'{observer} Left (n={len(valid_data)})',
+                            linewidth=2)
+                    all_case_numbers.update(valid_data['CASE NO:'])
+        
+        plt.title('Combined Kidney Volume Measurements (All Observers)', fontsize=14, pad=20)
+        plt.xlabel('Case Number', fontsize=12)
+        plt.ylabel('Volume (ml)', fontsize=12)
+        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=10)
+        plt.grid(True, alpha=0.3)
+        
+        # Set x-axis ticks to show all case numbers
+        case_numbers = sorted(list(all_case_numbers))
+        plt.xticks(case_numbers, case_numbers, rotation=45, ha='right')
+        
+        # Increase font size of tick labels
+        plt.xticks(fontsize=10)
+        plt.yticks(fontsize=10)
+        
+        plt.tight_layout()
+        plt.savefig(os.path.join(output_folder, 'combined_all_kidneys.png'),
+                   bbox_inches='tight', dpi=300)
+        plt.close()
+
+    except Exception as e:
+        print(f"Error creating combined kidney plot: {str(e)}")
         raise
 
 def main():
@@ -526,6 +646,10 @@ def main():
         # Create combined visualizations
         print("\nCreating combined visualizations...")
         create_combined_visualizations(df, output_folder)
+        
+        # Create combined kidney plot
+        print("\nCreating combined kidney plot...")
+        create_combined_kidney_plot(df, output_folder)
         
         print(f"\nAnalysis complete! Results saved in: {output_folder}")
         
