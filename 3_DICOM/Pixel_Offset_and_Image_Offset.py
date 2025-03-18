@@ -492,7 +492,7 @@ def analyze_dicom_directory(directory_path, output_json_path=None, force=True):
 
 if __name__ == "__main__":
     # Test with single frame
-    single_frame_path = "Data/CT000000.dcm"
+    single_frame_path = os.path.join("Data", "CT000000.dcm")
     if os.path.exists(single_frame_path):
         print("\n===== ANALYZING SINGLE FRAME IMAGE =====")
         result = analyze_dicom_offsets(single_frame_path)
@@ -504,7 +504,7 @@ if __name__ == "__main__":
         print(f"Results saved to: {output_path}")
     
     # Test with single frame that might be missing DICOM header
-    single_frame_path = "Data/1.2.840.113619.2.233.93181000916074.21423.1690296106124.2.dcm"
+    single_frame_path = os.path.join("Data", "1.2.840.113619.2.233.93181000916074.21423.1690296106124.2.dcm")
     if os.path.exists(single_frame_path):
         print("\n===== ANALYZING SINGLE FRAME IMAGE (WITH FORCE=TRUE) =====")
         result = analyze_dicom_offsets(single_frame_path, force=True)
@@ -516,7 +516,7 @@ if __name__ == "__main__":
         print(f"Results saved to: {output_path}")
         
     # Test with multi-frame
-    multi_frame_path = "Data/DX000000.dcm"
+    multi_frame_path = os.path.join("Data", "DX000000.dcm")
     if os.path.exists(multi_frame_path):
         print("\n===== ANALYZING MULTI-FRAME IMAGE =====")
         result = analyze_dicom_offsets(multi_frame_path)
@@ -528,6 +528,6 @@ if __name__ == "__main__":
         print(f"Results saved to: {output_path}")
     
     # Analyze all files in the Data directory
-    directory_path = "D:/2025/3_DICOM/Data/Test_Multiple_Slices"
+    directory_path = os.path.join("Data", "Test_Multiple_Slices")
     output_json_path = os.path.join("JSON", "series_analysis.json")
     analyze_dicom_directory(directory_path, output_json_path, force=True)
