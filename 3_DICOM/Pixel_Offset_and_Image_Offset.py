@@ -492,48 +492,42 @@ def analyze_dicom_directory(directory_path, output_json_path=None, force=True):
 
 if __name__ == "__main__":
     # Test with single frame
-    single_frame_path = "C:/Users/Subin-PC/Downloads/6627b6ac-b846cbe0-a0af01cc-f94a6bd0-990a57c6/8405 RAHIYANATH/Abdomen 01_DDNMRC_KUB_PLAIN Adult/CT KUB PLAIN 3D/CT000000.dcm"
+    single_frame_path = "Data/CT000000.dcm"
     if os.path.exists(single_frame_path):
         print("\n===== ANALYZING SINGLE FRAME IMAGE =====")
         result = analyze_dicom_offsets(single_frame_path)
         
         # Save single file result to JSON
-        output_path = os.path.join(os.path.dirname(single_frame_path), f"{os.path.basename(single_frame_path)}_analysis.json")
+        output_path = os.path.join("JSON", f"{os.path.basename(single_frame_path)}_analysis.json")
         with open(output_path, 'w') as f:
             json.dump(result, f, indent=2)
         print(f"Results saved to: {output_path}")
     
-    
     # Test with single frame that might be missing DICOM header
-    single_frame_path = "D:/ARAMIS_SPIN/dcmtest/dcm/ARAMIS/MR/2025/3/17/1.2.840.113619.6.408.45116334615101794048917581950627380337/1.2.840.113619.2.233.93181000916074.21423.1690296106101.1/1.2.840.113619.2.233.93181000916074.21423.1690296106124.2.dcm"
+    single_frame_path = "Data/1.2.840.113619.2.233.93181000916074.21423.1690296106124.2.dcm"
     if os.path.exists(single_frame_path):
         print("\n===== ANALYZING SINGLE FRAME IMAGE (WITH FORCE=TRUE) =====")
         result = analyze_dicom_offsets(single_frame_path, force=True)
         
         # Save single file result to JSON
-        output_path = os.path.join(os.path.dirname(single_frame_path), f"{os.path.basename(single_frame_path)}_analysis.json")
+        output_path = os.path.join("JSON", f"{os.path.basename(single_frame_path)}_analysis.json")
         with open(output_path, 'w') as f:
             json.dump(result, f, indent=2)
         print(f"Results saved to: {output_path}")
         
-        
     # Test with multi-frame
-    multi_frame_path = "C:/Users/Subin-PC/Downloads/Telegram Desktop/95188220-938b775b-bb0381f6-5da6443e-63148dd6/DR KURIAN BABU 250218071 DR R SENTHIL KUMAR 56M/Unknown Study/DX Exported volume/DX000000.dcm"
+    multi_frame_path = "Data/DX000000.dcm"
     if os.path.exists(multi_frame_path):
         print("\n===== ANALYZING MULTI-FRAME IMAGE =====")
         result = analyze_dicom_offsets(multi_frame_path)
         
         # Save single file result to JSON
-        output_path = os.path.join(os.path.dirname(multi_frame_path), f"{os.path.basename(multi_frame_path)}_analysis.json")
+        output_path = os.path.join("JSON", f"{os.path.basename(multi_frame_path)}_analysis.json")
         with open(output_path, 'w') as f:
             json.dump(result, f, indent=2)
         print(f"Results saved to: {output_path}")
     
-    # Uncomment to analyze a directory of DICOM files
-    # directory_path = "path/to/dicom/directory"
-    # if os.path.isdir(directory_path):
-    #     analyze_dicom_directory(directory_path, force=True)
-    
-    directory_path = "D:/ARAMIS_SPIN/dcmtest/dcm/ARAMIS/MR/2025/3/17/1.2.840.113619.6.408.45116334615101794048917581950627380337/1.2.840.113619.2.233.93181000916074.21423.1690296106101.1"
-    output_json_path = directory_path + "/series_analysis.json"
+    # Analyze all files in the Data directory
+    directory_path = "D:/2025/3_DICOM/Data/Test_Multiple_Slices"
+    output_json_path = os.path.join("JSON", "series_analysis.json")
     analyze_dicom_directory(directory_path, output_json_path, force=True)
