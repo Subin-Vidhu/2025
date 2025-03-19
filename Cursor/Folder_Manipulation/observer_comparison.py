@@ -10,7 +10,7 @@ from itertools import combinations
 
 # Global configuration for observers
 OBSERVER_CONFIG = {
-    'observers': ['AIRA', 'SREENADH'],  # Add 'ANISH', 'DOCTOR' when data is available
+    'observers': ['AIRA', 'SREENADH', 'ANISH'],  # Add 'ANISH', 'DOCTOR' when data is available
     'column_indices': {
         'AIRA': {'Right': 2, 'Left': 3},
         'SREENADH': {'Right': 5, 'Left': 6},
