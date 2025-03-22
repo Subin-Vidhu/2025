@@ -45,7 +45,8 @@ def analyze_dicom_offsets(dicom_path, results_dict=None, force=True):
         result["file_info"] = {
             "filename": os.path.basename(dicom_path),
             "filepath": dicom_path,
-            "filesize": os.path.getsize(dicom_path),
+            "filesize_bytes": os.path.getsize(dicom_path),
+            "filesize_formatted": f"{os.path.getsize(dicom_path):,} bytes",
             "analysis_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         
