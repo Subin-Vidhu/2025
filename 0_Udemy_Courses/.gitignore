@@ -8,3 +8,11 @@ __pycache__/
 
 # Ignore all files in the data folder
 data/
+*.dat
+*.npy
+*.npy.gz
+*.npy.bz2
+*.npy.zip
+*.npy.tar
+*.npy.gz.tar
+*.npy.bz2.tar

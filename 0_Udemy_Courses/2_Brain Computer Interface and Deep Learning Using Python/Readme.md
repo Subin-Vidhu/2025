@@ -71,4 +71,25 @@
 
     - Here Gradient Descent is a backpropagation algorithm, which is a way to update the weights and biases of the model, by calculating the gradient of the loss function with respect to the weights and biases. So how it works is the model predicts the output, and then the loss is calculated, and then the gradient is calculated, and then the weights and biases are updated.
 
+### Section 3:
 
+- Project 1: Brain Computer Interface
+
+    - Load the numpy array, sampling rate of the EEG data is 160Hz, meaning it can generate 160 samples/time points per second.
+
+    - The numpy array is loaded using the `np.load` function, and it has around 259520 data points, and each has 65 values, which are the values of the EEG channels.[dataset.shape: (259520, 65)]
+
+
+- CNN Model
+
+    - Convolutional Neural Network (CNN) is a type of neural network that is used for image classification.
+
+    - Usually in CNNs, we have a convolutional layer, activation function, pooling layer, and a fully connected layer.
+
+        - The convolutional layer is used to extract features from the image.
+
+        - The activation function is used to introduce non-linearity into the model.
+
+        - The pooling layer is used to reduce the dimensionality of the data.
+
+    - use  `optuna` to find the best hyperparameters for the model.
