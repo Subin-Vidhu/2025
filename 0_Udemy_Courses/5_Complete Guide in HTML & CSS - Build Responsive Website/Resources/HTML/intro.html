@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to HTML</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #707110;
+        }
+        p {
+            color: #2d105d;
+        }
+        ul {
+            list-style-type: square;
+        }
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Testing </h1>
+    <p title="first">This is a simple HTML document to test the structure.</p>
+    <ul>
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+    </ul>
+
+    <p>Here is a link to <a href="https://www.example.com">Example</a>.</p>
+    <img src="https://via.placeholder.com/150" alt="Placeholder Image">
+
+    <!-- This is a comment -->
+    <p>This is a paragraph.</p>
+    <!-- <p>This paragraph is commented out and will not be displayed.</p> -->
+    <p>Another paragraph.</p>
+    <p style="color: red;">This text is red.</p>
+        <p style="color: #FF0000;">This text is also red.</p>
+        <p style="color: rgb(255, 0, 0);">This text is also red.</p>
+        <div style="background-color: rgba(255, 0, 0, 0.5);">This div has a red background with 50% opacity.</div>
+
+        <div style="border: 2px solid red;">This div has a red border.</div>
+        <!--Add a margin as well-->
+        <div style="border: 1px dashed blue; margin: 2px;">This div has a blue dashed border.</div>
+        <div style="border: 3px dotted green ;margin: 2px;">This div has a green dotted border.</div>
+
+        <table>
+            <tr>
+                <th>Header 1</th>
+                <th>Header 2</th>
+            </tr>
+            <tr>
+                <td>Data 1</td>
+                <td>Data 2</td>
+            </tr>
+        </table>
+
+        <form action="/submit" method="POST">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <input type="submit" value="Submit">
+        </form>
+
+        <svg width="200" height="200">
+            <rect x="10" y="10" width="100" height="100" fill="blue" />
+            <circle cx="150" cy="150" r="40" fill="green" />
+            <text x="50" y="50" font-family="Verdana" font-size="20" fill="white">Hello SVG</text>
+        </svg>
+
+        <canvas id="myCanvas" width="400" height="400"></canvas>
+        <script>
+            var canvas = document.getElementById("myCanvas");
+            var ctx = canvas.getContext("2d");
+            ctx.fillStyle = "blue";
+            ctx.fillRect(50, 50, 300, 300);
+
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 5;
+            ctx.strokeRect(50, 50, 300, 300);
+
+            ctx.fillStyle = "white";
+            ctx.font = "30px Arial";
+            ctx.fillText("Hello, Canvas!", 100, 200);
+        </script>     
+
+<header>
+    <h1>My Website</h1>
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+        
+</body>
+</html>
