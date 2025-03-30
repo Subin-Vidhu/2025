@@ -1032,3 +1032,682 @@ No Resources found in this course, so typing the notes here.
             <input type="submit" value="Submit">
         </form>
         ``` 
+
+---
+CSS
+---
+
+- Introduction to CSS
+
+    - CSS (Cascading Style Sheets) is a stylesheet language used to describe the presentation of a document written in HTML or XML.
+    - CSS controls the layout, colors, fonts, and overall appearance of web pages.
+    - CSS allows you to separate content from presentation, making it easier to maintain and update styles across multiple pages.
+
+    - Example
+
+        ```
+        <style>
+            body {
+                background-color: lightblue;
+                font-family: Arial, sans-serif;
+            }
+            h1 {
+                color: darkblue;
+                text-align: center;
+            }
+            p {
+                color: black;
+                font-size: 16px;
+            }
+        </style>
+        ```
+        - In this example, CSS styles are defined for the `body`, `h1`, and `p` elements.
+        - The `body` element has a light blue background color and uses the Arial font.
+        - The `h1` element has dark blue text color and is centered on the page.
+        - The `p` element has black text color and a font size of 16 pixels.
+
+
+        - To use this style.css file in html file:
+            ```
+            <link rel="stylesheet" type="text/css" href="style.css">
+            ```
+
+- Selectors
+
+    - CSS selectors are used to select and apply styles to HTML elements.
+    - Common types of selectors include:
+        - Type selector: Selects elements by their tag name (e.g., `h1`, `p`, `div`).
+        - Class selector: Selects elements by their class attribute (e.g., `.class-name`).
+        - ID selector: Selects elements by their id attribute (e.g., `#id-name`).
+        - Descendant selector: Selects elements that are descendants of a specified element (e.g., `div p` selects all `p` elements inside a `div`).
+        - Attribute selector: Selects elements based on their attributes (e.g., `[type="text"]` selects all input elements with type "text").
+        - Pseudo-class selector: Selects elements based on their state or position (e.g., `a:hover` selects links when hovered over).
+        - Pseudo-element selector: Selects a specific part of an element (e.g., `::before`, `::after`).
+
+    - Example:
+        ```
+        <style>
+            h1 {
+                color: blue;
+            }
+            .class-name {
+                font-size: 20px;
+            }
+            #id-name {
+                background-color: yellow;
+            }
+            div p {
+                color: green;
+            }
+            input[type="text"] {
+                border: 1px solid black;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+        </style>
+        ```
+        - In this example, various selectors are used to apply styles to different elements.
+
+
+- Comments    
+
+    - CSS comments are used to add notes or explanations within the CSS code.
+    - Comments are ignored by the browser and do not affect the rendering of the page.
+    - CSS comments are enclosed in `/*` and `*/`.
+    - Example:
+        ```
+        /* This is a comment */
+        body {
+            background-color: lightblue; /* This sets the background color */
+        }
+        ```
+        - In this example, a comment is added to explain the purpose of the CSS rule. 
+
+        - The comment `/* This is a comment */` is ignored by the browser and does not affect the rendering of the page.       
+
+- Colors
+
+    - CSS supports various color formats, including named colors, hexadecimal colors, RGB colors, RGBA colors, HSL colors, and HSLA colors.
+    - Named colors: Predefined color names (e.g., `red`, `blue`, `green`).
+    - Hexadecimal colors: Colors represented in hexadecimal format (e.g., `#FF0000` for red).
+    - RGB colors: Colors represented using the RGB model (e.g., `rgb(255, 0, 0)` for red).
+    - RGBA colors: RGB colors with an alpha value for opacity (e.g., `rgba(255, 0, 0, 0.5)` for red with 50% opacity).
+    - HSL colors: Colors represented using the HSL model (e.g., `hsl(0, 100%, 50%)` for red).
+    - HSLA colors: HSL colors with an alpha value for opacity (e.g., `hsla(0, 100%, 50%, 0.5)` for red with 50% opacity).
+
+    - Example:
+        ```
+        <style>
+            body {
+                background-color: lightblue;
+            }
+            h1 {
+                color: #FF0000; /* Red */
+            }
+            p {
+                color: rgb(0, 255, 0); /* Green */
+            }
+            .class-name {
+                color: rgba(0, 0, 255, 0.5); /* Blue with 50% opacity */
+            }
+        </style>
+        ```
+        - In this example, various color formats are used to set the text color of different elements.
+
+
+- Backgrounds
+
+    - CSS allows you to set background properties for elements, including background color, background image, background position, background size, and background repeat.
+    - Example:
+        ```
+        <style>
+            body {
+                background-color: lightblue;
+                background-image: url('background.jpg');
+                background-position: center;
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
+        </style>
+        ```
+        - In this example, the body element has a light blue background color and a background image.
+        - The `background-position` property centers the image, the `background-size` property makes the image cover the entire element, and the `background-repeat` property prevents the image from repeating.
+
+    - Example:
+        ```
+        <style>
+            .class-name {
+                background-color: yellow;
+                background-image: linear-gradient(to right, red, orange);
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a yellow background color and a linear gradient background image that transitions from red to orange.
+
+- Borders
+
+    - CSS allows you to set borders for elements, including border width, border style, and border color.
+    - Example:
+        ```
+        <style>
+            .class-name {
+                border: 2px solid black; /* 2px width, solid style, black color */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a 2-pixel solid black border.
+
+    - Example:
+        ```
+        <style>
+            .class-name {
+                border-width: 5px;
+                border-style: dashed;
+                border-color: red;
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a 5-pixel dashed red border.
+
+- Margins
+
+    - CSS allows you to set margins for elements, which create space outside the element's border.
+    - Margins can be set using the `margin` property, which can take one to four values.
+    - Example:
+        ```
+        <style>
+            .class-name {
+                margin: 20px; /* 20 pixels on all sides */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a margin of 20 pixels on all sides.
+
+    - Example:
+        ```
+        <style>
+            .class-name {
+                margin: 10px 20px; /* 10 pixels top and bottom, 20 pixels left and right */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a margin of 10 pixels on the top and bottom and 20 pixels on the left and right.
+
+    - Example:
+        ```
+        <style>
+            .class-name {
+                margin: 5px 10px 15px; /* 5 pixels top, 10 pixels left and right, 15 pixels bottom */
+            }
+        </style>
+        ```
+
+    - margin - auto, 
+        ```
+        <style>
+            .class-name {
+                margin: auto; /* Center the element horizontally */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with an automatic margin, which centers the element horizontally within its parent container.
+
+
+- Padding        
+
+    - CSS allows you to set padding for elements, which creates space inside the element's border.
+    - Padding can be set using the `padding` property, which can take one to four values.
+    - Example:
+        ```
+        <style>
+            .class-name {
+                padding: 20px; /* 20 pixels on all sides */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a padding of 20 pixels on all sides.
+
+    - Example:
+        ```
+        <style>
+            .class-name {
+                padding: 10px 20px; /* 10 pixels top and bottom, 20 pixels left and right */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a padding of 10 pixels on the top and bottom and 20 pixels on the left and right.
+
+    - Example:
+        ```
+        <style>
+            .class-name {
+                padding: 5px 10px 15px; /* 5 pixels top, 10 pixels left and right, 15 pixels bottom */
+            }
+        </style>
+        ```
+
+    - Example:
+        ```
+        <style>
+            .class-name {
+                padding: 5px; /* 5 pixels on all sides */
+                border: 1px solid black; /* Border around the element */
+            }
+        </style>        
+        ```
+
+        - In this example, a class named "class-name" is created with a padding of 5 pixels on all sides and a solid black border around the element.
+
+
+- Height and Width
+
+    - CSS allows you to set the height and width of elements using the `height` and `width` properties.
+    - Height and width can be set using absolute values (e.g., pixels, ems) or relative values (e.g., percentages).
+    - Example:
+        ```
+        <style>
+            .class-name {
+                width: 300px; /* 300 pixels wide */
+                height: 200px; /* 200 pixels tall */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a width of 300 pixels and a height of 200 pixels.
+
+    - Example:
+        ```
+        <style>
+            .class-name {
+                width: 50%; /* 50% of the parent element's width */
+                height: auto; /* Height adjusts automatically based on content */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a width of 50% of its parent element's width and an automatic height that adjusts based on the content.
+
+    - Example:
+        ```
+        <style>
+            .class-name {
+                max-width: 100%; /* Maximum width of 100% of the parent element */
+                min-height: 100px; /* Minimum height of 100 pixels */
+            }
+        </style>
+        ```
+
+- Box Model
+
+    - The CSS box model describes the rectangular boxes generated for elements in the document tree and consists of the following components:
+        - Content: The actual content of the element (text, images, etc.).
+        - Padding: The space between the content and the border.
+        - Border: The line surrounding the padding and content.
+        - Margin: The space outside the border, separating the element from other elements.
+
+    - Example:
+        ```
+        <style>
+            .class-name {
+                width: 300px;
+                height: 200px;
+                padding: 20px;
+                border: 5px solid black;
+                margin: 10px;
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a width of 300 pixels, a height of 200 pixels, 20 pixels of padding, a 5-pixel solid black border, and a 10-pixel margin.
+
+- Outline
+
+    - The CSS outline property is used to create a line around an element, similar to a border but without taking up space in the layout.
+    - Outlines can be set using the `outline` shorthand property or individual properties for outline color, style, and width.
+    - Example:
+        ```
+        <style>
+            .class-name {
+                outline: 2px dashed red; /* 2-pixel dashed red outline */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a 2-pixel dashed red outline.
+
+    - Example:
+        ```
+        <style>
+            .class-name {
+                outline-color: blue; /* Blue outline color */
+                outline-style: solid; /* Solid outline style */
+                outline-width: 3px; /* 3-pixel outline width */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with a blue solid outline that is 3 pixels wide.
+
+
+- Text
+
+    - CSS provides various properties to style text, including font size, font family, font weight, text color, text alignment, line height, letter spacing, and text decoration.
+    - Example:
+        ```
+        <style>
+            .class-name {
+                font-size: 20px; /* Font size of 20 pixels */
+                font-family: Arial, sans-serif; /* Arial font family */
+                font-weight: bold; /* Bold font weight */
+                color: blue; /* Blue text color */
+                text-align: center; /* Centered text alignment */
+                line-height: 1.5; /* Line height of 1.5 */
+                letter-spacing: 2px; /* 2 pixels of letter spacing */
+                text-decoration: underline; /* Underlined text */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with various text styles applied.
+
+- Fonts
+
+    - CSS allows you to set fonts for text using the `font-family`, `font-size`, `font-weight`, and `font-style` properties.
+    - You can also use web fonts from services like Google Fonts or Adobe Fonts.
+    - Example:
+        ```
+        <style>
+            .class-name {
+                font-family: 'Roboto', sans-serif; /* Google Font */
+                font-size: 18px; /* Font size of 18 pixels */
+                font-weight: normal; /* Normal font weight */
+                font-style: italic; /* Italic font style */
+            }
+        </style>
+        ```
+        - In this example, a class named "class-name" is created with the Roboto font family, a font size of 18 pixels, normal font weight, and italic font style.
+
+    - Example:
+        ```
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+            body {
+                font-family: 'Roboto', sans-serif; /* Google Font */
+            }
+        </style>
+        ```
+
+        - In this example, the Roboto font is imported from Google Fonts and applied to the body element.
+
+        - The `link` tag is used to include the font stylesheet, and the `font-family` property is set to use the Roboto font.  
+
+- Icons
+
+    - CSS allows you to use icons in web pages using icon fonts or SVG icons.
+
+    - Icon fonts are font files that contain icons instead of letters, allowing you to use them like text.
+
+    - Example:
+        ```
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <style>
+            .icon {
+                font-family: 'Font Awesome 5 Free';
+                font-weight: 900; /* Font weight for solid icons */
+            }
+        </style>
+        ```
+        - In this example, the Font Awesome icon library is included using a CDN link, and a class named "icon" is created to apply the Font Awesome font family and font weight for solid icons.
+
+- Links
+
+    - CSS allows you to style links using the `a` selector and various properties like color, text decoration, and hover effects.
+    - Example:
+        ```
+        <style>
+            a {
+                color: blue; /* Blue link color */
+                text-decoration: none; /* No underline */
+            }
+            a:hover {
+                text-decoration: underline; /* Underline on hover */
+            }
+        </style>
+        ```
+        - In this example, all links are styled with a blue color and no underline, and an underline is added when the link is hovered over.
+
+    - Example:
+        ```
+        <style>
+            a {
+                color: red; /* Red link color */
+                font-weight: bold; /* Bold link text */
+            }
+            a:hover {
+                color: green; /* Green link color on hover */
+            }
+        </style>
+        ```
+        - In this example, all links are styled with a red color and bold text, and the link color changes to green when hovered over.
+
+- Lists
+
+    - CSS allows you to style lists using the `list-style` property and various properties like `padding`, `margin`, and `text-indent`.
+    - Example:
+        ```
+        <style>
+            ul {
+                list-style-type: square; /* Square bullet points */
+                padding-left: 20px; /* Left padding */
+            }
+            li {
+                margin-bottom: 10px; /* Bottom margin for list items */
+            }
+        </style>
+        ```
+        - In this example, an unordered list is styled with square bullet points and left padding, and each list item has a bottom margin of 10 pixels.
+
+    - Example:
+        ```
+        <style>
+            ol {
+                list-style-type: decimal; /* Decimal numbering */
+                padding-left: 20px; /* Left padding */
+            }
+            li {
+                text-indent: 20px; /* Indent text for list items */
+            }
+        </style>
+        ```
+        - In this example, an ordered list is styled with decimal numbering and left padding, and each list item has a text indent of 20 pixels.
+
+
+- Image Sprites
+
+    - CSS image sprites are a technique used to combine multiple images into a single image file, reducing the number of HTTP requests and improving page load times.
+    - Example:
+        ```
+        <style>
+            .sprite {
+                background-image: url('sprite.png');
+                width: 50px; /* Width of each sprite */
+                height: 50px; /* Height of each sprite */
+            }
+            .icon1 {
+                background-position: 0 0; /* Position for icon 1 */
+            }
+            .icon2 {
+                background-position: -50px 0; /* Position for icon 2 */
+            }
+        </style>
+        ```
+        - In this example, a class named "sprite" is created with a background image of the sprite sheet, and two additional classes "icon1" and "icon2" are created to position the individual icons within the sprite sheet.
+
+- Forms
+
+    - CSS allows you to style form elements, including input fields, buttons, and labels.
+    - Example:
+        ```
+        <style>
+            input[type="text"] {
+                width: 200px; /* Width of text input */
+                padding: 10px; /* Padding inside the input */
+                border: 1px solid gray; /* Border around the input */
+            }
+            button {
+                background-color: blue; /* Button background color */
+                color: white; /* Button text color */
+                padding: 10px 20px; /* Padding inside the button */
+                border: none; /* No border */
+                cursor: pointer; /* Pointer cursor on hover */
+            }
+            button:hover {
+                background-color: darkblue; /* Darker blue on hover */
+            }
+        </style>
+        ```
+        - In this example, a text input field is styled with a width of 200 pixels, padding, and a gray border.
+        - A button is styled with a blue background color, white text color, padding, no border, and a pointer cursor on hover. The button's background color changes to dark blue when hovered over.
+
+- Position
+
+    - CSS allows you to control the position of elements using the `position` property, which can take values like `static`, `relative`, `absolute`, `fixed`, and `sticky`.
+    - Example:
+        ```
+        <style>
+            .relative {
+                position: relative; /* Relative positioning */
+                top: 20px; /* Move down 20 pixels */
+                left: 10px; /* Move right 10 pixels */
+            }
+            .absolute {
+                position: absolute; /* Absolute positioning */
+                top: 50px; /* Move down 50 pixels */
+                left: 100px; /* Move right 100 pixels */
+            }
+            .fixed {
+                position: fixed; /* Fixed positioning */
+                bottom: 0; /* Stick to the bottom of the viewport */
+                right: 0; /* Stick to the right of the viewport */
+            }
+        </style>
+        ```
+        - In this example, three classes are created with different positioning styles.
+        - The "relative" class moves the element down and to the right relative to its original position.
+        - The "absolute" class positions the element at a specific location within its nearest positioned ancestor.
+        - The "fixed" class positions the element at a fixed location in the viewport, regardless of scrolling.
+
+- Floating
+
+    - CSS allows you to float elements to the left or right using the `float` property.
+    - Floating elements can be used to create multi-column layouts or wrap text around images.
+    - Example:
+        ```
+        <style>
+            .float-left {
+                float: left; /* Float element to the left */
+                width: 200px; /* Width of floated element */
+                margin-right: 20px; /* Right margin */
+            }
+            .float-right {
+                float: right; /* Float element to the right */
+                width: 200px; /* Width of floated element */
+                margin-left: 20px; /* Left margin */
+            }
+        </style>
+        ```
+        - In this example, two classes are created for floating elements.
+        - The "float-left" class floats the element to the left with a width of 200 pixels and a right margin of 20 pixels.
+        - The "float-right" class floats the element to the right with a width of 200 pixels and a left margin of 20 pixels.
+
+    - Example:
+        ```
+        <style>
+            .clearfix::after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+        </style>
+        ```
+
+- Overflow
+
+    - CSS allows you to control how content that overflows an element's box is handled using the `overflow` property.
+    - The `overflow` property can take values like `visible`, `hidden`, `scroll`, and `auto`.
+    - Example:
+        ```
+        <style>
+            .overflow {
+                width: 200px; /* Width of the element */
+                height: 100px; /* Height of the element */
+                overflow: auto; /* Add scrollbars if content overflows */
+            }
+        </style>
+        ```
+        - In this example, a class named "overflow" is created with a width of 200 pixels, a height of 100 pixels, and the `overflow` property set to `auto`, which adds scrollbars if the content overflows the element's box.
+
+- Align
+
+    - CSS allows you to align elements using properties like `text-align`, `vertical-align`, and `flexbox` or `grid` layout techniques.
+
+- Opacity
+
+    - CSS allows you to set the opacity of elements using the `opacity` property, which takes a value between 0 (completely transparent) and 1 (completely opaque).
+    - Example:
+        ```
+        <style>
+            .transparent {
+                opacity: 0.5; /* 50% opacity */
+            }
+        </style>
+        ```
+        - In this example, a class named "transparent" is created with an opacity of 50%, making the element semi-transparent.
+
+    - Example:
+        ```
+        <style>
+            .semi-transparent {
+                background-color: rgba(255, 0, 0, 0.5); /* Red with 50% opacity */
+            }
+        </style>
+        ```
+        - In this example, a class named "semi-transparent" is created with a red background color and 50% opacity using the RGBA color format.
+
+- Dropdowns
+
+    - CSS allows you to create dropdown menus using the `display` property and pseudo-classes like `:hover`.
+    - Example:
+        ```
+        <style>
+            .dropdown {
+                position: relative; /* Position relative to parent */
+            }
+            .dropdown-content {
+                display: none; /* Hide dropdown content by default */
+                position: absolute; /* Position absolute to parent */
+                background-color: white; /* Background color */
+                min-width: 160px; /* Minimum width */
+                z-index: 1; /* Stack above other elements */
+            }
+            .dropdown:hover .dropdown-content {
+                display: block; /* Show dropdown content on hover */
+            }
+        </style>
+        ```
+        - In this example, a class named "dropdown" is created with relative positioning, and a nested class named "dropdown-content" is created with absolute positioning and hidden by default.
+        - The dropdown content is displayed when the parent element is hovered over.
+
+    - Example:
+        ```
+        <style>
+            .dropdown {
+                position: relative;
+            }
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: white;
+                min-width: 160px;
+                z-index: 1;
+            }
+            .dropdown:hover .dropdown-content {
+                display: block;
+            }
+        </style>
+        ```
