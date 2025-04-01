@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# ---------------------------------------------------
+# Script Name: post_user_input.sh
+# Description: Sends a POST request to localhost:8787
+#              with a JSON payload containing user_input.
+# Usage: ./post_user_input.sh "Your input here"
+# ---------------------------------------------------
+
+# Function to display usage information
+usage() {
+    echo "Usage: $0 \"user_input\""
+    echo "Example: $0 \"Hello, World!\""
+    exit 1
+}
+
+# Check if the user provided an argument
+if [ $# -ne 1 ]; then
+    echo "Error: Missing user_input argument."
+    usage
+fi
+
+# Assign the first argument to USER_INPUT
+USER_INPUT="$1"
+
+# Define the target URL
+#URL="http://localhost:8787"
+URL="https://shrill-shape-e722.andrew-2e7.workers.dev"
+
+# Create the JSON payload
+# It's important to escape double quotes properly
+PAYLOAD=$(printf '{"user_input":"%s"}' "$USER_INPUT")
+
+# Send the POST request using curl
+response=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST \
+    -H "Content-Type: application/json" \
+    -d "$PAYLOAD" \
+    "$URL")
+
+# Extract the body and HTTP status code from the response
+body=$(echo "$response" | sed -n '1,/HTTP_STATUS:/p' | sed '$d')
+http_status=$(echo "$response" | grep "HTTP_STATUS:" | awk -F: '{print $2}')
+
+# Display the results
+echo "Response Body:"
+echo "$body"
+echo ""
+echo "HTTP Status Code: $http_status"
+
+# Optional: Handle non-2xx status codes
+if [[ ! "$http_status" =~ ^2 ]]; then
+    echo "Error: Received HTTP status code $http_status"
+    exit 1
+fi

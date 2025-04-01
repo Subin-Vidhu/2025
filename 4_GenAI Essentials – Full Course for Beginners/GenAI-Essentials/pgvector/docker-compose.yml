@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  postgres:
+    build: .
+    environment:
+      POSTGRES_USER: vectordb
+      POSTGRES_PASSWORD: vectorpass
+      POSTGRES_DB: vectordb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vectordb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

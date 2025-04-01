@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkTree Clone</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 680px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .profile {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-img {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .link {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: transform 0.2s;
+            text-align: center;
+        }
+
+        .link:hover {
+            transform: translateY(-2px);
+            background: white;
+        }
+
+        .add-link-form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        button {
+            background: #6e8efb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5d7ef8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile">
+            <img src="https://via.placeholder.com/96" alt="Profile" class="profile-img">
+            <h1>Your Name</h1>
+            <p>Your Bio</p>
+        </div>
+
+        <div class="links" id="links-container">
+            <!-- Links will be dynamically inserted here -->
+        </div>
+
+        <div class="add-link-form">
+            <h2>Add New Link</h2>
+            <form id="add-link-form">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="url">URL</label>
+                    <input type="url" id="url" required>
+                </div>
+                <button type="submit">Add Link</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Fetch and display links
+        async function fetchLinks() {
+            const response = await fetch('/links');
+            const links = await response.json();
+            const container = document.getElementById('links-container');
+            container.innerHTML = '';
+            
+            links.forEach(link => {
+                const linkElement = document.createElement('a');
+                linkElement.href = link.url;
+                linkElement.className = 'link';
+                linkElement.textContent = link.title;
+                linkElement.target = '_blank';
+                container.appendChild(linkElement);
+            });
+        }
+
+        // Add new link
+        document.getElementById('add-link-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const url = document.getElementById('url').value;
+
+            await fetch('/links/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title, url })
+            });
+
+            document.getElementById('title').value = '';
+            document.getElementById('url').value = '';
+            fetchLinks();
+        });
+
+        // Initial load
+        fetchLinks();
+    </script>
+</body>
+</html>
