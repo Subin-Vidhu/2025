@@ -1,0 +1,53 @@
+{
+    "editor.mouseWheelZoom": true,
+    "window.zoomLevel": 0.85,
+    "editor.fontFamily": "Fira Code",
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": false,
+        "markdown": true,
+        "scminput": false,
+        "python": true
+    },
+    "workbench.colorTheme": "GitHub Dark Colorblind (Beta)",
+    "remote.SSH.remotePlatform": {
+        "117.216.46.51": "linux",
+        "111.235.68.188": "windows",
+        "143.244.134.4": "linux",
+        "14.194.187.122": "windows"
+    },
+    "git.autofetch": true,
+    "terminal.integrated.scrollback": 5000,
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "window.newWindowDimensions": "maximized",
+    "dart.flutterSdkPath": "C:\\Users\\Subin-PC\\Downloads\\flutter",
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "github.copilot.chat.codesearch.enabled": true,
+    "github.copilot.chat.agent.thinkingTool": true,
+    "github.copilot.chat.editor.temporalContext.enabled": true,
+    "github.copilot.chat.edits.temporalContext.enabled": true,
+    "mcp": {
+        "servers": {
+            "postgres": {
+                "command": "npx",
+                "args": [
+                    "-y",
+                    "@modelcontextprotocol/server-postgres",
+                    "postgresql://radon:postgres_1x3@localhost:8069/radon"
+                ]
+            },
+            "todo-api": {
+                "command": "D:/2025/Cursor/VSCode_Agent/venv/Scripts/python.exe",
+                "args": ["D:/2025/Cursor/VSCode_Agent/main.py"]
+            }
+        }
+    },
+}
