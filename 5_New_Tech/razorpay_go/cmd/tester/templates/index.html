@@ -53,6 +53,14 @@
                         <div class="col-md-3">
                             <button type="submit" class="btn btn-primary">Create Payment</button>
                         </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="autoRetry" checked>
+                                <label class="form-check-label" for="autoRetry">
+                                    Auto-retry failed payments
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -70,6 +78,10 @@
     </div>
 
     <script>
+        let retryTimeout = null;
+        let countdownInterval = null;
+        let lastOrderData = null;
+
         function appendToLog(message, isError = false) {
             const log = document.getElementById('responseLog');
             const entry = document.createElement('div');
@@ -82,12 +94,44 @@
             document.getElementById('responseLog').innerHTML = '';
         }
 
-        document.getElementById('paymentForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        function startRetryCountdown(seconds) {
+            // Clear any existing countdown
+            cancelRetry();
             
-            const amount = parseFloat(document.getElementById('amount').value);
-            const currency = document.getElementById('currency').value;
+            let remainingSeconds = seconds;
+            appendToLog(`Payment retry scheduled in ${remainingSeconds} seconds...`, true);
+            
+            countdownInterval = setInterval(() => {
+                remainingSeconds--;
+                if (remainingSeconds <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                } else {
+                    appendToLog(`Retrying payment in ${remainingSeconds} seconds...`, true);
+                }
+            }, 1000);
 
+            retryTimeout = setTimeout(() => {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+                appendToLog('Retrying payment now...', true);
+                initializePayment(lastOrderData.amount, lastOrderData.currency);
+            }, seconds * 1000);
+        }
+
+        function cancelRetry() {
+            if (retryTimeout) {
+                clearTimeout(retryTimeout);
+                retryTimeout = null;
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+                appendToLog('Payment retry cancelled', true);
+            }
+        }
+
+        async function initializePayment(amount, currency) {
             try {
                 // Create order
                 const orderResponse = await fetch('/order/create', {
@@ -99,6 +143,7 @@
                 });
 
                 const orderData = await orderResponse.json();
+                lastOrderData = { amount, currency }; // Store for retry
                 appendToLog(`Order created: ${orderData.orderId}`);
 
                 // Initialize Razorpay checkout
@@ -110,6 +155,7 @@
                     name: 'Test Store',
                     description: 'Test Payment',
                     handler: async function(response) {
+                        cancelRetry(); // Cancel any pending retries
                         try {
                             // Verify payment
                             const verifyResponse = await fetch('/payment/callback', {
@@ -129,9 +175,13 @@
                             
                             if (data.status === 'success') {
                                 appendToLog(`Payment successful! Payment ID: ${response.razorpay_payment_id}`);
+                                lastOrderData = null; // Clear last order data on success
                             } else if (data.status === 'failed' || data.status === 'cancelled') {
                                 appendToLog(`Payment ${data.status}: ${data.message}`, true);
-                                // Close Razorpay modal if payment was already failed/cancelled
+                                // Schedule retry if auto-retry is enabled
+                                if (document.getElementById('autoRetry').checked) {
+                                    startRetryCountdown(30);
+                                }
                                 rzp.close();
                             } else {
                                 appendToLog(`Payment verification failed: ${data.message}`, true);
@@ -157,6 +207,10 @@
                                 const data = await response.json();
                                 if (data.status === 'cancelled') {
                                     appendToLog('Payment cancelled by user', true);
+                                    // Schedule retry if auto-retry is enabled
+                                    if (document.getElementById('autoRetry').checked) {
+                                        startRetryCountdown(30);
+                                    }
                                 } else if (data.status === 'failed') {
                                     appendToLog(`Payment already failed: ${data.message}`, true);
                                 }
@@ -199,10 +253,13 @@
                         const data = await failureResponse.json();
                         if (data.status === 'failed') {
                             appendToLog(`Payment failure recorded: ${data.message}`, true);
+                            // Schedule retry if auto-retry is enabled
+                            if (document.getElementById('autoRetry').checked) {
+                                startRetryCountdown(30);
+                            }
                         } else if (data.status === 'cancelled') {
                             appendToLog(`Payment was already cancelled`, true);
                         }
-                        // Close Razorpay modal
                         rzp.close();
                     } catch (error) {
                         appendToLog(`Error recording failure: ${error.message}`, true);
@@ -214,6 +271,14 @@
             } catch (error) {
                 appendToLog(`Error creating order: ${error.message}`, true);
             }
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            cancelRetry(); // Cancel any pending retries
+            const amount = parseFloat(document.getElementById('amount').value);
+            const currency = document.getElementById('currency').value;
+            await initializePayment(amount, currency);
         });
     </script>
 </body>
