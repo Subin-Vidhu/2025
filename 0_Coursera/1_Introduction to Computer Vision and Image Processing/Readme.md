@@ -6,4 +6,8 @@
 
 - Module 2:
 
-    - Refer Code directory
+    - Refer `Code` directory
+
+- Module 3:
+
+    - Refer `Code` directory
