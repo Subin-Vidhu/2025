@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"razorpay_go/cmd/tester/models"
 	"razorpay_go/cmd/tester/repository"
@@ -31,18 +30,22 @@ func (s *RefundService) InitiateRefund(paymentID string, amount float64, reason 
 
 	// Validate refund amount
 	if amount > payment.RefundableAmount {
-		return nil, errors.New("refund amount exceeds refundable amount")
+		return nil, fmt.Errorf("refund amount %f exceeds refundable amount %f", amount, payment.RefundableAmount)
 	}
 
 	// Convert amount to paise/cents
-	amountInPaise := int64(amount * 100)
+	amountInPaise := int(amount * 100)
 
 	// Create refund in Razorpay
-	notes := map[string]string{
-		"reason": reason,
+	data := map[string]interface{}{
+		"amount": amountInPaise,
+		"speed":  "normal",
+		"notes": map[string]interface{}{
+			"reason": reason,
+		},
 	}
 
-	rzpRefund, err := s.rzClient.Payment.Refund(paymentID, int(amountInPaise), nil, notes)
+	rzpRefund, err := s.rzClient.Payment.Refund(paymentID, amountInPaise, data, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error creating refund in Razorpay: %v", err)
 	}
