@@ -80,6 +80,10 @@
                 textBytes
             );
 
+            // Print sizes in the console
+            console.log("Original file size (bytes):", textBytes.length);
+            console.log("Encrypted file size (bytes):", encryptedData.byteLength);
+
             document.getElementById("output").innerHTML = 
                 `<span class="success">✅ File encrypted successfully!</span>\n` +
                 `Original text length: ${originalText.length} characters\n` +
