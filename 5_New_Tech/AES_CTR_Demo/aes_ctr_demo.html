@@ -19,6 +19,7 @@
   <input type="file" id="fileInput" />
   <br><br>
   <button onclick="encryptFile()">Encrypt File</button>
+  <button id="downloadBtn" style="display:none;" onclick="downloadEncryptedFile()">Download Encrypted File</button>
 
   <h3>Partial Decrypt</h3>
   <label>Start Byte Offset: <input type="number" id="offsetInput" value="0" min="0"></label><br>
@@ -89,10 +90,34 @@
                 `Original text length: ${originalText.length} characters\n` +
                 `Encrypted data size: ${encryptedData.byteLength} bytes\n\n` +
                 `Try decrypting a part using the controls above.`;
+
+            // Show the download button
+            document.getElementById("downloadBtn").style.display = "inline-block";
+            // Store the original filename for download
+            document.getElementById("downloadBtn").setAttribute("data-filename", file.name);
         } catch (e) {
             document.getElementById("output").innerHTML = 
                 `<span class="error">❌ Encryption failed: ${e.message}</span>`;
+            document.getElementById("downloadBtn").style.display = "none";
         }
+    }
+
+    function downloadEncryptedFile() {
+        if (!encryptedData) return alert("No encrypted data to download.");
+        const btn = document.getElementById("downloadBtn");
+        const originalName = btn.getAttribute("data-filename") || "encrypted_sample.txt";
+        const outName = originalName.replace(/(\.[^.]*)?$/, '_encrypted.bin');
+        const blob = new Blob([encryptedData], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = outName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
     }
 
     async function decryptPart() {
