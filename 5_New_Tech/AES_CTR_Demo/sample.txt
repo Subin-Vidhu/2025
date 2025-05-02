@@ -1,0 +1,570 @@
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+varyingThis is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+This is a sample large text file for AES-CTR encryption test.
+It includes several lines of repetitive or varying content.
+The purpose of this file is to simulate something large enough
+to test partial decryption from random offsets in a meaningful way.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi.
+
+— End of Sample —
+

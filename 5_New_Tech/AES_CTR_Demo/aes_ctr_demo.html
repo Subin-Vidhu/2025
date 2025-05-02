@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AES-CTR Partial Decryption Demo</title>
+</head>
+<body>
+  <h2>AES-CTR Encryption & Partial Decryption</h2>
+
+  <input type="file" id="fileInput" />
+  <br><br>
+  <button onclick="encryptFile()">Encrypt File</button>
+  <button onclick="decryptPart()">Decrypt Part</button>
+  <pre id="output">Output will appear here...</pre>
+
+  <script>
+    let key, iv, encryptedData;
+
+    async function generateKey() {
+      key = await crypto.subtle.generateKey(
+        { name: "AES-CTR", length: 256 },
+        true,
+        ["encrypt", "decrypt"]
+      );
+    }
+
+    async function encryptFile() {
+      const file = document.getElementById("fileInput").files[0];
+      if (!file) return alert("Please select a file.");
+
+      const buffer = await file.arrayBuffer();
+      await generateKey();
+
+      iv = crypto.getRandomValues(new Uint8Array(16)); // 128-bit IV
+
+      encryptedData = await crypto.subtle.encrypt(
+        {
+          name: "AES-CTR",
+          counter: iv,
+          length: 64
+        },
+        key,
+        buffer
+      );
+
+      document.getElementById("output").textContent = `✅ Encrypted ${buffer.byteLength} bytes.\nTry partial decryption!`;
+    }
+
+    async function decryptPart() {
+      if (!encryptedData) return alert("Encrypt a file first.");
+
+      const offset = 1000;   // start at byte 1000
+      const length = 200;    // read 200 bytes
+      const view = new Uint8Array(encryptedData).slice(offset, offset + length);
+
+      const blockSize = 16;
+      const blockOffset = Math.floor(offset / blockSize);
+      const byteOffset = offset % blockSize;
+
+      const adjustedIV = new Uint8Array(iv);
+      const ivView = new DataView(adjustedIV.buffer);
+      ivView.setUint32(12, blockOffset); // Modify the counter (last 4 bytes)
+
+      try {
+        const partialDecrypted = await crypto.subtle.decrypt(
+          {
+            name: "AES-CTR",
+            counter: adjustedIV,
+            length: 64
+          },
+          key,
+          view
+        );
+
+        const decoder = new TextDecoder();
+        const resultText = decoder.decode(partialDecrypted);
+
+        document.getElementById("output").textContent = 
+          `🔓 Decrypted partial content (bytes ${offset}–${offset+length}):\n\n${resultText}`;
+      } catch (err) {
+        document.getElementById("output").textContent = "❌ Decryption failed: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
