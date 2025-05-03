@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AES-CTR Partial Decrypt Demo</title>
+  <style>
+    body { padding: 20px; font-family: Arial, sans-serif; }
+    pre { background: #f5f5f5; padding: 10px; border-radius: 4px; white-space: pre-wrap; }
+    button { padding: 8px 16px; margin: 5px 0; }
+    input[type="number"] { width: 100px; }
+    .success { color: green; }
+    .error { color: red; }
+    .warning { color: #ff6b00; }
+  </style>
+</head>
+<body>
+  <h2>AES-CTR Encryption & Partial Decryption</h2>
+
+  <input type="file" id="fileInput" />
+  <br><br>
+  <button onclick="encryptFile()">Encrypt File</button>
+  <button id="downloadBtn" style="display:none;" onclick="downloadEncryptedFile()">Download Encrypted File</button>
+
+  <h3>Partial Decrypt</h3>
+  <label>Start Byte Offset: <input type="number" id="offsetInput" value="0" min="0"></label><br>
+  <label>Length (Bytes): <input type="number" id="lengthInput" value="20" min="1"></label><br><br>
+  <button onclick="decryptPart()">Decrypt Part</button>
+
+  <pre id="output">Output will appear here...</pre>
+
+  <script>
+    let key, nonce, encryptedData, originalText;
+
+    // Helper to convert number to 32-bit unsigned
+    function toUint32(num) {
+        return num >>> 0;
+    }
+
+    // Helper to create counter block
+    function createCounterBlock(nonce, blockIndex) {
+        const counter = new Uint8Array(16);
+        counter.set(nonce, 0);
+        
+        // Handle large block indices correctly
+        blockIndex = toUint32(blockIndex);
+        counter[12] = blockIndex >>> 24;
+        counter[13] = blockIndex >>> 16;
+        counter[14] = blockIndex >>> 8;
+        counter[15] = blockIndex & 0xff;
+        
+        return counter;
+    }
+
+    async function generateKey() {
+        key = await crypto.subtle.generateKey(
+            { name: "AES-CTR", length: 256 },
+            true,
+            ["encrypt", "decrypt"]
+        );
+        nonce = crypto.getRandomValues(new Uint8Array(12));
+    }
+
+    async function encryptFile() {
+        const file = document.getElementById("fileInput").files[0];
+        if (!file) return alert("Please select a file first.");
+
+        try {
+            originalText = await file.text();
+            const textBytes = new TextEncoder().encode(originalText);
+
+            await generateKey();
+            const counter = createCounterBlock(nonce, 0);
+
+            encryptedData = await crypto.subtle.encrypt(
+                {
+                    name: "AES-CTR",
+                    counter: counter,
+                    length: 64
+                },
+                key,
+                textBytes
+            );
+
+            // Print sizes in the console
+            console.log("Original file size (bytes):", textBytes.length);
+            console.log("Encrypted file size (bytes):", encryptedData.byteLength);
+
+            document.getElementById("output").innerHTML = 
+                `<span class="success">✅ File encrypted successfully!</span>\n` +
+                `Original text length: ${originalText.length} characters\n` +
+                `Encrypted data size: ${encryptedData.byteLength} bytes\n\n` +
+                `Try decrypting a part using the controls above.`;
+
+            // Show the download button
+            document.getElementById("downloadBtn").style.display = "inline-block";
+            // Store the original filename for download
+            document.getElementById("downloadBtn").setAttribute("data-filename", file.name);
+        } catch (e) {
+            document.getElementById("output").innerHTML = 
+                `<span class="error">❌ Encryption failed: ${e.message}</span>`;
+            document.getElementById("downloadBtn").style.display = "none";
+        }
+    }
+
+    function downloadEncryptedFile() {
+        if (!encryptedData) return alert("No encrypted data to download.");
+        const btn = document.getElementById("downloadBtn");
+        const originalName = btn.getAttribute("data-filename") || "encrypted_sample.txt";
+        const outName = originalName.replace(/(\.[^.]*)?$/, '_encrypted.bin');
+        const blob = new Blob([encryptedData], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = outName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+    }
+
+    async function decryptPart() {
+        if (!encryptedData) {
+            return alert("Please encrypt a file first!");
+        }
+
+        const offset = parseInt(document.getElementById("offsetInput").value);
+        const length = parseInt(document.getElementById("lengthInput").value);
+
+        if (isNaN(offset) || isNaN(length) || offset < 0 || length <= 0) {
+            return alert("Please enter valid offset and length values.");
+        }
+
+        if (offset + length > encryptedData.byteLength) {
+            return alert("Requested range exceeds encrypted data length.");
+        }
+
+        try {
+            const BLOCK_SIZE = 16;
+            const startBlock = Math.floor(offset / BLOCK_SIZE);
+            const offsetInBlock = offset % BLOCK_SIZE;
+            const blocksNeeded = Math.ceil((offsetInBlock + length) / BLOCK_SIZE);
+            const totalBytesToDecrypt = blocksNeeded * BLOCK_SIZE;
+
+            // Create counter for the starting block
+            const counter = createCounterBlock(nonce, startBlock);
+
+            // Get the encrypted data we need
+            const encryptedPortion = new Uint8Array(
+                encryptedData,
+                startBlock * BLOCK_SIZE,
+                totalBytesToDecrypt
+            );
+
+            // Decrypt the blocks
+            const decryptedData = await crypto.subtle.decrypt(
+                {
+                    name: "AES-CTR",
+                    counter: counter,
+                    length: 64
+                },
+                key,
+                encryptedPortion
+            );
+
+            // Extract just the bytes we want
+            const decryptedBytes = new Uint8Array(decryptedData)
+                .slice(offsetInBlock, offsetInBlock + length);
+
+            // Convert to text
+            const decryptedText = new TextDecoder().decode(decryptedBytes);
+            const originalPortion = originalText.slice(offset, offset + length);
+
+            document.getElementById("output").innerHTML = 
+                `<span class="success">🔓 Successfully decrypted bytes ${offset}-${offset + length - 1}</span>\n\n` +
+                `Decrypted text: "${decryptedText}"\n` +
+                `Original text: "${originalPortion}"\n\n` +
+                (decryptedText === originalPortion ? 
+                    `<span class="success">✅ Verification: Decrypted text matches original!</span>` :
+                    `<span class="warning">⚠️ Warning: Decrypted text does not match original</span>`);
+
+        } catch (e) {
+            document.getElementById("output").innerHTML = 
+                `<span class="error">❌ Decryption failed: ${e.message}</span>`;
+        }
+    }
+  </script>
+</body>
+</html>

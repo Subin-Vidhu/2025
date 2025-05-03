@@ -14,13 +14,26 @@ import (
 	"sync"
 	"time"
 
+	"razorpay_go/cmd/tester/db"
+	"razorpay_go/cmd/tester/handlers"
+	"razorpay_go/cmd/tester/models"
+	"razorpay_go/cmd/tester/repository"
+	"razorpay_go/cmd/tester/service"
+
 	"github.com/razorpay/razorpay-go"
 )
 
 // Test mode keys - replace these with your test mode keys from Razorpay Dashboard
 const (
-	keyID     = "rzp_test_96Yw5IBIzsWSZt"
-	keySecret = "EGkwN8l2dMhGaTR7AP6teXJJ"
+	keyID     = "rzp_test_FX3Nq50Trf2KzB"
+	keySecret = "dwPmbHcBQX6JkCvwJlbi8yAk"
+
+	// Database configuration
+	dbHost     = "localhost"
+	dbPort     = 5432
+	dbUser     = "postgres"
+	dbPassword = "password"
+	dbName     = "razorpay_test"
 )
 
 // PaymentState tracks the state of payments
@@ -124,15 +137,12 @@ func createOrder(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func handlePaymentCallback(w http.ResponseWriter, r *http.Request) {
+func handlePaymentCallback(w http.ResponseWriter, r *http.Request, repo *repository.Repository, client *razorpay.Client) {
 	if err := r.ParseForm(); err != nil {
 		log.Printf("Error parsing form: %v", err)
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
-
-	// Create Razorpay client
-	client := razorpay.NewClient(keyID, keySecret)
 
 	event := r.FormValue("event")
 	orderId := r.FormValue("razorpay_order_id")
@@ -157,15 +167,13 @@ func handlePaymentCallback(w http.ResponseWriter, r *http.Request) {
 		paymentId := r.FormValue("razorpay_payment_id")
 		signature := r.FormValue("razorpay_signature")
 
-		log.Printf("Verifying payment - Payment ID: %s, Order ID: %s", paymentId, orderId)
-		log.Printf("Received signature: %s", signature)
+		log.Printf("Processing successful payment - Payment ID: %s, Order ID: %s", paymentId, orderId)
 
 		// Verify payment signature
 		data := orderId + "|" + paymentId
 		h := hmac.New(sha256.New, []byte(keySecret))
 		h.Write([]byte(data))
 		expectedSignature := hex.EncodeToString(h.Sum(nil))
-		log.Printf("Expected signature: %s", expectedSignature)
 
 		if signature != expectedSignature {
 			log.Printf("Signature verification failed")
@@ -176,31 +184,37 @@ func handlePaymentCallback(w http.ResponseWriter, r *http.Request) {
 
 		log.Printf("Signature verification successful")
 
-		// Fetch payment details
-		payment, err := client.Payment.Fetch(paymentId, map[string]interface{}{}, map[string]string{})
+		// Fetch payment details from Razorpay
+		payment, err := client.Payment.Fetch(paymentId, nil, nil)
 		if err != nil {
-			log.Printf("Error fetching payment: %v", err)
+			log.Printf("Error fetching payment from Razorpay: %v", err)
 			updatePaymentState(orderId, "failed")
 			http.Error(w, "Error fetching payment details", http.StatusInternalServerError)
 			return
 		}
 
-		log.Printf("Payment details fetched successfully: %+v", payment)
+		log.Printf("Payment details fetched from Razorpay: %+v", payment)
 
-		// Check payment status
-		if status, ok := payment["status"].(string); ok {
-			if status != "captured" {
-				log.Printf("Payment not captured. Status: %s", status)
-				updatePaymentState(orderId, "failed")
-				response := map[string]interface{}{
-					"status":  "failed",
-					"message": fmt.Sprintf("Payment not captured. Status: %s", status),
-				}
-				w.Header().Set("Content-Type", "application/json")
-				json.NewEncoder(w).Encode(response)
-				return
-			}
+		// Store payment details in database
+		amount := float64(payment["amount"].(float64)) / 100
+		paymentRecord := &models.Payment{
+			OrderID:          orderId,
+			PaymentID:        paymentId,
+			Amount:           amount,
+			Currency:         payment["currency"].(string),
+			Status:           payment["status"].(string),
+			PaymentMethod:    payment["method"].(string),
+			RefundableAmount: amount, // Initially, full amount is refundable
 		}
+
+		log.Printf("Saving payment record to database: %+v", paymentRecord)
+		err = repo.SavePayment(paymentRecord)
+		if err != nil {
+			log.Printf("Error saving payment to database: %v", err)
+			http.Error(w, "Error saving payment details", http.StatusInternalServerError)
+			return
+		}
+		log.Printf("Payment record saved successfully")
 
 		updatePaymentState(orderId, "success")
 		response := map[string]interface{}{
@@ -268,16 +282,53 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	port := "3002"
+	// Initialize database connection string
+	dbConnStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		dbHost, dbPort, dbUser, dbPassword, dbName)
 
+	log.Printf("Connecting to database with connection string: %s", dbConnStr)
+
+	// Initialize database
+	database, err := db.InitDB(dbConnStr)
+	if err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
+	}
+	defer database.Close()
+
+	// Test query to verify database connection
+	var testCount int
+	err = database.QueryRow("SELECT COUNT(*) FROM payments").Scan(&testCount)
+	if err != nil {
+		log.Fatalf("Failed to query database: %v", err)
+	}
+	log.Printf("Database connection verified. Current payment count: %d", testCount)
+
+	// Initialize repository
+	repo := repository.NewRepository(database)
+
+	// Initialize Razorpay client
+	client := razorpay.NewClient(keyID, keySecret)
+
+	// Initialize services
+	refundService := service.NewRefundService(repo, client)
+
+	// Initialize handlers
+	refundHandler := handlers.NewRefundHandler(refundService)
+
+	// Register routes
 	http.HandleFunc("/", handleIndex)
 	http.HandleFunc("/order/create", createOrder)
-	http.HandleFunc("/payment/callback", handlePaymentCallback)
 
-	log.Printf("Starting Razorpay test payment server on http://localhost:%s", port)
-	log.Printf("Using test mode - Make sure to replace the API keys with your test mode keys")
+	// Register payment callback handler (only once)
+	http.HandleFunc("/payment/callback", func(w http.ResponseWriter, r *http.Request) {
+		handlePaymentCallback(w, r, repo, client)
+	})
 
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
-	}
+	// Refund routes
+	http.HandleFunc("/refund/initiate", refundHandler.InitiateRefund)
+	http.HandleFunc("/refund/details", refundHandler.GetRefundDetails)
+	http.HandleFunc("/refund/list", refundHandler.GetRefundsForPayment)
+
+	log.Printf("Server is running on http://localhost:3002")
+	log.Fatal(http.ListenAndServe(":3002", nil))
 }

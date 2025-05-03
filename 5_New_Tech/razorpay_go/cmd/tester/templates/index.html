@@ -155,7 +155,7 @@
                     name: 'Test Store',
                     description: 'Test Payment',
                     handler: async function(response) {
-                        cancelRetry(); // Cancel any pending retries
+                        //cancelRetry(); // Cancel any pending retries
                         try {
                             // Verify payment
                             const verifyResponse = await fetch('/payment/callback', {
