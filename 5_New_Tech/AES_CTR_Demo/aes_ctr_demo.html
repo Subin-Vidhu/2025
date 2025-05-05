@@ -26,6 +26,10 @@
   <label>Length (Bytes): <input type="number" id="lengthInput" value="20" min="1"></label><br><br>
   <button onclick="decryptPart()">Decrypt Part</button>
 
+  <label><input type="checkbox" id="useCustomKeyNonce"> Use custom key/nonce</label><br>
+  <label>Key file (.bin, 32 bytes): <input type="file" id="keyFileInput" accept=".bin"></label><br>
+  <label>Nonce file (.bin, 12 bytes): <input type="file" id="nonceFileInput" accept=".bin"></label><br><br>
+
   <pre id="output">Output will appear here...</pre>
 
   <script>
@@ -51,24 +55,57 @@
         return counter;
     }
 
-    async function generateKey() {
-        key = await crypto.subtle.generateKey(
-            { name: "AES-CTR", length: 256 },
-            true,
-            ["encrypt", "decrypt"]
-        );
-        nonce = crypto.getRandomValues(new Uint8Array(12));
+    function hexToBytes(hex) {
+      if (!hex) return null;
+      if (hex.length % 2 !== 0) throw new Error("Hex string must have even length");
+      const bytes = new Uint8Array(hex.length / 2);
+      for (let i = 0; i < hex.length; i += 2) {
+        bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+      }
+      return bytes;
+    }
+
+    function bytesToHex(bytes) {
+      return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function readFileAsUint8Array(file) {
+      return new Uint8Array(await file.arrayBuffer());
     }
 
     async function encryptFile() {
         const file = document.getElementById("fileInput").files[0];
         if (!file) return alert("Please select a file first.");
 
+        const useCustom = document.getElementById("useCustomKeyNonce").checked;
+        const keyFile = document.getElementById("keyFileInput").files[0];
+        const nonceFile = document.getElementById("nonceFileInput").files[0];
+
         try {
             originalText = await file.text();
             const textBytes = new TextEncoder().encode(originalText);
 
-            await generateKey();
+            if (useCustom && keyFile && nonceFile) {
+                const keyBytes = await readFileAsUint8Array(keyFile);
+                const nonceBytes = await readFileAsUint8Array(nonceFile);
+                if (keyBytes.length !== 32) throw new Error("Key file must be 32 bytes");
+                if (nonceBytes.length !== 12) throw new Error("Nonce file must be 12 bytes");
+                key = await crypto.subtle.importKey(
+                  "raw",
+                  keyBytes,
+                  { name: "AES-CTR" },
+                  true,
+                  ["encrypt", "decrypt"]
+                );
+                nonce = nonceBytes;
+            } else {
+                key = await crypto.subtle.generateKey(
+                    { name: "AES-CTR", length: 256 },
+                    true,
+                    ["encrypt", "decrypt"]
+                );
+                nonce = crypto.getRandomValues(new Uint8Array(12));
+            }
             const counter = createCounterBlock(nonce, 0);
 
             encryptedData = await crypto.subtle.encrypt(
@@ -85,10 +122,17 @@
             console.log("Original file size (bytes):", textBytes.length);
             console.log("Encrypted file size (bytes):", encryptedData.byteLength);
 
+            // Export key for display
+            const exportedKey = new Uint8Array(await crypto.subtle.exportKey("raw", key));
+            const keyHexOut = bytesToHex(exportedKey);
+            const nonceHexOut = bytesToHex(nonce);
+
             document.getElementById("output").innerHTML = 
                 `<span class="success">✅ File encrypted successfully!</span>\n` +
                 `Original text length: ${originalText.length} characters\n` +
-                `Encrypted data size: ${encryptedData.byteLength} bytes\n\n` +
+                `Encrypted data size: ${encryptedData.byteLength} bytes\n` +
+                `Key (hex): <span style='font-family:monospace'>${keyHexOut}</span>\n` +
+                `Nonce (hex): <span style='font-family:monospace'>${nonceHexOut}</span>\n\n` +
                 `Try decrypting a part using the controls above.`;
 
             // Show the download button
