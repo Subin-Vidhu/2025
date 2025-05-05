@@ -77,6 +77,64 @@
         </div>
     </div>
 
+    <!-- Payments Table -->
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Payments</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="paymentsTable">
+                        <thead>
+                            <tr>
+                                <th>Payment ID</th>
+                                <th>Order ID</th>
+                                <th>Amount</th>
+                                <th>Currency</th>
+                                <th>Status</th>
+                                <th>Refundable Amount</th>
+                                <th>Refunded Amount</th>
+                                <th><b>Refund Status</b></th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refund Modal -->
+    <div class="modal fade" id="refundModal" tabindex="-1" aria-labelledby="refundModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="refundModalLabel">Initiate Refund</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="refundForm">
+              <div class="mb-3">
+                <label for="refundPaymentId" class="form-label">Payment ID</label>
+                <input type="text" class="form-control" id="refundPaymentId" name="payment_id" readonly>
+              </div>
+              <div class="mb-3">
+                <label for="refundAmount" class="form-label">Amount</label>
+                <input type="number" class="form-control" id="refundAmount" name="amount" min="0.01" step="0.01" required>
+                <div class="form-text" id="maxRefundText"></div>
+              </div>
+              <div class="mb-3">
+                <label for="refundReason" class="form-label">Reason</label>
+                <input type="text" class="form-control" id="refundReason" name="reason" placeholder="Enter refund reason" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit Refund</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let retryTimeout = null;
         let countdownInterval = null;
@@ -280,6 +338,100 @@
             const currency = document.getElementById('currency').value;
             await initializePayment(amount, currency);
         });
+
+        // Payments Table Logic
+        let paymentsData = [];
+        let selectedPayment = null;
+        const refundModal = new bootstrap.Modal(document.getElementById('refundModal'));
+
+        async function fetchPayments() {
+            try {
+                const res = await fetch('/payments/list');
+                const payments = await res.json();
+                paymentsData = payments;
+                renderPaymentsTable();
+            } catch (err) {
+                appendToLog('Error fetching payments: ' + err.message, true);
+            }
+        }
+
+        function renderPaymentsTable() {
+            const tbody = document.querySelector('#paymentsTable tbody');
+            tbody.innerHTML = '';
+            paymentsData.forEach(payment => {
+                let refundStatus = '';
+                if (payment.refundable_amount === 0) {
+                    refundStatus = 'Fully Refunded';
+                } else if (payment.refundable_amount < payment.amount) {
+                    refundStatus = 'Partially Refunded';
+                } else {
+                    refundStatus = 'Not Refunded';
+                }
+                let refundedAmount = (payment.amount - payment.refundable_amount).toFixed(2);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${payment.payment_id}</td>
+                    <td>${payment.order_id}</td>
+                    <td>${payment.amount}</td>
+                    <td>${payment.currency}</td>
+                    <td>${payment.status}</td>
+                    <td>${payment.refundable_amount}</td>
+                    <td>${refundedAmount}</td>
+                    <td>${refundStatus}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning refund-btn" data-payment-id="${payment.payment_id}" data-max-refund="${payment.refundable_amount}" ${payment.refundable_amount <= 0 ? 'disabled' : ''}>
+                            Refund
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            // Attach event listeners
+            document.querySelectorAll('.refund-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const paymentId = this.getAttribute('data-payment-id');
+                    const maxRefund = parseFloat(this.getAttribute('data-max-refund'));
+                    openRefundModal(paymentId, maxRefund);
+                });
+            });
+        }
+
+        function openRefundModal(paymentId, maxRefund) {
+            selectedPayment = paymentId;
+            document.getElementById('refundPaymentId').value = paymentId;
+            document.getElementById('refundAmount').value = maxRefund;
+            document.getElementById('refundAmount').max = maxRefund;
+            document.getElementById('maxRefundText').textContent = `Max refundable: ${maxRefund}`;
+            document.getElementById('refundReason').value = '';
+            refundModal.show();
+        }
+
+        document.getElementById('refundForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const payment_id = document.getElementById('refundPaymentId').value;
+            const amount = parseFloat(document.getElementById('refundAmount').value);
+            const reason = document.getElementById('refundReason').value;
+            try {
+                const res = await fetch('/refund/initiate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ payment_id, amount, reason })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    appendToLog(`Refund successful for Payment ID: ${payment_id}, Refund ID: ${data.refund_id}, Amount: ${data.amount}`);
+                    refundModal.hide();
+                    fetchPayments(); // Refresh table
+                } else {
+                    appendToLog('Refund failed: ' + (data.error || data), true);
+                }
+            } catch (err) {
+                appendToLog('Refund error: ' + err.message, true);
+            }
+        });
+
+        // Fetch payments on page load
+        window.addEventListener('DOMContentLoaded', fetchPayments);
     </script>
 </body>
 </html> 

@@ -329,6 +329,9 @@ func main() {
 	http.HandleFunc("/refund/details", refundHandler.GetRefundDetails)
 	http.HandleFunc("/refund/list", refundHandler.GetRefundsForPayment)
 
+	// Payments list route
+	http.HandleFunc("/payments/list", refundHandler.ListPayments)
+
 	log.Printf("Server is running on http://localhost:3002")
 	log.Fatal(http.ListenAndServe(":3002", nil))
 }

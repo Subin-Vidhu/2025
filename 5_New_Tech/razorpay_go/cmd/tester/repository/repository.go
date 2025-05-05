@@ -188,3 +188,44 @@ func (r *Repository) UpdateRefundStatus(refundID string, status string) error {
 	log.Printf("Refund status updated successfully. Rows affected: %d", rowsAffected)
 	return nil
 }
+
+// ListPayments retrieves all payments from the database
+func (r *Repository) ListPayments() ([]models.Payment, error) {
+	log.Printf("Fetching all payments")
+	query := `
+		SELECT id, order_id, payment_id, amount, currency, status, 
+			   payment_method, refundable_amount, created_at, updated_at 
+		FROM payments 
+		ORDER BY created_at DESC
+	`
+	rows, err := r.db.Query(query)
+	if err != nil {
+		log.Printf("Error fetching payments: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var payments []models.Payment
+	for rows.Next() {
+		var payment models.Payment
+		err := rows.Scan(
+			&payment.ID,
+			&payment.OrderID,
+			&payment.PaymentID,
+			&payment.Amount,
+			&payment.Currency,
+			&payment.Status,
+			&payment.PaymentMethod,
+			&payment.RefundableAmount,
+			&payment.CreatedAt,
+			&payment.UpdatedAt,
+		)
+		if err != nil {
+			log.Printf("Error scanning payment row: %v", err)
+			return nil, err
+		}
+		payments = append(payments, payment)
+	}
+	log.Printf("Found %d payments", len(payments))
+	return payments, nil
+}

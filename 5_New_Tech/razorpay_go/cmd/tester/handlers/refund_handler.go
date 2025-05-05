@@ -90,3 +90,22 @@ func (h *RefundHandler) GetRefundsForPayment(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(refunds)
 }
+
+// ListPayments handles the request to fetch all payments
+func (h *RefundHandler) ListPayments(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Access the repository via the refundService
+	repo := h.refundService.GetRepository()
+	payments, err := repo.ListPayments()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(payments)
+}

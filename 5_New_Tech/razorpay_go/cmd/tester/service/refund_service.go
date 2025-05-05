@@ -103,3 +103,8 @@ func (s *RefundService) GetRefundDetails(refundID string) (*models.Refund, error
 func (s *RefundService) GetRefundsForPayment(paymentID string) ([]models.Refund, error) {
 	return s.repo.GetRefundsByPaymentID(paymentID)
 }
+
+// GetRepository returns the repository instance
+func (s *RefundService) GetRepository() *repository.Repository {
+	return s.repo
+}
