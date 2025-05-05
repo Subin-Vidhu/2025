@@ -1,1 +1,4 @@
 *.bin
+encrypted/
+decrypted_parts/
+test_data/
