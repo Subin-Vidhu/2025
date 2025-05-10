@@ -4,7 +4,7 @@ __pycache__/
 *.pickle
 *.pkl
 *.mp4
-*.zip
+# *.zip
 .env
 node_modules/
 Cursor/GoogleAuth/
