@@ -7,6 +7,9 @@
 
 --- 
 
+- New Life: -GB21/-D21
+
+---
 Order of Projects
 
 1. Face Recognition with Machine Learning + Deploy Flask App
