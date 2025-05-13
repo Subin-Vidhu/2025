@@ -209,6 +209,9 @@
         let reconnectAttempts = 0;
         const MAX_RECONNECT_ATTEMPTS = 3;
         let isTranscribing = false;
+        let lastTranscriptText = '';  // Keep track of the last transcription text
+        let silenceTimer = null;      // Timer to detect silence
+        const SILENCE_TIMEOUT = 5000; // Stop after 5 seconds of silence
         
         // DOM elements
         const recordButton = document.getElementById('recordButton');
@@ -241,20 +244,72 @@
             }
             
             if (text && text.trim() !== '') {
-                // Skip adding duplicate entries
-                const existingEntries = document.querySelectorAll('.transcript-entry');
-                for (let i = 0; i < existingEntries.length; i++) {
-                    if (existingEntries[i].textContent === text) {
-                        return;
-                    }
+                // If it's the same text as before, don't add it again
+                if (text === lastTranscriptText) {
+                    return;
                 }
                 
-                const entry = document.createElement('div');
-                entry.className = 'transcript-entry';
-                entry.textContent = text;
-                transcriptElement.appendChild(entry);
-                // Auto-scroll to the bottom
-                transcriptElement.scrollTop = transcriptElement.scrollHeight;
+                // Check if this is a new transcription or continuation
+                if (lastTranscriptText && text.startsWith(lastTranscriptText)) {
+                    // Only show the new part
+                    const newPart = text.substring(lastTranscriptText.length);
+                    
+                    if (newPart.trim() !== '') {
+                        // Find the last entry or create a new one if none exists
+                        let lastEntry = transcriptElement.querySelector('.transcript-entry:last-child');
+                        
+                        if (!lastEntry) {
+                            lastEntry = document.createElement('div');
+                            lastEntry.className = 'transcript-entry';
+                            lastEntry.textContent = lastTranscriptText;
+                            transcriptElement.appendChild(lastEntry);
+                        }
+                        
+                        // Append only the new text
+                        lastEntry.textContent = text;
+                        
+                        // Update the last transcript text
+                        lastTranscriptText = text;
+                        
+                        // Auto-scroll to the bottom
+                        transcriptElement.scrollTop = transcriptElement.scrollHeight;
+                    }
+                } else {
+                    // It's completely new text
+                    const entry = document.createElement('div');
+                    entry.className = 'transcript-entry';
+                    entry.textContent = text;
+                    transcriptElement.appendChild(entry);
+                    
+                    // Update the last transcript text
+                    lastTranscriptText = text;
+                    
+                    // Auto-scroll to the bottom
+                    transcriptElement.scrollTop = transcriptElement.scrollHeight;
+                }
+                
+                // Reset silence timer since we received a transcription
+                resetSilenceTimer();
+            }
+        }
+        
+        // Function to reset the silence timer
+        function resetSilenceTimer() {
+            // Clear any existing timer
+            if (silenceTimer) {
+                clearTimeout(silenceTimer);
+            }
+            
+            // Set a new timer
+            if (isRecording) {
+                silenceTimer = setTimeout(() => {
+                    // If we're still recording after the timeout, stop recording due to silence
+                    if (isRecording) {
+                        console.log('Stopping recording due to silence');
+                        updateStatus('No speech detected for a while. Stopping recording.', 'info');
+                        stopRecording();
+                    }
+                }, SILENCE_TIMEOUT);
             }
         }
         
@@ -333,10 +388,14 @@
                 audioChunks = [];
                 audioPlayerContainer.classList.add('hidden');
                 completeAudioBlob = null;
+                lastTranscriptText = ''; // Reset the last transcript text
                 
                 mediaRecorder.ondataavailable = (event) => {
                     if (event.data.size > 0) {
                         audioChunks.push(event.data);
+                        
+                        // Reset silence timer when we get audio data
+                        resetSilenceTimer();
                         
                         // Send audio chunk to server via WebSocket
                         if (websocket && websocket.readyState === WebSocket.OPEN) {
@@ -364,12 +423,15 @@
                 mediaRecorder.start(1000); // Capture in 1-second chunks
                 isRecording = true;
                 
+                // Set initial silence timer
+                resetSilenceTimer();
+                
                 // Update UI
                 recordButton.textContent = 'Recording...';
                 recordButton.classList.add('recording');
                 recordButton.disabled = true;
                 stopButton.disabled = false;
-                updateStatus('Recording... (Click Stop when finished)', 'info');
+                updateStatus('Recording... (Click Stop when finished or wait for silence detection)', 'info');
                 
                 // Handle recording stop event
                 mediaRecorder.onstop = async () => {
@@ -417,7 +479,7 @@
                 if (result.error) {
                     updateStatus('Error: ' + result.error, 'error');
                 } else if (result.transcription) {
-                    // Clear transcript and add new entry
+                    // For the final transcription, we want to show the complete result
                     transcriptElement.innerHTML = '';
                     addTranscriptEntry(result.transcription);
                     updateStatus('Recording transcribed successfully', 'success');

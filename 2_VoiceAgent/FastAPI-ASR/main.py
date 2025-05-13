@@ -310,4 +310,4 @@ async def transcribe_audio(file: UploadFile = File(...), language: str = Form("e
 
 if __name__ == "__main__":
     logger.info(f"FFmpeg available: {FFMPEG_AVAILABLE}")
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True) 
+    uvicorn.run("main:app", host="0.0.0.0", port=8484, reload=True) 
