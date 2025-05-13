@@ -1,0 +1,139 @@
+- Course Link: [Web Hacking For Beginners](https://www.udemy.com/course/web-hacking-for-beginners)
+
+- Section 1: Introduction
+  - Course Overview: 
+    - This course is designed for beginners who want to learn about web application security and ethical hacking.
+  - What is Web Hacking?
+    - Web hacking refers to the practice of exploiting vulnerabilities in web applications to gain unauthorized access or perform malicious actions.
+
+- Section 2: Information Gathering
+  - What is Information Gathering?
+    - Google Dorking: 
+      - Google Dorking is a technique used to find sensitive information on the web using advanced search operators.
+      - Example: `site:example.com filetype:pdf` will search for PDF files on the example.com domain.
+
+        - `site:example.com` : 
+          - This operator restricts the search to a specific domain.
+        - `site:example.com -forms`:
+          - This operator restricts the search to a specific domain and excludes results containing the word "forms".
+        - `site:example.com inurl:login`:
+          - This operator restricts the search to a specific domain and includes results containing the word "login" in the URL.
+        - `site:example.com intitle:"index of"`:
+          - This operator restricts the search to a specific domain and includes results with "index of" in the title.
+        - `site:example.com filetype:pdf`:
+          - This operator restricts the search to a specific domain and includes results with PDF files.
+        - `site:example.com intext:"password"`:
+          - This operator restricts the search to a specific domain and includes results with "password" in the text.
+        - `site:example.com ext:sql`:
+          - This operator restricts the search to a specific domain and includes results with SQL files.
+        - `inurl:example.com 'VISA'`:
+          - This operator restricts the search to a specific domain and includes results with "VISA" in the URL.
+
+      - For more information on Google Dorking, refer to the [Google Hacking Database](https://www.exploit-db.com/google-hacking-database).
+    - Fingerprint Web Server:
+      - Fingerprinting a web server involves identifying the type and version of the web server software being used.
+      - Tools like Nmap and WhatWeb can be used for fingerprinting.
+      - example: 
+        - `nmap -sV -p 80 example.com` will scan the target for open ports and service versions.
+        - `whatweb example.com` will provide information about the web server and technologies used.
+        - `Wappalyzer` extension can also be used to identify technologies used on a website. 
+    - Harvester:
+      - The Harvester is a tool used for gathering email addresses and subdomains from search engines.
+      - Example: 
+        - `theharvester -d example.com -b google` will search for email addresses and subdomains related to example.com using Google.
+      - For more information, refer to the [The Harvester GitHub repository](https://github.com/laramies/theHarvester)
+
+- Section 3: Configuration and Deployment Management Testing
+    - What is Configuration and Deployment Management Testing?
+      - Configuration and deployment management testing involves assessing the security of the configuration and deployment of web applications.
+      - This includes checking for default credentials, insecure configurations, and unnecessary services running on the server.
+    - HTTP methods:
+      - HTTP methods are used to perform actions on web resources.
+      - Common HTTP methods include GET, POST, PUT, DELETE, HEAD, OPTIONS, and TRACE.
+      - Example: 
+        - `curl -X GET http://example.com` will send a GET request to the specified URL.
+        - `curl -X POST http://example.com/login -d "username=admin&password=admin"` will send a POST request with login credentials.
+        - `curl -X PUT http://example.com/file.txt -d "This is a test"` will send a PUT request to upload a file.
+        - `curl -X DELETE http://example.com/file.txt` will send a DELETE request to remove a file.
+        - `curl -X HEAD http://example.com` will send a HEAD request to retrieve headers only.
+    - Burp Suite:
+      - Burp Suite is a popular web application security testing tool.
+      - It includes features like a proxy, scanner, and intruder for testing web applications.
+      - Example: 
+        - To intercept requests, configure your browser to use Burp Suite as a proxy.
+        - Use the "Repeater" feature to modify and resend requests.
+        - Use the "Intruder" feature to perform automated attacks on web applications.
+- Section 4: Username Enumeration
+  - What is Username Enumeration?
+    - Username enumeration is the process of identifying valid usernames on a web application.
+    - This can be done through error messages, response times, or other indicators.
+  - How to Perform Username Enumeration:
+    - Use tools like Burp Suite or OWASP ZAP to intercept requests and analyze responses.
+    - Look for differences in error messages or response times when submitting different usernames.
+    - Example: 
+      - If a login form returns a different error message for valid and invalid usernames, this can be exploited to enumerate usernames.
+      - Use a list of common usernames and test them against the login form.
+    - For reference, refer to the [link](https://github.com/eystsen/pentestlab)
+
+- Section 5: Authentication Testing
+  - What is Authentication Testing?
+    - Authentication testing involves assessing the security of the authentication mechanisms used in web applications.
+    - This includes testing for weak passwords, insecure password storage, and session management vulnerabilities.
+  - How to Perform Authentication Testing:
+    - Use tools like Burp Suite or OWASP ZAP to intercept requests and analyze authentication mechanisms.
+    - Test for weak passwords using a password list or brute-force attacks.
+    - Example: 
+      - Use Burp Suite's "Intruder" feature to perform a brute-force attack on a login form.
+      - Use a password list like "rockyou.txt" to test for weak passwords.
+
+Section 6: Authorization Testing
+  - What is Authorization Testing?
+    - Authorization testing involves assessing the security of the authorization mechanisms used in web applications.
+    - This includes testing for insecure direct object references, privilege escalation, and access control vulnerabilities.
+  - How to Perform Authorization Testing:
+    - Use tools like Burp Suite or OWASP ZAP to intercept requests and analyze authorization mechanisms.
+    - Test for insecure direct object references by manipulating URLs or parameters.
+    - Example: 
+      - IDOR:(Insecure Direct Object Reference):
+        - If a URL contains an ID parameter (e.g., `http://example.com/user?id=1`), try changing the ID to see if you can access other users' data (e.g., `http://example.com/user?id=2`).              
+
+- Section 7: Input Validation Testing
+  - What is Input Validation Testing?
+    - Input validation testing involves assessing the security of input validation mechanisms used in web applications.
+    - This includes testing for SQL injection, cross-site scripting (XSS), and command injection vulnerabilities.
+  - How to Perform Input Validation Testing:
+    - Use tools like Burp Suite or OWASP ZAP to intercept requests and analyze input validation mechanisms.
+    - Test for SQL injection by injecting SQL queries into input fields.
+    - Example: 
+      - Use a payload like `' OR '1'='1` in a login form to test for SQL injection vulnerabilities.
+      - Use tools like SQLMap to automate SQL injection testing.
+    - Command Injection:
+      - Command injection is a vulnerability that allows an attacker to execute arbitrary commands on the server.
+      - Example: 
+        - If a web application allows users to input a command (e.g., `ping`), try injecting a command like `; ls` to see if you can execute arbitrary commands.
+        - Use tools like Commix to automate command injection testing.
+
+    - HTTP verb tampering:
+      - HTTP verb tampering is a technique used to manipulate HTTP methods to bypass security controls.
+      - Example: 
+        - If a web application only allows GET requests, try using a different HTTP method (e.g., PUT or DELETE) to see if you can perform unauthorized actions.
+        - Use tools like Burp Suite or OWASP ZAP to modify HTTP methods in requests.
+
+- Section 8: Client Side Testing
+  - What is Client Side Testing?
+    - Client-side testing involves assessing the security of client-side components of web applications.
+    - This includes testing for cross-site scripting (XSS), cross-site request forgery (CSRF), and insecure storage vulnerabilities.
+  - How to Perform Client Side Testing:
+    - Use tools like Burp Suite or OWASP ZAP to intercept requests and analyze client-side components.
+    - Test for XSS by injecting JavaScript code into input fields.
+    - Example: 
+      - Use a payload like `<script>alert('XSS')</script>` in a comment form to test for XSS vulnerabilities.
+      - Use tools like XSSer to automate XSS testing.        
+  - DOM XSS:
+    - DOM-based XSS is a type of XSS vulnerability that occurs when client-side scripts modify the DOM without proper input validation.
+    - Example: 
+      - If a web application uses `document.write()` to display user input, an attacker can inject JavaScript code into the input field.
+      - Use tools like DOM Invader to automate DOM XSS testing.
+        
+
+- Course Certificate [here](Web Hacking For Beginners.pdf)        
