@@ -48,6 +48,8 @@ class ConnectionManager:
         self.temp_audio_files = {}
         self.last_processed_time = {}
         self.audio_data = {}  # Store complete audio data for each client
+        self.last_chunk_size = {}  # Track the size of last processed chunk
+        self.last_transcription = {}  # Store the last transcription for each client
 
     async def connect(self, websocket: WebSocket, client_id: str):
         await websocket.accept()
@@ -55,6 +57,8 @@ class ConnectionManager:
         self.temp_audio_files[client_id] = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
         self.last_processed_time[client_id] = time.time()
         self.audio_data[client_id] = bytearray()  # Initialize empty bytearray for audio data
+        self.last_chunk_size[client_id] = 0  # Initialize last chunk size to 0
+        self.last_transcription[client_id] = ""  # Initialize last transcription to empty string
         logger.info(f"Client {client_id} connected. Temp file: {self.temp_audio_files[client_id].name}")
         return self.temp_audio_files[client_id]
 
@@ -78,6 +82,12 @@ class ConnectionManager:
         
         if client_id in self.audio_data:
             del self.audio_data[client_id]
+            
+        if client_id in self.last_chunk_size:
+            del self.last_chunk_size[client_id]
+            
+        if client_id in self.last_transcription:
+            del self.last_transcription[client_id]
             
         logger.info(f"Client {client_id} disconnected")
 
@@ -177,8 +187,13 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                     transcription = process_audio_file(audio_file_path, "en")
                     
                     if transcription and not transcription.startswith("Error:"):
-                        logger.info(f"Sending transcription to client: {transcription[:50]}...")
-                        await manager.send_transcription(client_id, transcription)
+                        # Only send the transcription if it's different from the last one
+                        if transcription != manager.last_transcription.get(client_id, ""):
+                            logger.info(f"Sending transcription to client: {transcription[:50]}...")
+                            await manager.send_transcription(client_id, transcription)
+                            manager.last_transcription[client_id] = transcription
+                        else:
+                            logger.info(f"Skipping duplicate transcription")
                     else:
                         # If we get an error, send a more user-friendly message
                         error_msg = "Still listening..." if "Status code: 5" in transcription else transcription
@@ -190,6 +205,8 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 # Update timing variables
                 last_transcription_attempt = current_time
                 manager.last_processed_time[client_id] = current_time
+                # Store the size of the last chunk we processed
+                manager.last_chunk_size[client_id] = file_size
                 
     except WebSocketDisconnect:
         logger.info(f"WebSocket disconnected for client {client_id}")

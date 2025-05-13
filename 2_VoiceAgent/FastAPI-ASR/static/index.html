@@ -249,44 +249,28 @@
                     return;
                 }
                 
-                // Check if this is a new transcription or continuation
-                if (lastTranscriptText && text.startsWith(lastTranscriptText)) {
-                    // Only show the new part
-                    const newPart = text.substring(lastTranscriptText.length);
-                    
-                    if (newPart.trim() !== '') {
-                        // Find the last entry or create a new one if none exists
-                        let lastEntry = transcriptElement.querySelector('.transcript-entry:last-child');
-                        
-                        if (!lastEntry) {
-                            lastEntry = document.createElement('div');
-                            lastEntry.className = 'transcript-entry';
-                            lastEntry.textContent = lastTranscriptText;
-                            transcriptElement.appendChild(lastEntry);
-                        }
-                        
-                        // Append only the new text
-                        lastEntry.textContent = text;
-                        
-                        // Update the last transcript text
-                        lastTranscriptText = text;
-                        
-                        // Auto-scroll to the bottom
-                        transcriptElement.scrollTop = transcriptElement.scrollHeight;
-                    }
+                // For live transcription, replace the current text instead of appending
+                // Only show new content, not repeated content
+                
+                // Find the last entry or create a new one if none exists
+                let lastEntry = transcriptElement.querySelector('.transcript-entry:last-child');
+                
+                if (!lastEntry) {
+                    // First transcription entry
+                    lastEntry = document.createElement('div');
+                    lastEntry.className = 'transcript-entry';
+                    lastEntry.textContent = text;
+                    transcriptElement.appendChild(lastEntry);
                 } else {
-                    // It's completely new text
-                    const entry = document.createElement('div');
-                    entry.className = 'transcript-entry';
-                    entry.textContent = text;
-                    transcriptElement.appendChild(entry);
-                    
-                    // Update the last transcript text
-                    lastTranscriptText = text;
-                    
-                    // Auto-scroll to the bottom
-                    transcriptElement.scrollTop = transcriptElement.scrollHeight;
+                    // Update existing entry with latest content
+                    lastEntry.textContent = text;
                 }
+                
+                // Update the last transcript text
+                lastTranscriptText = text;
+                
+                // Auto-scroll to the bottom
+                transcriptElement.scrollTop = transcriptElement.scrollHeight;
                 
                 // Reset silence timer since we received a transcription
                 resetSilenceTimer();
@@ -480,8 +464,16 @@
                     updateStatus('Error: ' + result.error, 'error');
                 } else if (result.transcription) {
                     // For the final transcription, we want to show the complete result
+                    // This is different from the streaming updates - create a fresh transcript view
                     transcriptElement.innerHTML = '';
-                    addTranscriptEntry(result.transcription);
+                    lastTranscriptText = ''; // Reset the tracking of transcript text
+                    
+                    // Add the complete transcription as a new entry
+                    const entry = document.createElement('div');
+                    entry.className = 'transcript-entry';
+                    entry.textContent = result.transcription;
+                    transcriptElement.appendChild(entry);
+                    
                     updateStatus('Recording transcribed successfully', 'success');
                 } else {
                     updateStatus('No transcription received', 'error');
