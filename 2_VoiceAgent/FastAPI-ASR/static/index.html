@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time ASR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 0 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #recordButton.recording {
+            background-color: #f44336;
+        }
+        #stopButton {
+            background-color: #f44336;
+        }
+        #stopButton:hover {
+            background-color: #d32f2f;
+        }
+        .transcript-container {
+            margin-top: 30px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            text-align: center;
+            color: #666;
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .status.error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .status.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .status.info {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        .language-selector {
+            text-align: center;
+            margin: 15px 0;
+        }
+        select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .transcript-entry {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .transcript-entry:last-child {
+            border-bottom: none;
+        }
+        .transcript-empty {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .manual-upload {
+            margin-top: 30px;
+            text-align: center;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        .manual-upload input[type="file"] {
+            margin: 10px 0;
+        }
+        .manual-upload button {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        .audio-player {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .audio-player audio {
+            width: 100%;
+            max-width: 500px;
+        }
+        .hidden {
+            display: none;
+        }
+        .instructions {
+            background-color: #fff9c4;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #fbc02d;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #f57f17;
+        }
+        .instructions p {
+            margin-bottom: 5px;
+        }
+        .instructions strong {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-time Speech Recognition</h1>
+    
+    <div class="instructions">
+        <h3>Instructions</h3>
+        <p><strong>Step 1:</strong> Select your language and click "Start Recording"</p>
+        <p><strong>Step 2:</strong> Speak into your microphone</p>
+        <p><strong>Step 3:</strong> Click "Stop & Transcribe" when finished</p>
+        <p><strong>Note:</strong> You may see partial results while speaking, but the final transcription appears after stopping.</p>
+    </div>
+    
+    <div class="language-selector">
+        <label for="language">Language:</label>
+        <select id="language">
+            <option value="en" selected>English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="zh">Chinese</option>
+            <option value="ja">Japanese</option>
+            <option value="ko">Korean</option>
+            <option value="hi">Hindi</option>
+        </select>
+    </div>
+    
+    <div class="controls">
+        <button id="recordButton">Start Recording</button>
+        <button id="stopButton" disabled>Stop & Transcribe</button>
+    </div>
+    
+    <div class="status" id="status">Ready to record</div>
+    
+    <div class="audio-player hidden" id="audioPlayerContainer">
+        <h3>Your Recording:</h3>
+        <audio id="audioPlayer" controls></audio>
+    </div>
+    
+    <div class="transcript-container">
+        <h3>Transcript:</h3>
+        <div id="transcript">
+            <div class="transcript-empty">Recording will appear here...</div>
+        </div>
+    </div>
+    
+    <div class="manual-upload">
+        <h3>Or upload an audio file:</h3>
+        <input type="file" id="fileUpload" accept="audio/*" />
+        <button id="uploadButton">Transcribe File</button>
+    </div>
+    
+    <script>
+        // Global variables
+        let mediaRecorder;
+        let audioChunks = [];
+        let completeAudioBlob = null;
+        let isRecording = false;
+        let websocket;
+        let clientId = generateClientId();
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 3;
+        let isTranscribing = false;
+        let lastTranscriptText = '';  // Keep track of the last transcription text
+        let silenceTimer = null;      // Timer to detect silence
+        const SILENCE_TIMEOUT = 5000; // Stop after 5 seconds of silence
+        
+        // DOM elements
+        const recordButton = document.getElementById('recordButton');
+        const stopButton = document.getElementById('stopButton');
+        const statusElement = document.getElementById('status');
+        const transcriptElement = document.getElementById('transcript');
+        const languageSelect = document.getElementById('language');
+        const fileUploadInput = document.getElementById('fileUpload');
+        const uploadButton = document.getElementById('uploadButton');
+        const audioPlayerContainer = document.getElementById('audioPlayerContainer');
+        const audioPlayer = document.getElementById('audioPlayer');
+        
+        // Generate a random client ID
+        function generateClientId() {
+            return 'client_' + Math.random().toString(36).substring(2, 15);
+        }
+        
+        // Update status message with appropriate styling
+        function updateStatus(message, type = 'info') {
+            statusElement.textContent = message;
+            statusElement.className = 'status ' + type;
+        }
+        
+        // Add transcript entry
+        function addTranscriptEntry(text) {
+            // Clear the "empty" message if present
+            const emptyMessage = transcriptElement.querySelector('.transcript-empty');
+            if (emptyMessage) {
+                transcriptElement.removeChild(emptyMessage);
+            }
+            
+            if (text && text.trim() !== '') {
+                // If it's the same text as before, don't add it again
+                if (text === lastTranscriptText) {
+                    return;
+                }
+                
+                // Check if this is a new transcription or continuation
+                if (lastTranscriptText && text.startsWith(lastTranscriptText)) {
+                    // Only show the new part
+                    const newPart = text.substring(lastTranscriptText.length);
+                    
+                    if (newPart.trim() !== '') {
+                        // Find the last entry or create a new one if none exists
+                        let lastEntry = transcriptElement.querySelector('.transcript-entry:last-child');
+                        
+                        if (!lastEntry) {
+                            lastEntry = document.createElement('div');
+                            lastEntry.className = 'transcript-entry';
+                            lastEntry.textContent = lastTranscriptText;
+                            transcriptElement.appendChild(lastEntry);
+                        }
+                        
+                        // Append only the new text
+                        lastEntry.textContent = text;
+                        
+                        // Update the last transcript text
+                        lastTranscriptText = text;
+                        
+                        // Auto-scroll to the bottom
+                        transcriptElement.scrollTop = transcriptElement.scrollHeight;
+                    }
+                } else {
+                    // It's completely new text
+                    const entry = document.createElement('div');
+                    entry.className = 'transcript-entry';
+                    entry.textContent = text;
+                    transcriptElement.appendChild(entry);
+                    
+                    // Update the last transcript text
+                    lastTranscriptText = text;
+                    
+                    // Auto-scroll to the bottom
+                    transcriptElement.scrollTop = transcriptElement.scrollHeight;
+                }
+                
+                // Reset silence timer since we received a transcription
+                resetSilenceTimer();
+            }
+        }
+        
+        // Function to reset the silence timer
+        function resetSilenceTimer() {
+            // Clear any existing timer
+            if (silenceTimer) {
+                clearTimeout(silenceTimer);
+            }
+            
+            // Set a new timer
+            if (isRecording) {
+                silenceTimer = setTimeout(() => {
+                    // If we're still recording after the timeout, stop recording due to silence
+                    if (isRecording) {
+                        console.log('Stopping recording due to silence');
+                        updateStatus('No speech detected for a while. Stopping recording.', 'info');
+                        stopRecording();
+                    }
+                }, SILENCE_TIMEOUT);
+            }
+        }
+        
+        // Initialize WebSocket connection
+        function initWebSocket() {
+            // Close existing connection if any
+            if (websocket) {
+                websocket.close();
+            }
+            
+            // Get the hostname dynamically
+            const hostname = window.location.hostname;
+            const port = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            
+            try {
+                websocket = new WebSocket(`${wsProtocol}//${hostname}:${port}/ws/${clientId}`);
+                
+                websocket.onopen = function(event) {
+                    console.log('WebSocket connection established');
+                    updateStatus('Connected to server', 'success');
+                    reconnectAttempts = 0;
+                };
+                
+                websocket.onmessage = function(event) {
+                    // Display transcription
+                    const transcription = event.data;
+                    
+                    // Only show real transcriptions, not status messages
+                    if (transcription && 
+                        transcription.trim() !== '' && 
+                        !transcription.includes("Still listening...") &&
+                        !transcription.startsWith("Error:")) {
+                        addTranscriptEntry(transcription);
+                    } else if (transcription.startsWith("Error:")) {
+                        // Show error messages but don't add them as transcriptions
+                        updateStatus(transcription, 'error');
+                    } else if (transcription.includes("Still listening...")) {
+                        // Update status but don't add to transcript
+                        updateStatus('Listening...', 'info');
+                    }
+                };
+                
+                websocket.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                    updateStatus('Connection error', 'error');
+                };
+                
+                websocket.onclose = function(event) {
+                    console.log('WebSocket connection closed');
+                    updateStatus('Disconnected from server');
+                    
+                    // Attempt to reconnect if still recording
+                    if (isRecording && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                        reconnectAttempts++;
+                        updateStatus('Connection lost. Reconnecting...', 'info');
+                        setTimeout(initWebSocket, 2000);
+                    }
+                };
+                
+                return true;
+            } catch (error) {
+                console.error('Error initializing WebSocket:', error);
+                updateStatus('Failed to connect to server', 'error');
+                return false;
+            }
+        }
+        
+        // Start recording
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                
+                // Clear audio chunks and hide audio player
+                audioChunks = [];
+                audioPlayerContainer.classList.add('hidden');
+                completeAudioBlob = null;
+                lastTranscriptText = ''; // Reset the last transcript text
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                        
+                        // Reset silence timer when we get audio data
+                        resetSilenceTimer();
+                        
+                        // Send audio chunk to server via WebSocket
+                        if (websocket && websocket.readyState === WebSocket.OPEN) {
+                            // Convert Blob to ArrayBuffer and send
+                            event.data.arrayBuffer().then(buffer => {
+                                try {
+                                    websocket.send(buffer);
+                                } catch (error) {
+                                    console.error('Error sending audio data:', error);
+                                }
+                            });
+                        }
+                    }
+                };
+                
+                // Setup WebSocket
+                if (!initWebSocket()) {
+                    throw new Error('Failed to initialize WebSocket connection');
+                }
+                
+                // Clear previous transcript
+                transcriptElement.innerHTML = '<div class="transcript-empty">Listening...</div>';
+                
+                // Start recording
+                mediaRecorder.start(1000); // Capture in 1-second chunks
+                isRecording = true;
+                
+                // Set initial silence timer
+                resetSilenceTimer();
+                
+                // Update UI
+                recordButton.textContent = 'Recording...';
+                recordButton.classList.add('recording');
+                recordButton.disabled = true;
+                stopButton.disabled = false;
+                updateStatus('Recording... (Click Stop when finished or wait for silence detection)', 'info');
+                
+                // Handle recording stop event
+                mediaRecorder.onstop = async () => {
+                    // Create a blob from all the audio chunks
+                    completeAudioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    
+                    // Create a URL for the audio blob
+                    const audioURL = URL.createObjectURL(completeAudioBlob);
+                    audioPlayer.src = audioURL;
+                    audioPlayerContainer.classList.remove('hidden');
+                    
+                    // Transcribe the complete recording if user clicked Stop button
+                    if (!isRecording) {
+                        await transcribeRecording(completeAudioBlob);
+                    }
+                };
+                
+            } catch (error) {
+                console.error('Error accessing microphone:', error);
+                updateStatus('Error: ' + error.message, 'error');
+            }
+        }
+        
+        // Transcribe the complete recording
+        async function transcribeRecording(audioBlob) {
+            if (isTranscribing) return; // Prevent multiple transcription requests
+            
+            isTranscribing = true;
+            updateStatus('Transcribing recording... Please wait', 'info');
+            
+            try {
+                // Create form data with the complete audio blob
+                const formData = new FormData();
+                formData.append('file', audioBlob, 'recording.wav');
+                formData.append('language', languageSelect.value);
+                
+                // Send to server for transcription
+                const response = await fetch('/transcribe/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    updateStatus('Error: ' + result.error, 'error');
+                } else if (result.transcription) {
+                    // For the final transcription, we want to show the complete result
+                    transcriptElement.innerHTML = '';
+                    addTranscriptEntry(result.transcription);
+                    updateStatus('Recording transcribed successfully', 'success');
+                } else {
+                    updateStatus('No transcription received', 'error');
+                }
+            } catch (error) {
+                console.error('Error transcribing recording:', error);
+                updateStatus('Error transcribing recording', 'error');
+            } finally {
+                isTranscribing = false;
+            }
+        }
+        
+        // Stop recording
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                isRecording = false;
+                mediaRecorder.stop();
+                
+                // Stop all audio tracks
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                
+                // Close WebSocket connection
+                if (websocket) {
+                    websocket.close();
+                }
+                
+                // Update UI
+                recordButton.textContent = 'Start Recording';
+                recordButton.classList.remove('recording');
+                recordButton.disabled = false;
+                stopButton.disabled = true;
+                updateStatus('Processing recording... This may take a moment', 'info');
+            }
+        }
+        
+        // Handle file upload for transcription
+        async function handleFileUpload() {
+            const fileInput = document.getElementById('fileUpload');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                updateStatus('Please select an audio file', 'error');
+                return;
+            }
+            
+            // Create audio playback for the uploaded file
+            const audioURL = URL.createObjectURL(file);
+            audioPlayer.src = audioURL;
+            audioPlayerContainer.classList.remove('hidden');
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('language', languageSelect.value);
+            
+            updateStatus('Uploading and transcribing file...', 'info');
+            
+            try {
+                const response = await fetch('/transcribe/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    updateStatus('Error: ' + result.error, 'error');
+                } else if (result.transcription) {
+                    // Clear transcript and add new entry
+                    transcriptElement.innerHTML = '';
+                    addTranscriptEntry(result.transcription);
+                    updateStatus('File transcribed successfully', 'success');
+                } else {
+                    updateStatus('No transcription received', 'error');
+                }
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                updateStatus('Error uploading file', 'error');
+            }
+        }
+        
+        // Event listeners
+        recordButton.addEventListener('click', startRecording);
+        stopButton.addEventListener('click', stopRecording);
+        uploadButton.addEventListener('click', handleFileUpload);
+        
+        // Language change handler
+        languageSelect.addEventListener('change', function() {
+            console.log('Language changed to:', this.value);
+        });
+
+        // Check API status on page load
+        async function checkApiStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const status = await response.json();
+                
+                if (status.asr_api_status === "down") {
+                    updateStatus('Warning: ASR service is currently unreachable', 'error');
+                }
+            } catch (error) {
+                console.error('Error checking API status:', error);
+            }
+        }
+        
+        // Run status check on page load
+        checkApiStatus();
+    </script>
+</body>
+</html> 
