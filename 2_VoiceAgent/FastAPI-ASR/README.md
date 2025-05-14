@@ -6,31 +6,49 @@ A real-time ASR (Automatic Speech Recognition) application built with FastAPI, w
 
 - Real-time audio streaming from browser to server using WebSockets
 - Audio processing and transcription via the canary.protosonline.in API
-- **True incremental audio processing - only new audio chunks are sent to ASR API**
-- Simple and intuitive web interface
+- **Smart hybrid approach**: Uses incremental processing with full-file fallback
+- Simple and intuitive web interface with haptic feedback
 - Support for multiple languages (depending on the API's capabilities)
 - Direct file upload option for non-streaming transcription
 
 ## Recent Improvements
 
-### Audio Processing Enhancements
-- **True incremental processing:** Only new audio chunks are processed, not the entire recording
-- **Custom WAV header generation:** Creates properly formatted audio files for each chunk
-- **Fixed WAV header issues:** Now properly handles audio chunks with correct WAV headers
-- **Improved FFmpeg integration:** Better error handling and recovery when audio conversion fails
-- **Audio format validation:** Validates audio files before processing to prevent errors
-- **Robust error handling:** Gracefully handles malformed audio data with detailed diagnostics
+### Enhanced Real-time Processing
+- **Adaptive hybrid approach:** Starts with incremental processing and falls back to full audio if needed
+- **Sliding window technique:** Processes overlapping chunks to maintain context while minimizing API calls
+- **Silence detection:** Avoids sending empty/silent audio chunks to the ASR API
+- **Audio enhancement:** Applies audio filtering to improve transcription quality
+
+### Browser-side Improvements
+- **Optimized audio capture:** Custom audio settings for better ASR compatibility (mono, 16kHz)
+- **Adaptive MIME type selection:** Automatically selects the best audio format for the browser
+- **Smaller audio chunks:** Reduced from 1000ms to 500ms for more responsive feedback
+- **Visual and haptic feedback:** Brief highlighting on transcript updates and vibration on mobile devices
 
 ## Architecture
 
-This application follows a client-server architecture:
+This application follows a client-server architecture with a smart hybrid approach:
 
-1. **Client (Browser)**: Captures audio through the user's microphone and sends it in chunks to the server via WebSockets.
+1. **Client (Browser)**: 
+   - Captures high-quality audio (mono, 16kHz where possible)
+   - Sends audio in small chunks (500ms) via WebSockets
+   - Provides real-time visual and haptic feedback
+
 2. **Server (FastAPI)**: 
-   - Processes incoming audio chunks using an efficient true incremental approach
-   - Only extracts, formats, and processes the new audio since the last transcription attempt
-   - Creates proper WAV files on-the-fly with correct headers
-   - Streams transcription results back to the client in real-time
+   - **Sliding Window Approach:**
+     - Stores individual audio chunks in separate files
+     - Maintains a sliding window of recent chunks
+     - Processes overlapping chunks to maintain context
+   - **Hybrid Processing:**
+     - Starts with incremental processing of chunks
+     - Automatically switches to full-file approach after multiple empty results
+     - Balances latency and accuracy adaptively
+   - **Smart Audio Processing:**
+     - Detects and skips silent audio
+     - Applies audio filtering to enhance speech quality
+     - Uses FFmpeg for optimal audio conversion when available
+     - Falls back to manual WAV creation when needed
+
 3. **External ASR Service**: Performs the actual speech recognition and returns the transcription.
 
 ## Prerequisites
@@ -89,49 +107,81 @@ http://localhost:8484
 
 ## Technical Details
 
-- Audio is captured and streamed in 1-second chunks (~49KB each)
-- The server processes **only new audio data** for each transcription attempt
-- Each audio chunk is provided with proper WAV headers for compatibility
-- Temporary files for audio chunks are automatically cleaned up
-- Audio format conversion is performed as needed (when FFmpeg is available)
-- Connection and error handling is robust with automatic retries
+### Client-side
+- Audio is captured in 500ms chunks for more responsive feedback
+- AudioContext is used to enforce 16kHz mono audio when possible
+- Adaptive MIME type selection based on browser capabilities
+- Visual highlighting of transcription updates
+- Haptic feedback (vibration) on mobile devices
+
+### Server-side
+- **Connection Management:**
+  - Tracks processed and unprocessed audio chunks
+  - Maintains unique client sessions with separate audio buffers
+  - Handles WebSocket disconnects cleanly
+  
+- **Adaptive Processing:**
+  - Sliding window approach with 10-chunk buffer (5 seconds of context)
+  - Switches to full audio approach after 3 empty transcriptions
+  - Overlapping chunks to maintain speech context
+  
+- **Audio Processing:**
+  - Silence detection to avoid sending empty audio
+  - Audio filtering (highpass/lowpass) to enhance speech quality
+  - FFmpeg integration with fallback options
+  - Manual WAV header generation when needed
 
 ## Performance Improvements
 
-The application has been optimized to:
+The application uses a series of optimization techniques:
 
-1. **Process only new audio chunks**: Instead of re-processing the entire recording each time, only new audio data is sent to the ASR API
-2. **Generate WAV headers dynamically**: Creates valid audio files on-the-fly without requiring FFmpeg for basic operations
-3. **Clean up temporary files**: All temporary files are properly managed and removed after processing
-4. **Support audio format conversion**: When FFmpeg is available, audio is converted to optimal format for the ASR API
-5. **Handle network issues gracefully**: Automatic retries for network failures with the ASR API
-6. **Provide meaningful error messages**: Better error handling and user feedback
+1. **Hybrid processing approach:** 
+   - Starts with incremental processing for low latency
+   - Falls back to full audio for better accuracy when needed
+   - Automatically adapts based on transcription results
+
+2. **Intelligent chunk management:**
+   - Individual chunks are stored separately
+   - Sliding window provides sufficient context without overwhelming
+   - Tracks processed/unprocessed chunks to avoid redundant processing
+
+3. **Optimized audio processing:**
+   - Silence detection avoids wasting API calls
+   - Audio filtering enhances speech recognition quality
+   - Smart retry logic for failed or empty transcriptions
+
+4. **Browser optimizations:**
+   - Shorter audio chunks (500ms) for more responsive feedback
+   - Better audio format selection for transcription quality
+   - Visual and haptic feedback for improved user experience
 
 ## Customization
 
 You can customize this application by:
 
 - Modifying the ASR API endpoint in `main.py`
-- Adjusting the chunk processing parameters for audio
-- Implementing authentication for API access
+- Adjusting the sliding window size (`chunk_buffer_size` in ConnectionManager)
+- Tweaking the fallback threshold (`max_empty_transcriptions` in websocket_endpoint)
+- Customizing the audio capture settings in the frontend
 - Adding additional language support
 
 ## Limitations
 
 - Requires an internet connection to access the external ASR service
 - Audio quality and transcription accuracy may vary based on microphone quality and background noise
-- The external ASR service might have usage limits or require API keys
 - Best performance is achieved when FFmpeg is installed
+- Different browsers may provide different quality audio streams
 
 ## Troubleshooting
 
 - If the application fails to start, ensure all dependencies are installed
 - If no transcription appears, check browser console for WebSocket errors
+- If transcriptions are empty but you hear audio, try switching to a different browser
 - Ensure your microphone is properly connected and has necessary permissions
 - For Firefox users: Enable the WebSocket protocol in your browser settings
 - If you see "ffmpeg not found" warnings, install FFmpeg for better audio processing
-- If audio processing errors occur, check that your FFmpeg installation is working correctly
-- For Windows users: Ensure FFmpeg is properly added to your PATH environment variable
+- Check the server logs for any silent audio or processing errors
+- Try increasing the sliding window size if transcriptions are fragmented
 
 ## License
 

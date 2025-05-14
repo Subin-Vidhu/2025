@@ -264,6 +264,12 @@
                 } else {
                     // Update existing entry with latest content
                     lastEntry.textContent = text;
+                    
+                    // Highlight the entry briefly to show it was updated
+                    lastEntry.style.backgroundColor = '#fffde7';
+                    setTimeout(() => {
+                        lastEntry.style.backgroundColor = 'transparent';
+                    }, 300);
                 }
                 
                 // Update the last transcript text
@@ -334,6 +340,11 @@
                         
                         // Update status to show we're getting results
                         updateStatus('Receiving transcription...', 'success');
+                        
+                        // Vibrate the device if supported (mobile feedback)
+                        if (navigator.vibrate) {
+                            navigator.vibrate(50); // Short vibration
+                        }
                     } else if (transcription.startsWith("Error:")) {
                         // Show error messages but don't add them as transcriptions
                         updateStatus(transcription, 'error');
@@ -371,8 +382,42 @@
         // Start recording
         async function startRecording() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
+                // Try to get high-quality audio for better ASR results
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        channelCount: 1,      // Mono
+                        sampleRate: 16000,    // 16kHz
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true
+                    } 
+                });
+                
+                // Audio context for processing audio data if needed
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)({
+                    sampleRate: 16000 // Force 16kHz sample rate
+                });
+                
+                // Create MediaRecorder with appropriate settings
+                // Try different MIME types depending on browser support
+                let mimeType = 'audio/webm';
+                
+                if (MediaRecorder.isTypeSupported('audio/webm;codecs=pcm')) {
+                    mimeType = 'audio/webm;codecs=pcm';
+                } else if (MediaRecorder.isTypeSupported('audio/wav')) {
+                    mimeType = 'audio/wav';
+                }
+                
+                try {
+                    mediaRecorder = new MediaRecorder(stream, {
+                        mimeType: mimeType,
+                        audioBitsPerSecond: 256000  // 256 kbps
+                    });
+                    console.log(`Using MIME type: ${mimeType}`);
+                } catch (e) {
+                    console.warn('Specified MIME type not supported, using default', e);
+                    mediaRecorder = new MediaRecorder(stream);
+                }
                 
                 // Clear audio chunks and hide audio player
                 audioChunks = [];
@@ -409,8 +454,8 @@
                 // Clear previous transcript
                 transcriptElement.innerHTML = '<div class="transcript-empty">Listening...</div>';
                 
-                // Start recording
-                mediaRecorder.start(1000); // Capture in 1-second chunks
+                // Start recording with shorter chunks for more responsive streaming
+                mediaRecorder.start(500); // 500ms chunks for more responsive real-time feedback
                 isRecording = true;
                 
                 // Set initial silence timer
