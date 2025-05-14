@@ -12,6 +12,7 @@ from pathlib import Path
 import uuid
 import time
 import io
+import subprocess
 
 # Import our audio utilities
 from audio_utils import ensure_required_format, get_audio_info, FFMPEG_AVAILABLE
@@ -46,19 +47,21 @@ class ConnectionManager:
     def __init__(self):
         self.active_connections = {}
         self.temp_audio_files = {}
+        self.temp_chunk_files = {}  # Store individual chunk files
         self.last_processed_time = {}
         self.audio_data = {}  # Store complete audio data for each client
-        self.last_chunk_size = {}  # Track the size of last processed chunk
         self.last_transcription = {}  # Store the last transcription for each client
+        self.chunk_counter = {}  # Count chunks for each client
 
     async def connect(self, websocket: WebSocket, client_id: str):
         await websocket.accept()
         self.active_connections[client_id] = websocket
         self.temp_audio_files[client_id] = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+        self.temp_chunk_files[client_id] = []  # Initialize empty list for chunk files
         self.last_processed_time[client_id] = time.time()
         self.audio_data[client_id] = bytearray()  # Initialize empty bytearray for audio data
-        self.last_chunk_size[client_id] = 0  # Initialize last chunk size to 0
         self.last_transcription[client_id] = ""  # Initialize last transcription to empty string
+        self.chunk_counter[client_id] = 0  # Initialize chunk counter
         logger.info(f"Client {client_id} connected. Temp file: {self.temp_audio_files[client_id].name}")
         return self.temp_audio_files[client_id]
 
@@ -76,6 +79,16 @@ class ConnectionManager:
             except Exception as e:
                 logger.error(f"Error removing temp file: {e}")
             del self.temp_audio_files[client_id]
+        
+        # Clean up any chunk files
+        if client_id in self.temp_chunk_files:
+            for chunk_file in self.temp_chunk_files[client_id]:
+                try:
+                    os.unlink(chunk_file)
+                    logger.debug(f"Removed chunk file: {chunk_file}")
+                except Exception as e:
+                    logger.error(f"Error removing chunk file: {e}")
+            del self.temp_chunk_files[client_id]
             
         if client_id in self.last_processed_time:
             del self.last_processed_time[client_id]
@@ -83,11 +96,11 @@ class ConnectionManager:
         if client_id in self.audio_data:
             del self.audio_data[client_id]
             
-        if client_id in self.last_chunk_size:
-            del self.last_chunk_size[client_id]
-            
         if client_id in self.last_transcription:
             del self.last_transcription[client_id]
+            
+        if client_id in self.chunk_counter:
+            del self.chunk_counter[client_id]
             
         logger.info(f"Client {client_id} disconnected")
 
@@ -157,56 +170,78 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         # Track accumulated audio data
         accumulated_size = 0
         last_transcription_attempt = time.time()
-        transcription_interval = 3  # seconds
+        transcription_interval = 1.5  # seconds - shorter interval for more responsive real-time transcription
+        min_audio_duration = 0.5  # Minimum audio duration in seconds - shorter for quicker feedback
         
         while True:
             # Receive binary audio data from client
             data = await websocket.receive_bytes()
             
-            # Store the audio data in both the temporary file and our accumulated buffer
+            # Store the audio data in the temporary file
             temp_file.write(data)
             temp_file.flush()
-            manager.audio_data[client_id].extend(data)  # Add to complete audio data
             accumulated_size += len(data)
             
             # Only attempt transcription at intervals to avoid overwhelming the server
             current_time = time.time()
             elapsed_since_last_transcription = current_time - last_transcription_attempt
             
-            # Process audio periodically (every few seconds or when enough data is accumulated)
-            if (elapsed_since_last_transcription > transcription_interval and accumulated_size > 10000):
+            # Process audio periodically 
+            if elapsed_since_last_transcription > transcription_interval:
+                # Get the current size of the accumulated audio
                 file_size = temp_file.tell()
-                logger.info(f"Processing audio chunk for client {client_id} - Size: {file_size} bytes")
                 
-                # Make sure the file exists and has content
-                if file_size > 0 and os.path.exists(temp_file.name):
-                    # Use the file directly
-                    audio_file_path = temp_file.name
-                    
-                    # Try to get a transcription
-                    transcription = process_audio_file(audio_file_path, "en")
-                    
-                    if transcription and not transcription.startswith("Error:"):
-                        # Only send the transcription if it's different from the last one
-                        if transcription != manager.last_transcription.get(client_id, ""):
-                            logger.info(f"Sending transcription to client: {transcription[:50]}...")
-                            await manager.send_transcription(client_id, transcription)
-                            manager.last_transcription[client_id] = transcription
+                # Estimate duration (assuming 16-bit mono PCM at 16kHz)
+                # Each sample is 2 bytes, so duration = size / (sample_rate * bytes_per_sample)
+                estimated_duration = file_size / (16000 * 2)
+                
+                logger.info(f"Processing audio for client {client_id} - Size: {file_size} bytes, Est. duration: {estimated_duration:.2f}s")
+                
+                # Only process if we have enough audio data
+                if estimated_duration >= min_audio_duration:
+                    try:
+                        # Make a copy of the temp file to avoid conflicts during processing
+                        temp_processing_path = os.path.join(
+                            tempfile.gettempdir(),
+                            f"processing_{client_id}_{int(current_time)}.wav"
+                        )
+                        
+                        # Add to list of temp files to clean up later
+                        manager.temp_chunk_files[client_id].append(temp_processing_path)
+                        
+                        # Copy the file for processing
+                        with open(temp_file.name, 'rb') as src, open(temp_processing_path, 'wb') as dst:
+                            dst.write(src.read())
+                        
+                        # Process the audio file
+                        transcription = process_audio_file(temp_processing_path, "en")
+                        
+                        if transcription and not transcription.startswith("Error:"):
+                            # Only send the transcription if it's different from the last one
+                            if transcription != manager.last_transcription.get(client_id, ""):
+                                logger.info(f"Sending transcription to client: {transcription[:50]}...")
+                                await manager.send_transcription(client_id, transcription)
+                                manager.last_transcription[client_id] = transcription
+                            else:
+                                logger.info(f"Skipping duplicate transcription")
                         else:
-                            logger.info(f"Skipping duplicate transcription")
-                    else:
-                        # If we get an error, send a more user-friendly message
-                        error_msg = "Still listening..." if "Status code: 5" in transcription else transcription
-                        logger.warning(f"Transcription error or empty: {transcription}")
-                        await manager.send_transcription(client_id, error_msg)
+                            # If we get an error, send a more user-friendly message
+                            error_msg = "Still listening..." if "Status code: 5" in transcription else transcription
+                            logger.warning(f"Transcription error or empty: {transcription}")
+                            if transcription == "":  # Only if truly empty, not for other errors
+                                await manager.send_transcription(client_id, "Still listening...")
+                            else:
+                                await manager.send_transcription(client_id, error_msg)
+                    except Exception as e:
+                        logger.error(f"Error processing audio: {e}")
+                        await manager.send_transcription(client_id, f"Processing error: {str(e)}")
                 else:
-                    logger.warning(f"File doesn't exist or is empty: {temp_file.name}")
+                    logger.warning(f"Audio too short to process: {estimated_duration:.2f}s")
+                    await manager.send_transcription(client_id, "Still listening...")
                 
                 # Update timing variables
                 last_transcription_attempt = current_time
                 manager.last_processed_time[client_id] = current_time
-                # Store the size of the last chunk we processed
-                manager.last_chunk_size[client_id] = file_size
                 
     except WebSocketDisconnect:
         logger.info(f"WebSocket disconnected for client {client_id}")
@@ -223,6 +258,7 @@ def process_audio_file(file_path: str, language: str = "en", retry_count=0):
     """
     Send audio file to the ASR API for transcription
     """
+    processed_file_path = None
     try:
         # Check if file exists
         if not os.path.exists(file_path):
@@ -238,14 +274,45 @@ def process_audio_file(file_path: str, language: str = "en", retry_count=0):
             logger.warning(f"File too small to process: {file_path} ({file_size} bytes)")
             return ""
         
-        # Send to ASR API
+        # Validate the audio file is actually a valid WAV file
+        is_valid_wav = False
+        try:
+            with open(file_path, 'rb') as f:
+                header = f.read(44)  # Read WAV header (minimum 44 bytes)
+                # Check for basic WAV header signatures
+                if header[0:4] == b'RIFF' and header[8:12] == b'WAVE':
+                    is_valid_wav = True
+                    logger.debug(f"Valid WAV file format confirmed for {file_path}")
+                else:
+                    logger.warning(f"File does not appear to be a valid WAV file: {file_path}")
+        except Exception as e:
+            logger.error(f"Error checking WAV header: {e}")
+        
+        # Check if audio format is supported and convert if needed
+        if FFMPEG_AVAILABLE:
+            try:
+                # Try to convert to ensure it's in a format the ASR API can handle
+                # Convert to 16kHz mono WAV if possible
+                processed_file_path = ensure_required_format(file_path, sample_rate=16000, channels=1)
+                if processed_file_path and processed_file_path != file_path:
+                    logger.info(f"Converted audio format: {file_path} -> {processed_file_path}")
+                    # Use the converted file
+                    file_path = processed_file_path
+            except Exception as e:
+                logger.error(f"Error during audio conversion: {e}")
+                # Continue with original file if conversion fails
+        elif not is_valid_wav:
+            logger.warning("FFmpeg not available and file may not be a valid WAV file. Processing may fail.")
+        
+        # Send to ASR API with appropriate timeouts for real-time processing
         with open(file_path, "rb") as audio_file:
             files = {"file": audio_file}
             data = {"language": language}
             
             try:
                 logger.info(f"Sending request to ASR API: {ASR_API_URL}")
-                response = requests.post(ASR_API_URL, files=files, data=data, timeout=30)
+                # Use shorter timeout for real-time processing
+                response = requests.post(ASR_API_URL, files=files, data=data, timeout=5)
                 
                 if response.status_code == 200:
                     try:
@@ -261,12 +328,12 @@ def process_audio_file(file_path: str, language: str = "en", retry_count=0):
                         logger.error(f"Error parsing API response: {e}")
                         return f"Error parsing API response: {str(e)}"
                 else:
-                    logger.error(f"ASR API error: {response.status_code} - {response.text}")
+                    logger.error(f"ASR API error: {response.status_code} - {response.text[:200]}...")
                     
                     # If server error and we haven't exceeded retry limit, try again
                     if response.status_code >= 500 and retry_count < MAX_API_RETRIES:
                         logger.info(f"Retrying API call ({retry_count + 1}/{MAX_API_RETRIES})")
-                        time.sleep(1)  # Wait a second before retrying
+                        time.sleep(0.5)  # Shorter wait before retrying for real-time results
                         return process_audio_file(file_path, language, retry_count + 1)
                     
                     return f"Error: Could not transcribe audio. Status code: {response.status_code}"
@@ -276,7 +343,7 @@ def process_audio_file(file_path: str, language: str = "en", retry_count=0):
                 # Retry on connection errors
                 if retry_count < MAX_API_RETRIES:
                     logger.info(f"Retrying API call after connection error ({retry_count + 1}/{MAX_API_RETRIES})")
-                    time.sleep(1)
+                    time.sleep(0.5)  # Shorter wait for real-time responsiveness
                     return process_audio_file(file_path, language, retry_count + 1)
                     
                 return f"Connection error: {str(e)}"
@@ -284,6 +351,14 @@ def process_audio_file(file_path: str, language: str = "en", retry_count=0):
     except Exception as e:
         logger.error(f"Error processing audio file: {e}")
         return f"Error: {str(e)}"
+    finally:
+        # Clean up any temporary converted files
+        if FFMPEG_AVAILABLE and processed_file_path and processed_file_path != file_path:
+            try:
+                os.unlink(processed_file_path)
+                logger.debug(f"Removed temporary converted file: {processed_file_path}")
+            except Exception as e:
+                logger.error(f"Error removing temporary converted file: {e}")
 
 @app.post("/transcribe/")
 async def transcribe_audio(file: UploadFile = File(...), language: str = Form("en")):
@@ -297,33 +372,38 @@ async def transcribe_audio(file: UploadFile = File(...), language: str = Form("e
     try:
         # Save uploaded file to temp location
         with open(temp_file_path, "wb") as temp_file:
-            temp_file.write(await file.read())
+            content = await file.read()
+            temp_file.write(content)
             logger.info(f"Saved uploaded file to {temp_file_path}")
         
-        # Process the file directly
-        transcription = process_audio_file(temp_file_path, language)
+        # Get file info
+        file_size = os.path.getsize(temp_file_path)
         
-        # Delete the temp file
-        try:
-            os.unlink(temp_file_path)
-            logger.info(f"Removed temp file: {temp_file_path}")
-        except Exception as e:
-            logger.error(f"Error removing temp file: {e}")
+        # Check if file is too small
+        if file_size < 1000:  # Less than 1KB
+            return {"transcription": "File too small to contain speech.", "warning": "File size too small"}
+        
+        # Process the file
+        transcription = process_audio_file(temp_file_path, language)
         
         # Handle empty transcriptions
         if not transcription:
             return {"transcription": "No speech detected or transcription failed."}
+        elif transcription.startswith("Error:"):
+            return {"error": transcription, "transcription": "Transcription failed."}
             
         return {"transcription": transcription}
     except Exception as e:
+        logger.error(f"Error in transcribe endpoint: {e}")
+        return {"error": str(e), "transcription": "Transcription failed due to an error."}
+    finally:
         # Ensure temp file is deleted even if an error occurs
         if os.path.exists(temp_file_path):
             try:
                 os.unlink(temp_file_path)
-            except:
-                pass
-        logger.error(f"Error in transcribe endpoint: {e}")
-        return {"error": str(e)}
+                logger.info(f"Removed temp file: {temp_file_path}")
+            except Exception as e:
+                logger.error(f"Error removing temp file: {e}")
 
 if __name__ == "__main__":
     logger.info(f"FFmpeg available: {FFMPEG_AVAILABLE}")

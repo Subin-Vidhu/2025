@@ -327,7 +327,13 @@
                         transcription.trim() !== '' && 
                         !transcription.includes("Still listening...") &&
                         !transcription.startsWith("Error:")) {
+                        
+                        // For real-time transcription during recording, update the transcript
+                        // Even while recording is in progress
                         addTranscriptEntry(transcription);
+                        
+                        // Update status to show we're getting results
+                        updateStatus('Receiving transcription...', 'success');
                     } else if (transcription.startsWith("Error:")) {
                         // Show error messages but don't add them as transcriptions
                         updateStatus(transcription, 'error');
