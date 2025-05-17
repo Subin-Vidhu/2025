@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: -GB18/-D18
+- New Life: -GB17/-D17
 
 ---
 Order of Projects
