@@ -7,6 +7,7 @@ TEST_DATA_DIR = Path('../test_data')
 OUTPUT_DIR = Path('.')
 ENCRYPTED_DIR = OUTPUT_DIR / 'encrypted'
 DECRYPTED_PARTS_DIR = OUTPUT_DIR / 'decrypted_parts'
+DECRYPTED_FULL_DIR = OUTPUT_DIR / 'decrypted_full'  # New directory for fully decrypted files
 KEY_FILE = OUTPUT_DIR / 'aes_key.bin'
 NONCE_FILE = OUTPUT_DIR / 'aes_nonce.bin'
 
@@ -30,6 +31,16 @@ def encrypt_file(input_path, key, nonce):
     ciphertext = cipher.encrypt(plaintext)
     return ciphertext
 
+def decrypt_full(input_path, key, nonce):
+    """Decrypt an entire encrypted file using AES-CTR mode."""
+    with open(input_path, 'rb') as f:
+        ciphertext = f.read()
+    # Create a new cipher instance with initial counter value of 0
+    cipher = AES.new(key, AES.MODE_CTR, nonce=nonce, initial_value=0)
+    # Decrypt the entire file in one operation
+    plaintext = cipher.decrypt(ciphertext)
+    return plaintext
+
 def decrypt_partial(input_path, key, nonce, offset, length):
     with open(input_path, 'rb') as f:
         f.seek(offset)
@@ -51,6 +62,7 @@ def main():
     # Create output directories if they don't exist
     ENCRYPTED_DIR.mkdir(exist_ok=True)
     DECRYPTED_PARTS_DIR.mkdir(exist_ok=True)
+    DECRYPTED_FULL_DIR.mkdir(exist_ok=True)  # Create directory for fully decrypted files
 
     # Generate key and nonce (or load if already exist)
     if not KEY_FILE.exists():
@@ -90,7 +102,21 @@ def main():
         # Save the decrypted part
         part_path = DECRYPTED_PARTS_DIR / f"{dicom_file.name}.decrypted.part"
         save_bytes(part_path, decrypted_part)
-        print(f"Saved decrypted part: {part_path}\n")
+        print(f"Saved decrypted part: {part_path}")
+
+        # Test full decryption
+        print(f"Fully decrypting {enc_path.name} ...")
+        decrypted_full_data = decrypt_full(enc_path, key, nonce)
+        full_path = DECRYPTED_FULL_DIR / f"{dicom_file.name}.decrypted"
+        save_bytes(full_path, decrypted_full_data)
+        # Compare with original
+        with open(dicom_file, 'rb') as f:
+            original_data = f.read()
+        if decrypted_full_data == original_data:
+            print(f"Full decryption test PASSED for {dicom_file.name}")
+        else:
+            print(f"Full decryption test FAILED for {dicom_file.name}")
+        print(f"Saved fully decrypted file: {full_path}\n")
 
     print("Looking for DICOM files in:", TEST_DATA_DIR.resolve())
     print("Found files:", list(TEST_DATA_DIR.glob('*.dcm')))
