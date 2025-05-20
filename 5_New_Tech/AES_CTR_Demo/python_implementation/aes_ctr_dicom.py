@@ -107,8 +107,15 @@ def main():
         # Test full decryption
         print(f"Fully decrypting {enc_path.name} ...")
         decrypted_full_data = decrypt_full(enc_path, key, nonce)
+        
+        # Save as both raw decrypted file and DICOM file
         full_path = DECRYPTED_FULL_DIR / f"{dicom_file.name}.decrypted"
         save_bytes(full_path, decrypted_full_data)
+        
+        # Save as a proper DICOM file with .dcm extension
+        dicom_path = DECRYPTED_FULL_DIR / f"{dicom_file.stem}_decrypted.dcm"
+        save_bytes(dicom_path, decrypted_full_data)
+        
         # Compare with original
         with open(dicom_file, 'rb') as f:
             original_data = f.read()
@@ -116,7 +123,8 @@ def main():
             print(f"Full decryption test PASSED for {dicom_file.name}")
         else:
             print(f"Full decryption test FAILED for {dicom_file.name}")
-        print(f"Saved fully decrypted file: {full_path}\n")
+        print(f"Saved fully decrypted file: {full_path}")
+        print(f"Saved as DICOM file: {dicom_path}\n")
 
     print("Looking for DICOM files in:", TEST_DATA_DIR.resolve())
     print("Found files:", list(TEST_DATA_DIR.glob('*.dcm')))
