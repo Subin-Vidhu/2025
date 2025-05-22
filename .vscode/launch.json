@@ -8,7 +8,7 @@
             "name": "Python: DICOM Volume_HL7 main.py",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/3_DICOM/Volume_HL7/main.py",
+            "program": "${workspaceFolder}/3_DICOM/Volume_HL7/main_sr.py",
             "console": "integratedTerminal",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}/venv/Lib/site-packages"
