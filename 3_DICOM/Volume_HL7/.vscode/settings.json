@@ -1,0 +1,10 @@
+{
+    "python.defaultInterpreterPath": "D:\\2025\\venv\\Scripts\\python.exe",
+    "python.analysis.extraPaths": [
+        "D:\\2025\\venv\\Lib\\site-packages"
+    ],
+    "python.terminal.activateEnvironment": true,
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "autopep8"
+}
