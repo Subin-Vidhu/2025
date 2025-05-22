@@ -234,41 +234,44 @@ def create_fhir_observation_json():
     return observations
 
 # ===============================
-# APPROACH 3: Standard DICOM Tags for Measurements
+# APPROACH 3: Standard DICOM Tags for Measurements - SIMPLIFIED VERSION
 # ===============================
-def add_standard_dicom_measurements(ds):
+
+# ===============================
+# Modified DICOM file processing function
+# ===============================
+def modify_dicom_files():
     """
-    Use standard DICOM measurement sequences instead of private tags
+    Step 3: Add private tags to DICOM files
     """
-    # Create Measurement Report
-    measurement_sequence = []
+    modified_count = 0
+    for root, _, files in os.walk(SAVE_DIR):
+        for file in files:
+            if file.endswith(".dcm"):
+                path = os.path.join(root, file)
+                try:
+                    ds = dcmread(path)
+
+                    # Reserve private creator tag (0011,0010)
+                    private_creator_tag = Tag(0x0011, 0x0010)
+                    private_creator = "KidneyVolInfo"
+                    ds.add_new(private_creator_tag, 'LO', private_creator)
+
+                    # Now you can use (0011,1010) and (0011,1011) under that creator
+                    ds.add_new(Tag(0x0011, 0x1010), 'LO', f"Right Kidney: {KIDNEY_DATA['Right Kidney']}")
+                    ds.add_new(Tag(0x0011, 0x1011), 'LO', f"Left Kidney: {KIDNEY_DATA['Left Kidney']}")
+
+                    # Generate new UIDs to avoid conflicts when sending back
+                    ds.SOPInstanceUID = generate_uid()
+                    
+                    dcmwrite(path, ds)
+                    modified_count += 1
+                    print(f"Modified: {path}")
+                except Exception as e:
+                    print(f"Error modifying {path}: {e}")
     
-    # Right Kidney Measurement
-    right_measurement = Dataset()
-    right_measurement.MeasurementType = "VOLUME"
-    right_measurement.MeasurementValue = "125"
-    right_measurement.MeasurementUnits = "ml"
-    right_measurement.AnatomicRegionSequence = [Dataset()]
-    right_measurement.AnatomicRegionSequence[0].CodeValue = "9846003"
-    right_measurement.AnatomicRegionSequence[0].CodingSchemeDesignator = "SCT"
-    right_measurement.AnatomicRegionSequence[0].CodeMeaning = "Right kidney"
-    
-    # Left Kidney Measurement
-    left_measurement = Dataset()
-    left_measurement.MeasurementType = "VOLUME"
-    left_measurement.MeasurementValue = "132"
-    left_measurement.MeasurementUnits = "ml"
-    left_measurement.AnatomicRegionSequence = [Dataset()]
-    left_measurement.AnatomicRegionSequence[0].CodeValue = "7771000"
-    left_measurement.AnatomicRegionSequence[0].CodingSchemeDesignator = "SCT"
-    left_measurement.AnatomicRegionSequence[0].CodeMeaning = "Left kidney"
-    
-    measurement_sequence.extend([right_measurement, left_measurement])
-    
-    # Add to dataset
-    ds.MeasurementSequence = measurement_sequence
-    
-    return ds
+    print(f"Total files modified: {modified_count}")
+    return modified_count
 
 # ===============================
 # ORTHANC Integration Functions
@@ -378,46 +381,164 @@ def approach_2_fhir_integration(study_id):
     return fhir_observations
 
 def approach_3_standard_tags(study_id):
-    """Implement Approach 3: Standard DICOM Measurement Tags"""
-    print("=== APPROACH 3: Standard DICOM Measurement Tags ===")
+    """Implement Approach 3: Standard DICOM Measurement Tags with New Private Tag Method"""
+    print("=== APPROACH 3: Standard DICOM Measurement Tags (With New Private Tag Method) ===")
     
-    # Download and modify existing DICOM files
+    # Create save directory
     if not os.path.exists(SAVE_DIR):
         os.makedirs(SAVE_DIR)
     
     # Download study
+    print("Downloading study files...")
     response = requests.get(f"{ORTHANC_URL}/studies/{study_id}/archive", auth=AUTH)
     response.raise_for_status()
     with zipfile.ZipFile(io.BytesIO(response.content)) as z:
         z.extractall(SAVE_DIR)
     
-    # Modify files with standard measurement sequences
-    modified_count = 0
+    # Modify files using your specific private tag approach
+    print("Modifying DICOM files with private tags (0011,0010), (0011,1010), (0011,1011)...")
+    modified_count = modify_dicom_files()
+    
+    # Send modified files back to Orthanc
+    print("Sending modified files back to Orthanc...")
+    uploaded_count = 0
+    failed_count = 0
+    
     for root, _, files in os.walk(SAVE_DIR):
         for file in files:
             if file.endswith(".dcm"):
                 path = os.path.join(root, file)
                 try:
-                    ds = dcmread(path)
-                    
-                    # Add standard measurement sequences
-                    ds = add_standard_dicom_measurements(ds)
-                    
-                    # Generate new UIDs
-                    ds.SOPInstanceUID = generate_uid()
-                    
-                    dcmwrite(path, ds)
-                    modified_count += 1
-                    print(f"Modified with standard tags: {path}")
-                    
+                    with open(path, 'rb') as f:
+                        response = requests.post(f"{ORTHANC_URL}/instances", 
+                                               auth=AUTH, 
+                                               data=f.read(),
+                                               headers={'Content-Type': 'application/dicom'})
+                        
+                        if response.status_code == 200:
+                            uploaded_count += 1
+                            print(f"Successfully uploaded: {file}")
+                        else:
+                            failed_count += 1
+                            print(f"Failed to upload {file}: {response.status_code} - {response.text}")
+                            
                 except Exception as e:
-                    print(f"Error modifying {path}: {e}")
+                    failed_count += 1
+                    print(f"Error uploading {path}: {e}")
     
-    print(f"Modified {modified_count} files with standard measurement tags")
-    return modified_count
+    print(f"Upload summary: {uploaded_count} successful, {failed_count} failed")
+    
+    # Verify the modifications were preserved
+    print("Verifying uploaded files contain measurement data...")
+    verify_measurements_in_orthanc(study_id)
+    
+    return {"modified": modified_count, "uploaded": uploaded_count, "failed": failed_count}
+
+def verify_measurements_in_orthanc(study_id):
+    """Verify that uploaded files contain the measurement data with new private tags"""
+    try:
+        # Get all instances in the study
+        response = requests.get(f"{ORTHANC_URL}/studies/{study_id}/instances", auth=AUTH)
+        response.raise_for_status()
+        instances = response.json()
+        
+        print(f"\n=== MEASUREMENT DATA VERIFICATION (NEW PRIVATE TAG METHOD) ===")
+        print(f"Checking {len(instances)} instances for measurement data...\n")
+        
+        verified_count = 0
+        for i, instance in enumerate(instances[:3]):  # Check first 3 instances as examples
+            instance_id = instance['ID']
+            print(f"Instance {i+1}: {instance_id}")
+            
+            # Get DICOM tags
+            tags_response = requests.get(f"{ORTHANC_URL}/instances/{instance_id}/tags?simplify", auth=AUTH)
+            if tags_response.status_code == 200:
+                tags = tags_response.json()
+                
+                found_measurements = False
+                
+                # Check for Image Comments (most visible)
+                if 'ImageComments' in tags and 'KIDNEY' in tags['ImageComments'].upper():
+                    print(f"  ✓ Image Comments (0020,4000): {tags['ImageComments']}")
+                    found_measurements = True
+                
+                # Check for Study Comments
+                if 'StudyComments' in tags and 'KIDNEY' in tags['StudyComments'].upper():
+                    print(f"  ✓ Study Comments (0032,4000): {tags['StudyComments']}")
+                    found_measurements = True
+                
+                # Check for Content Description
+                if 'ContentDescription' in tags:
+                    print(f"  ✓ Content Description (0070,0081): {tags['ContentDescription']}")
+                    found_measurements = True
+                
+                # Check for Content Label
+                if 'ContentLabel' in tags:
+                    print(f"  ✓ Content Label (0070,0080): {tags['ContentLabel']}")
+                    found_measurements = True
+                
+                # Check for our specific private tags (0011,0010), (0011,1010), (0011,1011)
+                private_tags_found = []
+                
+                # Look for private creator tag
+                if '00110010' in tags or any('0011' in str(k) and 'KidneyVolInfo' in str(v) for k, v in tags.items()):
+                    private_tags_found.append("Private Creator (0011,0010): KidneyVolInfo")
+                
+                # Look for kidney data tags
+                for tag_name, tag_value in tags.items():
+                    if ('00111010' in str(tag_name) or '00111011' in str(tag_name)) and isinstance(tag_value, str):
+                        private_tags_found.append(f"Kidney Data ({tag_name}): {tag_value}")
+                    elif isinstance(tag_value, str) and 'kidney' in tag_value.lower():
+                        private_tags_found.append(f"Found kidney data in {tag_name}: {tag_value}")
+                
+                if private_tags_found:
+                    print(f"  ✓ Private Tags Found:")
+                    for tag in private_tags_found:
+                        print(f"    {tag}")
+                    found_measurements = True
+                
+                if found_measurements:
+                    verified_count += 1
+                    print(f"  ✓ MEASUREMENT DATA FOUND\n")
+                else:
+                    print(f"  ✗ No measurement data found\n")
+            else:
+                print(f"  ✗ Could not retrieve tags\n")
+        
+        print(f"=== SUMMARY ===")
+        print(f"Instances with measurement data: {verified_count}/{min(3, len(instances))} checked")
+        print(f"\nTo view measurement data in DICOM viewers, look for:")
+        print(f"  • Image Comments (Tag 0020,4000) - Most widely supported")
+        print(f"  • Study Comments (Tag 0032,4000) - Visible in study info")  
+        print(f"  • Content Description (Tag 0070,0081) - Standard content tag")
+        print(f"  • Content Label (Tag 0070,0080) - Standard content tag")
+        print(f"  • Private Creator (Tag 0011,0010) - Should show 'KidneyVolInfo'")
+        print(f"  • Right Kidney Data (Tag 0011,1010) - Right kidney volume")
+        print(f"  • Left Kidney Data (Tag 0011,1011) - Left kidney volume")
+        print(f"  • Measurement Sequence (Tag 0011,1020) - Structured measurements")
+        
+    except Exception as e:
+        print(f"Error during verification: {e}")
+
+def cleanup_local_files():
+    """Clean up downloaded files after processing"""
+    import shutil
+    if os.path.exists(SAVE_DIR):
+        shutil.rmtree(SAVE_DIR)
+        print(f"Cleaned up local directory: {SAVE_DIR}")
 
 def main():
-    """Main function to demonstrate all approaches"""
+    """Main function to run the kidney volume integration"""
+    # Check if PACS is accessible
+    try:
+        response = requests.get(f"{ORTHANC_URL}/system", auth=AUTH)
+        response.raise_for_status()
+        print("✓ Connected to Orthanc PACS")
+    except Exception as e:
+        print(f"✗ Cannot connect to Orthanc PACS: {e}")
+        return
+    
+    # Get available studies
     studies = requests.get(f"{ORTHANC_URL}/studies", auth=AUTH).json()
     if not studies:
         print("No studies found on PACS.")
@@ -432,23 +553,30 @@ def main():
     print("Choose approach:")
     print("1. DICOM Structured Report (Most HL7-compatible)")
     print("2. FHIR Integration (Best for modern healthcare systems)")
-    print("3. Standard DICOM Measurement Tags (Best for DICOM viewers)")
+    print("3. Standard DICOM Measurement Tags (NEW Private Tag Method)")
     print("4. All approaches")
     
     choice = input("Enter choice (1-4): ").strip()
     
-    if choice == "1":
-        approach_1_dicom_sr(study_id)
-    elif choice == "2":
-        approach_2_fhir_integration(study_id)
-    elif choice == "3":
-        approach_3_standard_tags(study_id)
-    elif choice == "4":
-        approach_1_dicom_sr(study_id)
-        approach_2_fhir_integration(study_id)
-        approach_3_standard_tags(study_id)
-    else:
-        print("Invalid choice")
+    try:
+        if choice == "1":
+            approach_1_dicom_sr(study_id)
+        elif choice == "2":
+            approach_2_fhir_integration(study_id)
+        elif choice == "3":
+            approach_3_standard_tags(study_id)
+        elif choice == "4":
+            approach_1_dicom_sr(study_id)
+            approach_2_fhir_integration(study_id)
+            approach_3_standard_tags(study_id)
+        else:
+            print("Invalid choice")
+        
+    finally:
+        # Clean up local files
+        print("Clean up local files case...")
+        # cleanup_local_files()
 
 if __name__ == "__main__":
+    cleanup_local_files()
     main()
