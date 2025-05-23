@@ -270,8 +270,8 @@ def modify_dicom_files():
 
                     # Keep all original UIDs - just adding tags
                     print(f"Modified: {path}")
-                    print(f"  SOP Instance UID: {original_sop_uid} (unchanged)")
-                    print(f"  Added kidney volume tags")
+                    # print(f"  SOP Instance UID: {original_sop_uid} (unchanged)")
+                    # print(f"  Added kidney volume tags")
                     
                     dcmwrite(path, ds)
                     modified_count += 1
@@ -384,9 +384,10 @@ def verify_measurements_in_orthanc_fixed(study_id=None, instance_ids=None):
         print(f"\n=== MEASUREMENT DATA VERIFICATION ===")
         
         verified_count = 0
-        for i, instance in enumerate(instances_to_check[:5]):  # Check first 5 instances
+        for i, instance in enumerate(instances_to_check[:1]):  # Check first 5 instances
             instance_id = instance['ID']
             print(f"\nInstance {i+1}: {instance_id}")
+            print(f"\n Instance SOP Instance UID: {instance['MainDicomTags'].get('SOPInstanceUID', 'Unknown')}")
             
             try:
                 # Get DICOM tags using Orthanc library
