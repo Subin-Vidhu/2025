@@ -1,281 +1,174 @@
-Kidney Volume DICOM Integration Tool
-A comprehensive Python tool for integrating kidney volume measurements into DICOM studies using multiple HL7-compatible approaches. This tool supports DICOM Structured Reports, FHIR integration, and private DICOM tags to ensure maximum compatibility across different healthcare systems.
-🏥 Overview
-This tool provides three different approaches to store kidney volume measurements in DICOM studies:
+# Kidney Volume DICOM Integration Tool
 
-DICOM Structured Report (SR) - Creates standardized DICOM-SR documents
-FHIR Integration - Generates FHIR R4-compliant observations
-Private DICOM Tags - Embeds measurements directly into existing DICOM files
+## Overview
+This script allows you to add kidney volume measurement data to DICOM medical imaging studies using three different approaches, making the data accessible to other healthcare systems. It works with an Orthanc PACS (Picture Archiving and Communication System) server to retrieve, modify, and store DICOM files.
 
-📋 Features
+## What Does This Tool Do?
+When doctors perform kidney volume measurements, these measurements need to be stored alongside the imaging studies. This script provides three ways to integrate these measurements:
 
-Multi-approach compatibility - Choose the best method for your healthcare system
-HL7 FHIR R4 compliant - Uses standard LOINC codes and UCUM units
-DICOM SR support - Creates proper structured reports with measurement sequences
-Private tag preservation - Uses registered private creator tags to avoid conflicts
-Orthanc PACS integration - Direct upload and metadata storage
-Automatic verification - Validates that measurements are properly stored
-UID management - Handles DICOM UID generation and conflict resolution
+1. **DICOM Structured Reports (SR)**: Creates a new standardized report document within the study
+2. **FHIR-Compatible JSON**: Stores data in a format compatible with modern healthcare data standards
+3. **Private Tags**: Modifies the original DICOM files to include measurement data
 
-🛠️ Prerequisites
-Required Python Packages
-bashpip install requests pydicom
-System Requirements
+## Prerequisites
+- Python 3.6+
+- Orthanc PACS server running locally (or accessible via network)
+- The following Python packages:
+  - `pydicom`
+  - `pyorthanc`
+  - `requests`
 
-Python 3.7+
-Access to an Orthanc PACS server
-Network connectivity to PACS system
+To install required packages:
+```
+pip install pydicom pyorthanc requests
+```
 
-PACS Configuration
+## Configuration
+At the top of the script, you'll find configuration settings you may need to modify:
 
-Orthanc PACS server running on localhost:8042 (default)
-Authentication credentials (default: admin/password)
-Write permissions to upload DICOM instances
-
-⚙️ Configuration
-Edit the configuration section in the script:
-python# Configuration
-ORTHANC_URL = "http://localhost:8042"  # Your Orthanc server URL
-AUTH = ('admin', 'password')           # Your credentials
+```python
+# Configuration
+ORTHANC_URL = "http://localhost:8042"  # Change if your Orthanc server is elsewhere
+ORTHANC_USER = 'admin'
+ORTHANC_PASSWORD = 'password'
 KIDNEY_DATA = {
-    "Right Kidney": "125 ml",          # Right kidney volume
-    "Left Kidney": "132 ml"            # Left kidney volume
+    "Right Kidney": "125 ml",
+    "Left Kidney": "132 ml"
 }
-SAVE_DIR = "study_files"               # Local working directory
-🚀 Usage
-Basic Usage
-bashpython kidney_volume_integration.py
-Interactive Menu
-The tool presents an interactive menu with four options:
+SAVE_DIR = "study_files"  # Temporary directory for file operations
+```
+
+## How It Works: The Three Approaches
+
+### Approach 1: DICOM Structured Reports (SR)
+This approach creates a new standardized document within the DICOM study specifically designed to hold measurements. This is the most compatible with existing healthcare systems.
+
+**Benefits:**
+- Follows standard DICOM format for measurements
+- Easily recognized by most DICOM viewers
+- Clear separation of measurements from images
+
+**Process:**
+1. Retrieves study information from Orthanc
+2. Creates a new DICOM SR document with kidney measurements
+3. Uploads this new document back to the study
+
+### Approach 2: FHIR Integration
+FHIR (Fast Healthcare Interoperability Resources) is a modern standard for healthcare data exchange. This approach creates FHIR-compatible observation resources.
+
+**Benefits:**
+- Compatible with modern healthcare data systems
+- Well-structured data format
+- Easier integration with electronic health records
+
+**Process:**
+1. Creates FHIR Observation resources for kidney measurements
+2. Stores them as metadata in Orthanc
+3. Also saves them as a separate JSON file for external systems
+
+### Approach 3: Private Tags
+This approach modifies the original DICOM files by adding private tags containing kidney measurements.
+
+**Benefits:**
+- Measurements stay with the original images
+- No additional documents to manage
+- Direct access to measurements when viewing images
+
+**Process:**
+1. Downloads all DICOM files in the study
+2. Adds private tags with kidney volume data
+3. Replaces the original files in Orthanc with modified versions
+
+## Usage Instructions
+
+### Running the Script
+1. Ensure Orthanc is running and accessible
+2. Run the script with Python:
+   ```
+   python main_sr.py
+   ```
+3. The script will connect to Orthanc and list available studies
+4. Choose which approach you want to use:
+   - Option 1: DICOM Structured Report
+   - Option 2: FHIR Integration
+   - Option 3: Private Tags in Existing Instances
+   - Option 4: All approaches
+
+### Specifying a Study
+By default, the script looks for a specific study ID. You can modify this line to use your own study ID:
+```python
+study_id = "6627b6ac-b846cbe0-a0af01cc-f94a6bd0-990a57c6"  # Your study ID
+```
+
+## Key Functions Explained
+
+### General Functions
+- `main()`: The entry point that coordinates the entire process
+- `cleanup_local_files()`: Removes temporary files after processing
+- `get_study_info()`: Retrieves information about a study from Orthanc
+
+### Approach 1: DICOM SR Functions
+- `create_dicom_sr_with_kidney_volumes()`: Creates a structured report dataset
+- `send_dicom_to_orthanc()`: Uploads the SR document to Orthanc
+
+### Approach 2: FHIR Functions
+- `create_fhir_observation_json()`: Creates FHIR-compatible observation data
+- `store_fhir_in_orthanc_metadata()`: Stores FHIR data as Orthanc metadata
+
+### Approach 3: Private Tags Functions
+- `modify_dicom_files()`: Adds private tags to DICOM files
+- `delete_original_instances_from_orthanc()`: Removes original files before uploading
+- `upload_modified_files_to_orthanc_fixed()`: Uploads modified files to Orthanc
+- `verify_measurements_in_orthanc_fixed()`: Confirms data was properly added
+
+## Common Issues and Solutions
+
+### Cannot connect to Orthanc
+- Check if Orthanc is running
+- Verify URL, username, and password in configuration
+- Ensure network connectivity if Orthanc is on another machine
+
+### No studies found
+- Check that Orthanc contains DICOM studies
+- Verify authentication credentials
+
+### Upload failures
+- Ensure the script has permission to write temporary files
+- Check disk space for temporary file storage
+- Increase timeout settings if dealing with large studies
+
+## Understanding the Code Structure
+
+The script is organized into several sections:
+1. Configuration and imports
+2. Functions for each approach
+3. Helper functions for file and DICOM operations
+4. Main execution function
+
+Each approach is implemented as a separate function that can be called independently, making the code modular and easier to adapt for different use cases.
+
+## Output Examples
+
+When running the script successfully, you'll see progress information like:
+```
+✓ Connected to Orthanc PACS
+Orthanc Version: 1.9.7
+Found 12 studies on PACS
+
+Available studies:
+1. Study ID: abc123 - Patient: SMITH^JOHN - Date: 20230215
+...
+
+Working with Study ID: 6627b6ac-b846cbe0-a0af01cc-f94a6bd0-990a57c6
+Patient: DOE^JANE
+
 Choose approach:
 1. DICOM Structured Report (Most HL7-compatible)
 2. FHIR Integration (Best for modern healthcare systems)
-3. Standard DICOM Measurement Tags (Private Tag Method)
+3. Private Tags in Existing Instances (Modifies original instances)
 4. All approaches
-Study ID Configuration
-Update the study ID in the main() function:
-pythonstudy_id = "your-study-id-here"
-📊 Approach Details
-Approach 1: DICOM Structured Report (SR)
-Best for: HL7 compliance, standardized reporting, enterprise PACS systems
-Features:
+```
 
-Creates DICOM-SR with SOP Class UID 1.2.840.10008.5.1.4.1.1.88.11
-Uses LOINC codes for kidney measurements:
+## Conclusion
 
-Right Kidney: 33747-0
-Left Kidney: 33748-8
-
-
-UCUM units (ml for milliliters)
-Proper measurement sequences with coded concepts
-New series in existing study (Series Number: 9999)
-
-Output: kidney_volume_sr.dcm
-Approach 2: FHIR Integration
-Best for: Modern healthcare systems, interoperability, cloud platforms
-Features:
-
-FHIR R4 compliant Observation resources
-Stores as Orthanc metadata for API access
-Uses standard terminologies:
-
-LOINC codes for measurements
-SNOMED CT for body sites
-UCUM for units
-
-
-JSON Bundle format for external systems
-
-Output:
-
-Orthanc metadata: /studies/{id}/metadata/KidneyVolumes
-JSON file: kidney_volume_fhir.json
-
-Approach 3: Private DICOM Tags
-Best for: Direct DICOM viewer compatibility, embedded measurements, legacy systems
-Features:
-
-Registers private creator: "KidneyVolInfo" at tag (0011,0010)
-Stores measurements in private tags:
-
-(0011,1010): Right Kidney volume
-(0011,1011): Left Kidney volume
-
-
-Generates new SOPInstanceUIDs to avoid conflicts
-Preserves all original DICOM data
-
-Tags Used:
-(0011,0010) LO "KidneyVolInfo"                    # Private Creator
-(0011,1010) LO "Right Kidney: 125 ml"            # Right kidney data
-(0011,1011) LO "Left Kidney: 132 ml"             # Left kidney data
-🔍 Verification
-The tool automatically verifies that measurements are properly stored by checking:
-
-Private Creator Tags: Confirms "KidneyVolInfo" registration
-Measurement Data: Validates kidney volume values are present
-Tag Accessibility: Ensures data is readable via DICOM APIs
-
-📁 File Structure
-project/
-├── kidney_volume_integration.py    # Main script
-├── study_files/                   # Temporary working directory
-│   ├── *.dcm                     # Downloaded/modified DICOM files
-│   ├── kidney_volume_sr.dcm      # Generated SR document
-│   └── kidney_volume_fhir.json   # FHIR observations
-└── README.md                     # This file
-🏥 Healthcare Integration
-PACS Systems
-
-Orthanc: Direct integration via REST API
-dcm4che: Compatible via DICOM C-STORE
-Conquest: Standard DICOM storage
-Commercial PACS: Supports any DICOM-compliant system
-
-EHR/EMR Systems
-
-FHIR-enabled: Direct FHIR R4 observation import
-HL7 v2: Can extract from DICOM-SR OBX segments
-Legacy: DICOM tag-based data extraction
-
-Viewing Software
-
-DICOM Viewers: All approaches visible in metadata/tags
-Web Viewers: FHIR JSON easily consumable
-Radiology Workstations: SR documents appear as reports
-
-🔧 Troubleshooting
-Connection Issues
-✗ Cannot connect to Orthanc PACS: Connection refused
-Solution: Verify Orthanc is running and accessible at configured URL
-Authentication Errors
-Failed to upload: 401 Unauthorized
-Solution: Check credentials in AUTH tuple
-Study Not Found
-No studies found on PACS
-Solution: Upload test studies or verify study ID exists
-Private Tag Conflicts
-Error modifying DICOM: Tag already exists
-Solution: Tool handles this automatically by generating new UIDs
-Upload Failures
-Failed to upload file: 400 Bad Request
-Solution: Check DICOM file validity and PACS storage configuration
-📋 DICOM Compliance
-Standards Compliance
-
-DICOM PS3.3: Information Object Definitions
-DICOM PS3.5: Data Structures and Encoding
-DICOM PS3.6: Data Dictionary
-DICOM PS3.10: Media Storage and File Format
-
-Private Tag Registration
-
-Follows DICOM PS3.5 Section 7.8 for private data elements
-Uses proper private creator registration
-Avoids conflicts with standard and other private tags
-
-SOP Classes Used
-
-Basic Text SR: 1.2.840.10008.5.1.4.1.1.88.11
-CT Image Storage: 1.2.840.10008.5.1.4.1.1.2 (modified files)
-MR Image Storage: 1.2.840.10008.5.1.4.1.1.4 (modified files)
-
-🔒 Security Considerations
-Data Privacy
-
-All processing done locally or on configured PACS
-No external data transmission
-Maintains original patient data integrity
-
-Authentication
-
-Uses configurable credentials
-Supports basic HTTP authentication
-Can be extended for certificate-based auth
-
-Audit Trail
-
-Logs all operations and modifications
-Tracks uploaded instances
-Maintains verification records
-
-🚀 Advanced Usage
-Batch Processing
-Modify the script to process multiple studies:
-pythonstudy_ids = ["study1", "study2", "study3"]
-for study_id in study_ids:
-    approach_3_standard_tags(study_id)
-Custom Measurements
-Update KIDNEY_DATA for different measurements:
-pythonKIDNEY_DATA = {
-    "Right Kidney": "128.5 ml",
-    "Left Kidney": "135.2 ml",
-    "Total Volume": "263.7 ml"
-}
-Integration with Analysis Tools
-python# Example: Integration with AI analysis results
-def process_ai_results(analysis_output):
-    global KIDNEY_DATA
-    KIDNEY_DATA = {
-        "Right Kidney": f"{analysis_output['right_volume']:.1f} ml",
-        "Left Kidney": f"{analysis_output['left_volume']:.1f} ml"
-    }
-    return KIDNEY_DATA
-📈 Performance Considerations
-Memory Usage
-
-Downloads entire study to local storage
-Memory usage proportional to study size
-Automatic cleanup after processing
-
-Network Bandwidth
-
-Downloads full DICOM study initially
-Uploads modified files back to PACS
-Consider compression for large studies
-
-Processing Time
-
-Linear with number of DICOM instances
-Typical processing: 1-5 seconds per file
-Network latency affects total time
-
-🔄 Version History
-v1.0.0
-
-Initial release with three integration approaches
-Private tag method using (0011,xxxx) tags
-FHIR R4 and DICOM-SR support
-Orthanc PACS integration
-
-🤝 Contributing
-Development Setup
-
-Clone repository
-Install dependencies: pip install -r requirements.txt
-Configure test PACS environment
-Run tests: python -m pytest tests/
-
-Code Standards
-
-Follow PEP 8 style guidelines
-Add docstrings for all functions
-Include error handling and logging
-Write unit tests for new features
-
-📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
-📞 Support
-Documentation
-
-DICOM Standard: https://dicom.nema.org/
-FHIR R4: https://hl7.org/fhir/R4/
-Orthanc Documentation: https://book.orthanc-server.com/
-
-Issues
-For bugs and feature requests, please create an issue in the project repository.
-Professional Support
-For enterprise deployment and custom integration, contact your healthcare IT team or PACS vendor.
-
-⚠️ Important: This tool is designed for development and testing purposes. Ensure compliance with your healthcare organization's policies and regulatory requirements before using in production environments.
+This script provides flexible options for integrating kidney volume measurements with DICOM studies. Choose the approach that best fits your workflow and system compatibility needs.
