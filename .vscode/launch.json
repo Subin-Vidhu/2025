@@ -1,0 +1,20 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: DICOM Volume_HL7 main.py",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/3_DICOM/Volume_HL7/main_sr.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/venv/Lib/site-packages"
+            },
+            "python": "${workspaceFolder}/venv/Scripts/python.exe",
+            "cwd": "${workspaceFolder}/3_DICOM/Volume_HL7"
+        }
+    ]
+}
