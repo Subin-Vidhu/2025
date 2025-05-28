@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: +GB1/+D1  -  Building a new life
+- New Life: +GB2/+D2  -  Building a new life
 
 ---
 Order of Projects
