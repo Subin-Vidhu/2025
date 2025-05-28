@@ -620,7 +620,7 @@ def create_combined_kidney_plot(df, output_folder):
 def main():
     try:
         # File path and output folder
-        file_path = r"D:/__SHARED__/Chippy/___FDA___/ARAMIS BATCH 1 - FDA_2.5mm_test.csv"
+        file_path = r"D:/__SHARED__/Chippy/___FDA___/ARAMIS BATCH 1 - FDA_2.5mm_final.csv"
         output_folder = "observer_analysis_results"
         os.makedirs(output_folder, exist_ok=True)
         

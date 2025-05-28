@@ -6,55 +6,55 @@ Comparison between AIRA and SREENADH:
 
 Right Kidney Measurements:
 ------------------------------
-Number of Valid Cases: 18
-Mean Absolute Error: 3.752
-Root Mean Squared Error: 7.667
-R-squared Score: 0.899
-Pearson Correlation: 0.956
-Spearman Correlation: 0.890
-Mean Difference (AIRA - SREENADH): -2.80
-Median Difference: -0.55
-Mean Percentage Difference: 3.80
-Standard Deviation of Differences: 7.14
-AIRA Mean Volume: 124.38
-SREENADH Mean Volume: 127.18
-AIRA Volume Range: 77.09 - 176.01
-SREENADH Volume Range: 100.32 - 176.87
-Paired t-test p-value: 0.123
-t-statistic: -1.621
+Number of Valid Cases: 27
+Mean Absolute Error: 6.162
+Root Mean Squared Error: 11.564
+R-squared Score: 0.886
+Pearson Correlation: 0.947
+Spearman Correlation: 0.939
+Mean Difference (AIRA - SREENADH): -2.19
+Median Difference: -0.43
+Mean Percentage Difference: 7.29
+Standard Deviation of Differences: 11.35
+AIRA Mean Volume: 130.78
+SREENADH Mean Volume: 132.97
+AIRA Volume Range: 46.06 - 223.86
+SREENADH Volume Range: 89.26 - 232.79
+Paired t-test p-value: 0.335
+t-statistic: -0.983
 
 Interpretation:
 ---------------
 - Very strong correlation between observers
-- Excellent agreement between observers (Mean % diff < 5%)
+- Good agreement between observers (Mean % diff < 10%)
 - No statistically significant differences between observers (p >= 0.05)
 
 ==================================================
 
 Left Kidney Measurements:
 ------------------------------
-Number of Valid Cases: 18
-Mean Absolute Error: 7.420
-Root Mean Squared Error: 15.374
-R-squared Score: 0.632
-Pearson Correlation: 0.846
-Spearman Correlation: 0.804
-Mean Difference (AIRA - SREENADH): -7.25
-Median Difference: -0.36
-Mean Percentage Difference: 8.42
-Standard Deviation of Differences: 13.56
-AIRA Mean Volume: 120.81
-SREENADH Mean Volume: 128.05
-AIRA Volume Range: 65.03 - 175.85
-SREENADH Volume Range: 91.98 - 176.17
-Paired t-test p-value: 0.042
-t-statistic: -2.204
+Number of Valid Cases: 27
+Mean Absolute Error: 7.556
+Root Mean Squared Error: 13.651
+R-squared Score: 0.877
+Pearson Correlation: 0.947
+Spearman Correlation: 0.905
+Mean Difference (AIRA - SREENADH): -3.13
+Median Difference: -0.24
+Mean Percentage Difference: 7.36
+Standard Deviation of Differences: 13.29
+AIRA Mean Volume: 132.32
+SREENADH Mean Volume: 135.46
+AIRA Volume Range: 65.03 - 265.02
+SREENADH Volume Range: 88.16 - 254.34
+Paired t-test p-value: 0.240
+t-statistic: -1.203
 
 Interpretation:
 ---------------
-- Strong correlation between observers
+- Very strong correlation between observers
 - Good agreement between observers (Mean % diff < 10%)
-- Statistically significant differences between observers (p < 0.05)
+- No statistically significant differences between observers (p >= 0.05)
 
 ==================================================
 
@@ -63,55 +63,55 @@ Comparison between AIRA and ANISH:
 
 Right Kidney Measurements:
 ------------------------------
-Number of Valid Cases: 11
-Mean Absolute Error: 1.821
-Root Mean Squared Error: 3.023
-R-squared Score: 0.973
-Pearson Correlation: 0.990
-Spearman Correlation: 0.991
-Mean Difference (AIRA - ANISH): -0.64
-Median Difference: 0.00
-Mean Percentage Difference: 1.41
-Standard Deviation of Differences: 2.96
-AIRA Mean Volume: 124.77
-ANISH Mean Volume: 125.40
-AIRA Volume Range: 99.99 - 157.11
-ANISH Volume Range: 100.27 - 159.47
-Paired t-test p-value: 0.511
-t-statistic: -0.682
-
-Interpretation:
----------------
-- Very strong correlation between observers
-- Excellent agreement between observers (Mean % diff < 5%)
-- No statistically significant differences between observers (p >= 0.05)
-
-==================================================
-
-Left Kidney Measurements:
-------------------------------
-Number of Valid Cases: 11
-Mean Absolute Error: 5.295
-Root Mean Squared Error: 10.557
-R-squared Score: 0.776
-Pearson Correlation: 0.915
-Spearman Correlation: 1.000
-Mean Difference (AIRA - ANISH): -5.18
-Median Difference: -0.75
-Mean Percentage Difference: 6.23
-Standard Deviation of Differences: 9.20
-AIRA Mean Volume: 118.85
-ANISH Mean Volume: 124.03
-AIRA Volume Range: 65.03 - 153.36
-ANISH Volume Range: 96.53 - 153.32
-Paired t-test p-value: 0.105
-t-statistic: -1.780
+Number of Valid Cases: 27
+Mean Absolute Error: 6.284
+Root Mean Squared Error: 12.968
+R-squared Score: 0.857
+Pearson Correlation: 0.937
+Spearman Correlation: 0.953
+Mean Difference (AIRA - ANISH): -4.97
+Median Difference: -0.28
+Mean Percentage Difference: 7.79
+Standard Deviation of Differences: 11.98
+AIRA Mean Volume: 130.78
+ANISH Mean Volume: 135.75
+AIRA Volume Range: 46.06 - 223.86
+ANISH Volume Range: 93.96 - 246.44
+Paired t-test p-value: 0.044
+t-statistic: -2.115
 
 Interpretation:
 ---------------
 - Very strong correlation between observers
 - Good agreement between observers (Mean % diff < 10%)
-- No statistically significant differences between observers (p >= 0.05)
+- Statistically significant differences between observers (p < 0.05)
+
+==================================================
+
+Left Kidney Measurements:
+------------------------------
+Number of Valid Cases: 27
+Mean Absolute Error: 6.795
+Root Mean Squared Error: 14.937
+R-squared Score: 0.853
+Pearson Correlation: 0.940
+Spearman Correlation: 0.897
+Mean Difference (AIRA - ANISH): -6.41
+Median Difference: -0.42
+Mean Percentage Difference: 7.54
+Standard Deviation of Differences: 13.49
+AIRA Mean Volume: 132.32
+ANISH Mean Volume: 138.73
+AIRA Volume Range: 65.03 - 265.02
+ANISH Volume Range: 92.49 - 264.61
+Paired t-test p-value: 0.023
+t-statistic: -2.423
+
+Interpretation:
+---------------
+- Very strong correlation between observers
+- Good agreement between observers (Mean % diff < 10%)
+- Statistically significant differences between observers (p < 0.05)
 
 ==================================================
 
@@ -120,55 +120,55 @@ Comparison between SREENADH and ANISH:
 
 Right Kidney Measurements:
 ------------------------------
-Number of Valid Cases: 11
-Mean Absolute Error: 0.691
-Root Mean Squared Error: 1.136
-R-squared Score: 0.997
-Pearson Correlation: 0.999
-Spearman Correlation: 0.991
-Mean Difference (SREENADH - ANISH): -0.32
-Median Difference: 0.04
-Mean Percentage Difference: 0.60
-Standard Deviation of Differences: 1.09
-SREENADH Mean Volume: 125.08
-ANISH Mean Volume: 125.40
-SREENADH Volume Range: 100.32 - 159.02
-ANISH Volume Range: 100.27 - 159.47
-Paired t-test p-value: 0.372
-t-statistic: -0.934
+Number of Valid Cases: 27
+Mean Absolute Error: 3.074
+Root Mean Squared Error: 6.136
+R-squared Score: 0.958
+Pearson Correlation: 0.987
+Spearman Correlation: 0.987
+Mean Difference (SREENADH - ANISH): -2.78
+Median Difference: -0.21
+Mean Percentage Difference: 2.20
+Standard Deviation of Differences: 5.47
+SREENADH Mean Volume: 132.97
+ANISH Mean Volume: 135.75
+SREENADH Volume Range: 89.26 - 232.79
+ANISH Volume Range: 93.96 - 246.44
+Paired t-test p-value: 0.016
+t-statistic: -2.590
 
 Interpretation:
 ---------------
 - Very strong correlation between observers
 - Excellent agreement between observers (Mean % diff < 5%)
-- No statistically significant differences between observers (p >= 0.05)
+- Statistically significant differences between observers (p < 0.05)
 
 ==================================================
 
 Left Kidney Measurements:
 ------------------------------
-Number of Valid Cases: 11
-Mean Absolute Error: 1.036
-Root Mean Squared Error: 1.731
-R-squared Score: 0.991
-Pearson Correlation: 0.997
-Spearman Correlation: 1.000
-Mean Difference (SREENADH - ANISH): -0.85
-Median Difference: -0.18
-Mean Percentage Difference: 0.91
-Standard Deviation of Differences: 1.51
-SREENADH Mean Volume: 123.19
-ANISH Mean Volume: 124.03
-SREENADH Volume Range: 91.98 - 153.17
-ANISH Volume Range: 96.53 - 153.32
-Paired t-test p-value: 0.107
-t-statistic: -1.770
+Number of Valid Cases: 27
+Mean Absolute Error: 3.378
+Root Mean Squared Error: 5.383
+R-squared Score: 0.972
+Pearson Correlation: 0.994
+Spearman Correlation: 0.995
+Mean Difference (SREENADH - ANISH): -3.28
+Median Difference: -1.11
+Mean Percentage Difference: 2.35
+Standard Deviation of Differences: 4.27
+SREENADH Mean Volume: 135.46
+ANISH Mean Volume: 138.73
+SREENADH Volume Range: 88.16 - 254.34
+ANISH Volume Range: 92.49 - 264.61
+Paired t-test p-value: 0.001
+t-statistic: -3.912
 
 Interpretation:
 ---------------
 - Very strong correlation between observers
 - Excellent agreement between observers (Mean % diff < 5%)
-- No statistically significant differences between observers (p >= 0.05)
+- Statistically significant differences between observers (p < 0.05)
 
 ==================================================
 
