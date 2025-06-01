@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: +GB5  -  Building a new life
+- New Life: +NL1  -  Building a new life, Calorie deficit, and Fitness Journey
 
 ---
 Order of Projects
