@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: +NL1  -  Building a new life, Calorie deficit, and Fitness Journey
+- New Life: +NL0 -  Building a new life, Calorie deficit, and Fitness Journey
 
 ---
 Order of Projects
