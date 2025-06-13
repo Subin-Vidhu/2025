@@ -1,0 +1,48 @@
+
+002 Repl.it
+https://repl.it/
+
+002 Glot.io
+https://glot.io/
+
+006 For-Loop
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for
+
+006 findNemo
+https://repl.it/@aneagoie/findNemo1
+
+007 findNemo2
+https://repl.it/@aneagoie/findingNemo2
+
+015 findNemo
+https://repl.it/@aneagoie/findNemo1
+
+016 printFirstItemThenFirstHalfThenSayHi100Times
+https://repl.it/@aneagoie/printFirstItemThenFirstHalfThenSayHi100Times?language=javascript
+
+016 While-Loop
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/while
+
+018 logAllPairsOfArray
+https://repl.it/@aneagoie/logAllPairsOfArray?language=javascript
+
+019 printAllNumbersThenAllPairSums
+https://repl.it/@aneagoie/printAllNumbersThenAllPairSums?language=javascript
+
+019 forEach-
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
+
+021 Arrays
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+021 Objects
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object
+
+021 http-bigocheatsheet.com-
+http://bigocheatsheet.com/
+
+022 O-n-example
+https://stackoverflow.com/questions/3953244/example-of-on
+
+025 Code
+https://repl.it/@aneagoie/spaceComplexity?language=javascript
