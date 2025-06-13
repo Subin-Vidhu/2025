@@ -5,16 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: DICOM 6_Debugging main.py",
+            "name": "Python: Debug dsa.py",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/6_Debugging/main.py",
+            "program": "${workspaceFolder}/6_Personal/ii_Debugging/dsa.py",
             "console": "integratedTerminal",
             "env": {
                 "PYTHONPATH": "${workspaceFolder}/venv/Lib/site-packages"
             },
             "python": "${workspaceFolder}/venv/Scripts/python.exe",
-            "cwd": "${workspaceFolder}/6_Debugging"
+            "cwd": "${workspaceFolder}/6_Personal/ii_Debugging"
         }
     ]
 }
