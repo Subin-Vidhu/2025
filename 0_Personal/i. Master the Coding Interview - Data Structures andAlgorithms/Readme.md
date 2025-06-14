@@ -157,3 +157,81 @@
         - Coding Skills
         - Technical Skills
         - Communication Skills    
+
+5. Data Structures Introduction
+
+    - What is a Data Structure?
+        - A data structure is a way of organizing and storing data(collection of values and relationships) in a computer so that it can be accessed and modified efficiently.
+    - Why are Data Structures Important?
+        - Data structures are essential for efficient data storage, retrieval, and manipulation.
+        - They enable algorithms to operate on data effectively.
+        - Choosing the right data structure can significantly impact the performance of an application.
+
+    - Types of Data Structures
+        - Primitive Data Structures
+            - Basic data types like integers, floats, characters, and booleans.
+            - Examples: int, float, char, bool in programming languages.
+        - Non-Primitive Data Structures
+            - More complex structures that can store multiple values or relationships.
+            - Examples: Arrays, Linked Lists, Stacks, Queues, Trees, Graphs, Hash Tables.
+
+    - Abstract Data Types (ADTs)
+        - An abstract data type is a mathematical model for a certain class of data structures that have similar behavior.
+        - ADTs define the data and operations on that data without specifying the implementation details.
+        - Examples: Stack, Queue, List, Set, Map.
+    - Choosing the Right Data Structure
+        - Consider the type of data you need to store.
+        - Analyze the operations you need to perform on the data.
+        - Evaluate time and space complexity for different data structures.
+        - Choose a data structure that best fits your requirements.
+
+    - Data Structure Operations
+        - Insertion: Adding an element to the data structure.
+        - Deletion: Removing an element from the data structure.
+        - Searching: Finding an element in the data structure.
+        - Traversal: Accessing each element in the data structure.
+        - Sorting: Arranging elements in a specific order (e.g., ascending or descending).
+
+    - Data Structure Characteristics
+        - Efficiency: How well the data structure performs operations like insertion, deletion, and searching.
+        - Flexibility: The ability to adapt to different types of data and operations.
+        - Memory Usage: The amount of memory required to store the data structure.
+        - Ease of Use: How easy it is to implement and work with the data structure.
+
+    - Data Structure Examples
+        - Arrays: A collection of elements stored in contiguous memory locations.
+        - Linked Lists: A collection of nodes where each node contains data and a reference to the next node.
+        - Stacks: A Last In First Out (LIFO) data structure where elements are added and removed from the top.
+        - Queues: A First In First Out (FIFO) data structure where elements are added at the back and removed from the front.
+        - Trees: A hierarchical data structure with nodes connected by edges, where each node can have multiple children.
+        - Graphs: A collection of nodes (vertices) connected by edges, representing relationships between entities.
+        - Hash Tables: A data structure that uses a hash function to map keys to values for efficient retrieval.
+
+    - Data Structure Visualization
+        - Visualizing data structures can help understand their structure and operations.
+        - Use diagrams, animations, or interactive tools to visualize data structures.
+        - Examples: [VisuAlgo](https://visualgo.net/en), [Data Structure Visualizations](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html).
+
+    - Data Structures:
+
+        - How to build them
+        - How to use them
+        - How to analyze them
+        - How to implement them
+    - Data Structures in Real Life
+        - Data structures are used in various applications, such as databases, search engines, social media platforms, and more.
+        - Understanding data structures is crucial for software development, algorithm design, and problem-solving.
+
+    - How Computers Store Data
+        - Computers store data in binary format (0s and 1s).
+        - Data is organized in memory using various data structures. Computers store data(variables) in RAM (Random Access Memory) and secondary storage devices like hard drives and SSDs.
+        - Data structures help manage and organize this data for efficient access and manipulation.
+        - The choice of data structure affects how efficiently data can be accessed and manipulated.
+
+        - ie, When a program is run, the computer allocates memory for variables and data structures in RAM, the CPU accesses this memory to read and write data, asking the memory controller to retrieve or store data at specific addresses.
+
+        - How RAM stores data
+            - RAM stores data in binary format (0s and 1s).
+            - Each memory cell has a unique address.
+            - Data is organized in bytes (8 bits) and words (multiple bytes).
+            - The CPU accesses RAM to read and write data using memory addresses. 
