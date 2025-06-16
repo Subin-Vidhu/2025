@@ -6,7 +6,7 @@
 
     - 001 Technical-Interview-Mind-Map | [Link](https://coggle.it/diagram/W5E5tqYlrXvFJPsq/t/master-the-interview)
 
-2. Getting Mor Interviews
+2. Getting More Interviews
 
     - Resume
 
@@ -61,10 +61,10 @@
 
     - Good Code 
 
-        - Readable
+        - `Readable`
         - Efficient
         - Maintainable
-        - Scalable: Time and Space Complexity
+        - `Scalable`: Time and Space Complexity
     - Time Complexity
         - O(1) - Constant Time
             - The algorithm's time remains constant regardless of the input size.
@@ -235,3 +235,87 @@
             - Each memory cell has a unique address.
             - Data is organized in bytes (8 bits) and words (multiple bytes).
             - The CPU accesses RAM to read and write data using memory addresses. 
+
+6. Data Structures Arrays
+
+    - What is an Array?
+        - An array is a collection of elements stored in contiguous memory locations.
+        - Each element can be accessed using an index, which represents its position in the array.
+
+        - eg:
+
+            - ```Strings = ["Hello", "World", "Python"]```, this takes 3 memory locations, each containing a string, each string takes 4 bytes of memory, so the total memory used is 12 bytes.
+            - ```Numbers = [1, 2, 3, 4, 5]```, this takes 5 memory locations, each containing an integer, each integer takes 4 bytes of memory, so the total memory used is 20 bytes.
+            - ```Booleans = [True, False, True]```, this takes 3 memory locations, each containing a boolean value, each boolean takes 1 byte of memory, so the total memory used is 3 bytes.
+            - ```Mixed = [1, "Hello", True]```, this takes 3 memory locations, each containing a different data type, the total memory used is 4 + 4 + 1 = 9 bytes.
+
+        - Optional Classes
+
+            - Reference Types
+                - Classes are reference types, meaning they store a reference to the object in memory rather than the actual object itself.
+                - When you create an instance of a class, it is stored in the heap memory, and the variable holds a reference to that memory location.
+                - eg: 
+                    - ```python
+                      class Person:
+                          def __init__(self, name):
+                              self.name = name
+
+                      person1 = Person("Alice")
+                      person2 = person1  # person2 holds a reference to the same object as person1
+                      print(person1.name)  # Output: Alice
+                      print(person2.name)  # Output: Alice
+                      ```
+
+            - Context vs Scope
+                - Context refers to the `environment in which a piece of code is executed`(ie, it tells you where you are within the object, in js, it refers to the value of `this`), while scope refers to the visibility and accessibility of variables and functions within that context.
+                - In JavaScript, the context is determined by how a function is called, while the scope is determined by where a variable is declared.
+                - a simple trick is to use `console.log(this)` to see the context of the current function, `what is to the left of the dot` is the context, and `what is to the right of the dot` is the scope.
+                - In Python, the context is determined by the class or module in which a function is defined, while the scope is determined by the indentation level of the code.
+                - eg:
+                    - ```javascript
+                      function showContext() {
+                          console.log(this);
+                      }
+
+                      const obj = {
+                          name: "Alice",
+                          show: showContext
+                      };
+
+                      obj.show();  // Output: { name: 'Alice', show: [Function: showContext] }, this refers to the obj object and the showContext function is called on the obj object, so this refers to the obj object. 
+                      ```
+                    - ```python
+                      class Person:
+                          def show_context(self):
+                              print(self)
+
+                      person = Person()
+                      person.show_context()  # Output: <__main__.Person object at 0x...>
+                      # The self parameter refers to the instance of the class, and it is used to access the attributes and methods of the class.
+                      # the scope here is the class Person, and the context is the instance of the class Person.
+                      ```
+            - Instantiation
+                - Instantiation is the process of creating an instance of a class.
+                - In Python, you create an instance of a class by calling the class as if it were a function.
+                - In JavaScript, you create an instance of a class using the `new` keyword.
+                - eg:
+                    - ```python
+                      class Dog:
+                          def __init__(self, name):
+                              self.name = name
+
+                      my_dog = Dog("Buddy")  # Instantiation in Python
+                      print(my_dog.name)  # Output: Buddy
+                      ```
+                    - ```javascript
+                      class Dog {
+                          constructor(name) {
+                              this.name = name;
+                          }
+                      }
+
+                      const myDog = new Dog("Buddy");  // Instantiation in JavaScript
+                      console.log(myDog.name);  // Output: Buddy
+                      ```
+
+                
