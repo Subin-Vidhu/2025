@@ -318,4 +318,72 @@
                       console.log(myDog.name);  // Output: Buddy
                       ```
 
-                
+7. Data Structures Hash Tables
+
+    - What is a Hash Table?
+        - A hash table is a data structure that maps keys to values using a hash function.
+        - It allows for efficient data retrieval and storage by using a unique key to access the corresponding value.
+
+    - How Does a Hash Table Work?
+        - A hash function takes an input (key) and produces a fixed-size output (hash code).
+        - The hash code is used to determine the index in the hash table where the value will be stored.
+        - When retrieving a value, the same hash function is applied to the key to find the corresponding index.
+
+    - Advantages of Hash Tables
+        - Fast data retrieval: Average time complexity for search, insert, and delete operations is O(1).
+        - Efficient memory usage: Hash tables can dynamically resize to accommodate more elements.
+        - Flexible key-value pairs: Keys can be of any data type, allowing for versatile data storage.
+
+    - Index, lookup, delete, search - all have a time complexity of O(1) on average.
+    - Disadvantages of Hash Tables
+        - Hash collisions: When two different keys produce the same hash code, leading to potential data loss or retrieval issues.
+        - Memory overhead: Hash tables may require more memory than other data structures due to their dynamic resizing and storage of keys and values.
+        - Not ordered: Hash tables do not maintain the order of elements, making them unsuitable for scenarios where order matters.
+    - Hash Collisions
+        - A hash collision occurs when two different keys produce the same hash code.
+        - To handle collisions, hash tables use techniques like chaining (linked lists) or open addressing (probing).
+        - Chaining: Each index in the hash table points to a linked list of key-value pairs.
+        - Open Addressing: When a collision occurs, the algorithm searches for the next available index.
+
+    - Example of a Hash Table
+        - ```python
+          class HashTable:
+              def __init__(self):
+                  self.table = [None] * 10  # Initialize a hash table with 10 slots
+
+              def hash_function(self, key):
+                  return hash(key) % len(self.table)  # Simple hash function
+
+              def insert(self, key, value):
+                  index = self.hash_function(key)
+                  if self.table[index] is None:
+                      self.table[index] = []
+                  self.table[index].append((key, value))  # Store key-value pair
+
+              def search(self, key):
+                  index = self.hash_function(key)
+                  if self.table[index] is not None:
+                      for k, v in self.table[index]:
+                          if k == key:
+                              return v
+                  return None  # Key not found
+
+          ht = HashTable()
+          ht.insert("name", "Alice")
+          ht.insert("age", 30)
+          print(ht.search("name"))  # Output: Alice
+          print(ht.search("age"))   # Output: 30
+          ```
+
+    - Real-World Applications of Hash Tables
+        - Hash tables are widely used in various applications, including:
+            - Caching: Storing frequently accessed data for quick retrieval.
+            - Database indexing: Efficiently mapping keys to records in a database.
+            - Symbol tables in compilers: Associating variable names with their values.
+            - Implementing sets and dictionaries in programming languages.
+
+    - Hash Tables vs Arrays
+        - Hash tables provide faster data retrieval compared to arrays, especially for large datasets.
+        - Arrays have a fixed size and require resizing when full, while hash tables can dynamically resize.
+        - Arrays maintain the order of elements, while hash tables do not.
+        - The time complexity for search, insert, and delete operations in arrays is O(n) in the worst case, while hash tables have an average time complexity of O(1).
