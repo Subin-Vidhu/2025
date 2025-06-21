@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: -NL19 -  Building a new life, Calorie deficit, and Fitness Journey
+- New Life: 0 -  Building a new life, Calorie deficit, and Fitness Journey
 
 ---
 Order of Projects
