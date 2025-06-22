@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: 0 -  Building a new life, Calorie deficit, and Fitness Journey
+- New Life: 1 -  Building a new life, Calorie deficit, and Fitness Journey
 
 ---
 Order of Projects
