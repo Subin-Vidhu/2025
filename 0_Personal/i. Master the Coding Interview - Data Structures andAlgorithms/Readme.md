@@ -387,3 +387,98 @@
         - Arrays have a fixed size and require resizing when full, while hash tables can dynamically resize.
         - Arrays maintain the order of elements, while hash tables do not.
         - The time complexity for search, insert, and delete operations in arrays is O(n) in the worst case, while hash tables have an average time complexity of O(1).
+
+8. Data Structures Linked Lists
+
+    - What is a Linked List?
+        - A linked list is a data structure consisting of nodes, where each node contains data and a reference (or pointer) to the next node in the sequence.
+        - Unlike arrays, linked lists do not require contiguous memory allocation, allowing for dynamic resizing.
+
+    - Types of Linked Lists
+        - Singly Linked List: Each node points to the next node, and the last node points to null.
+        - Doubly Linked List: Each node has two pointers, one to the next node and one to the previous node.
+        - Circular Linked List: The last node points back to the first node, forming a circle.
+
+    - Advantages of Linked Lists
+        - Dynamic size: Linked lists can grow and shrink in size as needed.
+        - Efficient insertions/deletions: Adding or removing nodes is more efficient than in arrays, especially for large datasets.
+
+    - Disadvantages of Linked Lists
+        - Memory overhead: Each node requires additional memory for the pointer(s).
+        - Sequential access: Linked lists do not support random access, making certain operations slower.
+
+    - Example of a Singly Linked List
+        - ```python
+          class Node:
+              def __init__(self, data):
+                  self.data = data
+                  self.next = None
+
+          class LinkedList:
+              def __init__(self):
+                  self.head = None
+
+              def insert(self, data):
+                  new_node = Node(data)
+                  new_node.next = self.head
+                  self.head = new_node
+
+              def display(self):
+                  current = self.head
+                  while current:
+                      print(current.data, end=" -> ")
+                      current = current.next
+                  print("None")
+
+          ll = LinkedList()
+          ll.insert(3)
+          ll.insert(2)
+          ll.insert(1)
+          ll.display()  # Output: 1 -> 2 -> 3 -> None
+          ```
+
+    - Real-World Applications of Linked Lists
+        - Linked lists are used in various applications, including:
+            - Implementing stacks and queues.
+            - Managing memory in dynamic data structures.
+            - Representing graphs and adjacency lists.
+
+    - Conclusion
+        - Linked lists are a fundamental data structure with various applications in computer science.
+        - Understanding linked lists is crucial for mastering more complex data structures and algorithms.
+
+    - Pointer
+
+        - A pointer is a variable that stores the memory address of another variable or object.
+        - In linked lists, pointers are used to connect nodes, allowing traversal and manipulation of the list.
+        - Pointers can be null, indicating the end of the list or the absence of a node.
+
+    - Garbage Collection
+
+        - Garbage collection is the automatic process of reclaiming memory occupied by objects that are no longer in use.
+        - In languages like Python and Java, garbage collectors periodically check for unreachable objects and free their memory.
+        - In C and C++, developers must manually manage memory allocation and deallocation using functions like `malloc` and `free`.
+
+        - Example of Garbage Collection in Python
+            - ```python
+              class Node:
+                  def __init__(self, data):
+                      self.data = data
+                      self.next = None
+
+              class LinkedList:
+                  def __init__(self):
+                      self.head = None
+
+              ll = LinkedList()
+              ll.head = Node(1)
+              ll.head.next = Node(2)
+              ll.head.next.next = Node(3)
+
+              # After this point, the linked list nodes will be automatically garbage collected when they are no longer referenced.
+              ```
+
+    - External Resources
+        - [GeeksforGeeks - Linked List](https://www.geeksforgeeks.org/data-structures/linked-list/)
+        - [VisuAlgo - Linked List](https://visualgo.net/en/list)
+        
