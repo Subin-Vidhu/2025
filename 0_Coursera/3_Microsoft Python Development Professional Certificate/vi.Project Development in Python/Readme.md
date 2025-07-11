@@ -134,3 +134,72 @@
             - Extreme Programming (XP): An Agile methodology that emphasizes technical excellence, continuous feedback, and customer involvement. XP practices include pair programming, test-driven development, and continuous integration.
 
             - For more details, refer to [this article](https://www.coursera.org/learn/microsoft-devops-agile-practices-in-python-development/supplement/5jrQv/the-agile-manifesto-a-beginners-guide).  
+
+- Week 3
+    - The art of active listening:
+        - Active listening is a communication technique that involves fully focusing, understanding, and responding to the speaker.
+        - It requires paying attention to verbal and non-verbal cues, asking clarifying questions, and providing feedback.
+        - Active listening helps build trust, improve understanding, and foster effective communication in teams.
+
+        - Key components of active listening:
+            - Paying attention: Focus on the speaker without distractions.
+            - Showing that you're listening: Use verbal and non-verbal cues to indicate engagement.
+            - Providing feedback: Summarize or paraphrase what the speaker has said to confirm understanding.
+            - Deferring judgment: Avoid making assumptions or interrupting the speaker.
+            - Responding appropriately: Provide thoughtful responses based on the speaker's message.
+
+        - For more details, refer to [this article](https://www.coursera.org/learn/microsoft-devops-agile-practices-in-python-development/lecture/GRPtV/the-art-of-active-listening).      
+
+
+    - Technical feasibility assessment: A step-by-step guide: [Refer to this article](https://www.coursera.org/learn/microsoft-devops-agile-practices-in-python-development/supplement/NB6c1/technical-feasibility-assessment-a-step-by-step-guide)
+
+        - A technical feasibility assessment evaluates whether a proposed project or solution can be implemented with the available technology, resources, and expertise.
+        - It involves analyzing the technical requirements, identifying potential challenges, and assessing the risks associated with the project.
+        - The assessment helps stakeholders make informed decisions about the project's viability and potential return on investment.
+
+    - The project communication plan: A crucial tool for success: [Refer to this article](https://www.coursera.org/learn/microsoft-devops-agile-practices-in-python-development/supplement/JBVUv/the-project-communication-plan-a-crucial-tool)
+
+        - A project communication plan outlines how information will be shared among stakeholders throughout the project lifecycle.
+        - It includes details about communication channels, frequency, audience, and key messages.
+        - A well-defined communication plan helps ensure that all stakeholders are informed, engaged, and aligned with the project's goals.
+
+- Week 4
+    - Chatbot development with Python
+
+        - Chatbots are automated programs that can simulate human conversation through text or voice interactions.
+        - Python provides several libraries and frameworks for building chatbots, including NLTK, spaCy, and Rasa.
+        - Chatbots can be used for various applications, such as customer support, information retrieval, and entertainment.
+
+        - For more details, refer to [this article](https://www.coursera.org/learn/microsoft-devops-agile-practices-in-python-development/supplement/MYgpW/chatbot-development-101-a-beginners-guide).
+
+    - Python libraries for chatbot development
+
+        - NLTK (Natural Language Toolkit): A library for natural language processing that provides tools for text processing, tokenization, and classification.
+        - spaCy: An open-source library for advanced natural language processing that includes pre-trained models for various languages.
+        - Rasa: An open-source framework for building conversational AI applications, including chatbots and virtual assistants.
+
+        - For more details, refer to [this article](https://www.coursera.org/learn/microsoft-devops-agile-practices-in-python-development/supplement/Joqve/python-libraries-for-chatbot-development).
+
+        - NLU (Natural Language Understanding):
+            - NLU is a subfield of natural language processing that focuses on understanding the meaning and intent behind user input.
+            - It involves tasks such as intent recognition, entity extraction, and sentiment analysis.
+            - NLU is essential for building intelligent chatbots that can understand and respond to user queries effectively.
+
+        - For more details, refer to [this article](https://www.coursera.org/learn/microsoft-devops-agile-practices-in-python-development/supplement/20g6O/natural-language-understanding-nlu-the-key-to-intelligent-chatbots).
+
+- Week 5
+    - Organizing your Python developer portfolio
+
+        - A Python developer portfolio showcases your skills, projects, and experience to potential employers or clients.
+        - It should include a well-structured resume, a collection of your best projects, and links to your GitHub profile or personal website.
+        - A strong portfolio demonstrates your expertise in Python development and your ability to deliver high-quality software solutions.
+
+        - For more details, refer to [this article](https://www.coursera.org/learn/microsoft-devops-agile-practices-in-python-development/supplement/CcV2g/organizing-your-python-developer-portfolio).
+
+    - Cheat sheet for Technical Interviews
+
+        - A technical interview cheat sheet is a quick reference guide that summarizes key concepts, algorithms, and data structures commonly asked in technical interviews.
+        - It can include topics such as sorting algorithms, data structures (arrays, linked lists, trees, graphs), and common coding patterns.
+        - A well-prepared cheat sheet can help you quickly recall important information during interviews.
+
+        - For more details, refer to [this article](https://www.coursera.org/learn/microsoft-devops-agile-practices-in-python-development/supplement/QInn3/cheat-sheet-for-your-technical-interview).
