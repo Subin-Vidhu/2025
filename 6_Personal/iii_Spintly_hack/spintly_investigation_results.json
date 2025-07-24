@@ -1,0 +1,319 @@
+{
+  "timestamp": "2025-07-23T08:17:34.938Z",
+  "authData": {
+    "cookies": {
+      "_tccl_visitor": "abfc5867-f5cb-4a89-acbe-a5fada493695"
+    },
+    "localStorage": {
+      "CognitoIdentityServiceProvider.24lqc87njds5aqjknibohr5ero.+918086516291.clockDrift": "0",
+      "CognitoIdentityServiceProvider.24lqc87njds5aqjknibohr5ero.LastAuthUser": "+918086516291",
+      "CognitoIdentityServiceProvider.24lqc87njds5aqjknibohr5ero.+918086516291.userData": "{\"UserAttributes\":[{\"Name\":\"sub\",\"Value\":\"97b34de5-1854-4006-90ae-b0d2a140bb8d\"},{\"Name\":\"email_verified\",\"Value\":\"true\"},{\"Name\":\"phone_number_verified\",\"Value\":\"true\"},{\"Name\":\"phone_number\",\"Value\":\"+918086516291\"},{\"Name\":\"given_name\",\"Value\":\"Subin\"},{\"Name\":\"email\",\"Value\":\"subin@aramisimaging.com\"}],\"Username\":\"25df6b16-32a7-4056-9129-7d19378a84b8\"}",
+      "mp_a7f49e632d502a76bfb13de5f6768ceb_mixpanel": "{\"distinct_id\":\"$device:066f75bd-bb6c-4e0a-b48c-1c22a6c5722d\",\"$device_id\":\"066f75bd-bb6c-4e0a-b48c-1c22a6c5722d\",\"$initial_referrer\":\"$direct\",\"$initial_referring_domain\":\"$direct\",\"__mps\":{},\"__mpso\":{\"$initial_referrer\":\"$direct\",\"$initial_referring_domain\":\"$direct\"},\"__mpus\":{},\"__mpa\":{},\"__mpu\":{},\"__mpr\":[],\"__mpap\":[]}",
+      "cloudRegion": "ap-south-1",
+      "amplify-signin-with-hostedUI": "false",
+      "userPoolId": "ap-south-1_FJvXB4KPj",
+      "baseURL": "https://saams.api.spintly.com",
+      "id": "1",
+      "CognitoIdentityServiceProvider.24lqc87njds5aqjknibohr5ero.+918086516291.accessToken": "eyJraWQiOiJ2QnZ3SVJrMUVJM2dXWlo5dnNIMWpNVXlPcWZDVDMwOTNLaG9zQVpUTVUwPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI5N2IzNGRlNS0xODU0LTQwMDYtOTBhZS1iMGQyYTE0MGJiOGQiLCJldmVudF9pZCI6ImY3ZGFlNWU2LTRkNGQtNDk3MC05Yjg5LTlkNDYxMDY1NzJjMCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE3NTMyNDU1MjgsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5hcC1zb3V0aC0xLmFtYXpvbmF3cy5jb21cL2FwLXNvdXRoLTFfRkp2WEI0S1BqIiwiZXhwIjoxNzUzMjYxMzE4LCJpYXQiOjE3NTMyNTc3MTgsImp0aSI6ImQ0MTg0ZGY3LTZlNjQtNGQ5OC1iOTI4LWU1OGZiMzYzMDg1NyIsImNsaWVudF9pZCI6IjI0bHFjODduamRzNWFxamtuaWJvaHI1ZXJvIiwidXNlcm5hbWUiOiIyNWRmNmIxNi0zMmE3LTQwNTYtOTEyOS03ZDE5Mzc4YTg0YjgifQ.QPyrF8oacihoxDmbEUV4G0tjQ67pbfCjgxNFZL9JgfnkM7uFMgaF-0LWH4Jt8VHRNufjMEEKBgXIaCGkddzzMnPgJBREpjNlEwECZzZAOmk-C6m-9BKWpRkj6Hc4diTN4608pOBvcSX18VldvyrK5AmSTTO4JCCEm3Kpd4inJjA31U8_QxEsyfsFEQoY_GK_ur7zjZzsJe_kzqOSAsAICi5xleH09hpk_Wb0bw3XmJXnR5Cg5iFORavz1nAbLM_dR4dc11Nm_zZviQbiyKjpuo_08C8QOEek2WFNkw8cdpnEjK98-sO0pi2TpLVlUTFgqjgJJhfDdFWrDoNybcOyUA",
+      "webClientId": "24lqc87njds5aqjknibohr5ero",
+      "__mpq_a7f49e632d502a76bfb13de5f6768ceb_ev": "[]",
+      "CognitoIdentityServiceProvider.24lqc87njds5aqjknibohr5ero.+918086516291.refreshToken": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.ql0mhM88UMDZ9QKgo0JYjyQMvsN9FoNAsBKrf4nl6gEVtATL-tHH8d0psQLR87nqTmwzefFA1lRLyMaOE3D0LH2tH4-rlTN1nYTSGCoU0WevlKWspcaclWemmsnkq-cJASAtk_E9VQmp_wJwzmJWJ1EcJGOVob2dsNH9UWbLDThBJ6-Rw6WBc6xPK-NytNZ7NI1NJxsE2jmSo_SzGt5s_hFmsXLA30a-XrhguCWgjNhuOHWygMq3_nbAZNhfKO67ujX0-Ui2gwPqd1FntPrtr_jP-WTuOI8ifyzYE8YLtNnX7x_pAlGuWe87-IhmGvpO3_u8cYQkoOcvbB9B1FW37Q.xt31rnB7O7SiDmR7.A8WRqwIu65CWtSU5wE2xXtqL-QXbV-lkR_O9RD0240i_yTe_-fVANoH4JcrTmMfJJ35KSivv1WDTkfzf6jcsrYg0Xc1T73MVK5iZFRkUpXfyURrUIPgIMlG-sIXqsHh-KKCiZg9opUHnrYduU2EL9lUq_sP4CrTQsEJzPWJ-q_tDUR5XemdMWmMFsXaaX-jLTPiu2MBWxIWBbEagPrSXgdOqNHxuPPiqcnHZfZl9LnWm6ilAgPzlG2eyp5U4Rv_7_1mjawidjhA4ye3EgT4h9H_m4s3yV4IBFz6QFsj9huIqGYI8ygeQKG6pxXImkvFrlVrjrXlhuWTvQ3YzpmoyRv0DrWRa9SnKBxEHM0atG1s-djTvmkMiIIF86HSREApkr5AK10CmLf67Q_3OoqfscJQfGpoAyQyoceScr5xy-8hZd6jEw5U2L80Wzv-uR5B8kc2GrCtsAJUyxPmdRBNg21DGwtp75fsX4HtPpXvDJRWhuGWNso1zqv52iHIYYILW6AE_PqrpjP51jKDxzZTwpymLob1SzEfxS7whEMkJhU7G4n27ghAAWQpL_E8P3zdFNmOcKqyjLdS8Si_6TrFiaLdbG7be9wRiskbfkO2_16sTuHJcfm2MKQEcQzMBwoKzMuy1QVVBmYO5Iyl3sLB8jRGXHMHvuXdklGQgXmrbAbhOCQqEc7v_6uZln6BjEuDVvYZ3iD6o-MMv_qxrq3zb4iwvMiRW2X2Bi5cV32UWeQZMeX23Wyt8rU_AlRt1mscsYrA_AKFlXrItx1Kh3MkgSN24Ojrydzujr-KCilxTwGgVKDr7GptVULugJ26zkrVkMdElBhEq0SsrFuYkdEn9o4f2BET0M2zY29XA56i1abuTcWu3dk89cxAgGTacip4Q4u_2y1hrwEgIayu8azKOGIJxqUWY36FDdaqssGIYbrLXIktngxpVb_qtHicKcaxrNvffRC_SWsjg_UUPIIOb2lzCUyYjyZKdjAWPGkvvQohX72LTN35DqlarU5HGUW5mOhE4_SMMOoJMZEIMUIBQAItYvfXHo67pyAR3BDCHvxOVotVJEFP38nPWnwfrQSfpyqzFS4d7XO0M3zbkBnZ4v4_LqJMl1ShTMTSdUwv_2nYJUVPg_AXKAv6ldVKPMxewvDMpEKk0XDN_vig-kXoycMBCLtY41b1Db2B3Liu8xpV5OzXblxwU-0MEmCI_ovjlBqr3V9nxyyqqAGbiKzApwaxltCVZYF8HjrTIo-smBlo-_ymPmgZh0GdJWjXbuBSQTlIl7Wx3_01_s-cUVjY7Y2OL1d5WMLCa9LmARO-am2X8Is_JPrAQvNcZUViqlg.LPqC_zP5FHjr7o5d832ykA",
+      "identityPoolId": "ap-south-1:b9f187a9-d41e-45be-bfcd-dafe6b7edfa1",
+      "CognitoIdentityServiceProvider.24lqc87njds5aqjknibohr5ero.+918086516291.idToken": "eyJraWQiOiJ4R2pRdVJWeVM1MVZKTEJsUXhIY3BheWpBWFwvdFwvOTlGQytQdzlVUlpGVEk9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI5N2IzNGRlNS0xODU0LTQwMDYtOTBhZS1iMGQyYTE0MGJiOGQiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmFwLXNvdXRoLTEuYW1hem9uYXdzLmNvbVwvYXAtc291dGgtMV9GSnZYQjRLUGoiLCJwaG9uZV9udW1iZXJfdmVyaWZpZWQiOnRydWUsImNvZ25pdG86dXNlcm5hbWUiOiIyNWRmNmIxNi0zMmE3LTQwNTYtOTEyOS03ZDE5Mzc4YTg0YjgiLCJnaXZlbl9uYW1lIjoiU3ViaW4iLCJhdWQiOiIyNGxxYzg3bmpkczVhcWprbmlib2hyNWVybyIsImV2ZW50X2lkIjoiZjdkYWU1ZTYtNGQ0ZC00OTcwLTliODktOWQ0NjEwNjU3MmMwIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3NTMyNDU1MjgsInBob25lX251bWJlciI6Iis5MTgwODY1MTYyOTEiLCJleHAiOjE3NTMyNjEzMTgsImlhdCI6MTc1MzI1NzcxOCwiZW1haWwiOiJzdWJpbkBhcmFtaXNpbWFnaW5nLmNvbSJ9.OXEFrd_IpFSnr_bz_B7X_up9p6X2Tfo0PNYHpaApakLb2gmA6EAh0yPFXWbMtscLtSdcatiaVzUz3sFGF92Z9pS8kPMctox3IQaa8U9omffj5Jxg9WRhFeuH6yL6e7vI_Lcy1vTxKlUV4dmH61X7MG4pJNQSdXurgdb8_kMYNyRGizI-fauMjJ0TfLATVvr03Ke4OkovlXZiW6p-AZkdLLBR6M1srIiLyX1Kzfkm2H5TuyZbnWN-Ysgmc9-bRMm1IEvDTgMVENI8yLhle4OSWtllt2p-bHPz_FZFOvHCoFLdLt7Lj2DQQ9xeFJaO4_HU2P5WWDsURhjiZavX_7NJmQ",
+      "orgID": "NaN",
+      "currentOrg": "0",
+      "region": "in",
+      "persist:root": "{\"headcounts\":\"{\\\"setup\\\":false,\\\"zonesList\\\":{\\\"list\\\":[],\\\"pagination\\\":{\\\"page\\\":1,\\\"perPage\\\":25}},\\\"allZones\\\":[],\\\"headcounts\\\":{\\\"list\\\":[],\\\"pagination\\\":{\\\"page\\\":1,\\\"perPage\\\":25}},\\\"usersMap\\\":{}}\",\"accessGroups\":\"{\\\"setup\\\":false,\\\"accessGroups\\\":[],\\\"groupDetails\\\":{\\\"id\\\":0,\\\"name\\\":\\\"\\\",\\\"assignedDoorsIds\\\":[],\\\"assignedDoorsList\\\":[],\\\"userScheduleIdToAssign\\\":-1,\\\"initialScheduleId\\\":-1,\\\"selectAllToAssign\\\":false,\\\"assignedUsers\\\":[]},\\\"allAccessUsers\\\":{\\\"users\\\":[],\\\"pagination\\\":{\\\"page\\\":1,\\\"perPage\\\":25}}}\",\"_persist\":\"{\\\"version\\\":-1,\\\"rehydrated\\\":true}\"}"
+    },
+    "sessionStorage": {
+      "mp_tab_id_mixpanel_a7f49e632d502a76bfb13de5f6768ceb": "$tab-320baa45-402c-4993-af7d-3422d60cf18c",
+      "__darkreader__wasEnabledForHost": "false",
+      "mp_gen_new_tab_id_mixpanel_a7f49e632d502a76bfb13de5f6768ceb": "1",
+      "sentryReplaySession": "{\"id\":\"de3728eda2284c96ae4230657f5613fe\",\"started\":1753258618618,\"lastActivity\":1753258618577,\"segmentId\":0,\"sampled\":\"buffer\"}"
+    },
+    "csrfTokens": {},
+    "currentUrl": "https://smart-access.spintly.com/dashboard/access/history",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "timestamp": "2025-07-23T08:17:09.017Z"
+  },
+  "networkRequests": [],
+  "apiEndpoints": [
+    "/dashboard/access/history"
+  ],
+  "currentTableData": [
+    {
+      "index": 0,
+      "name": "",
+      "datetime": "​",
+      "direction": "​",
+      "allCells": [
+        "",
+        "​",
+        "",
+        "​",
+        "​",
+        "​",
+        ""
+      ]
+    },
+    {
+      "index": 1,
+      "name": "Subin",
+      "datetime": "Jul 23, 2025, 07:38:08 AM (IST)",
+      "direction": "• Entry",
+      "allCells": [
+        "Subin",
+        "Jul 23, 2025, 07:38:08 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Entry",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 2,
+      "name": "Subin",
+      "datetime": "Jul 22, 2025, 04:19:59 PM (IST)",
+      "direction": "• Exit",
+      "allCells": [
+        "Subin",
+        "Jul 22, 2025, 04:19:59 PM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Exit",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 3,
+      "name": "Subin",
+      "datetime": "Jul 22, 2025, 11:09:26 AM (IST)",
+      "direction": "• Entry",
+      "allCells": [
+        "Subin",
+        "Jul 22, 2025, 11:09:26 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Entry",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 4,
+      "name": "Subin",
+      "datetime": "Jul 22, 2025, 10:54:31 AM (IST)",
+      "direction": "• Exit",
+      "allCells": [
+        "Subin",
+        "Jul 22, 2025, 10:54:31 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Exit",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 5,
+      "name": "Subin",
+      "datetime": "Jul 22, 2025, 07:34:16 AM (IST)",
+      "direction": "• Entry",
+      "allCells": [
+        "Subin",
+        "Jul 22, 2025, 07:34:16 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Entry",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 6,
+      "name": "Subin",
+      "datetime": "Jul 21, 2025, 05:01:23 PM (IST)",
+      "direction": "• Exit",
+      "allCells": [
+        "Subin",
+        "Jul 21, 2025, 05:01:23 PM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Exit",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 7,
+      "name": "Subin",
+      "datetime": "Jul 21, 2025, 07:30:12 AM (IST)",
+      "direction": "• Entry",
+      "allCells": [
+        "Subin",
+        "Jul 21, 2025, 07:30:12 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Entry",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 8,
+      "name": "Subin",
+      "datetime": "Jul 19, 2025, 04:18:30 PM (IST)",
+      "direction": "• Exit",
+      "allCells": [
+        "Subin",
+        "Jul 19, 2025, 04:18:30 PM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Exit",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 9,
+      "name": "Subin",
+      "datetime": "Jul 19, 2025, 07:22:39 AM (IST)",
+      "direction": "• Entry",
+      "allCells": [
+        "Subin",
+        "Jul 19, 2025, 07:22:39 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Entry",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 10,
+      "name": "Subin",
+      "datetime": "Jul 18, 2025, 02:35:06 PM (IST)",
+      "direction": "• Exit",
+      "allCells": [
+        "Subin",
+        "Jul 18, 2025, 02:35:06 PM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Exit",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 11,
+      "name": "Subin",
+      "datetime": "Jul 18, 2025, 10:47:00 AM (IST)",
+      "direction": "• Entry",
+      "allCells": [
+        "Subin",
+        "Jul 18, 2025, 10:47:00 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Entry",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 12,
+      "name": "Subin",
+      "datetime": "Jul 18, 2025, 10:23:10 AM (IST)",
+      "direction": "• Exit",
+      "allCells": [
+        "Subin",
+        "Jul 18, 2025, 10:23:10 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Exit",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 13,
+      "name": "Subin",
+      "datetime": "Jul 18, 2025, 07:30:16 AM (IST)",
+      "direction": "• Entry",
+      "allCells": [
+        "Subin",
+        "Jul 18, 2025, 07:30:16 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Entry",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 14,
+      "name": "Subin",
+      "datetime": "Jul 17, 2025, 04:50:19 PM (IST)",
+      "direction": "• Exit",
+      "allCells": [
+        "Subin",
+        "Jul 17, 2025, 04:50:19 PM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Exit",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 15,
+      "name": "Subin",
+      "datetime": "Jul 17, 2025, 10:48:07 AM (IST)",
+      "direction": "• Entry",
+      "allCells": [
+        "Subin",
+        "Jul 17, 2025, 10:48:07 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Entry",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 16,
+      "name": "Subin",
+      "datetime": "Jul 17, 2025, 10:19:04 AM (IST)",
+      "direction": "• Exit",
+      "allCells": [
+        "Subin",
+        "Jul 17, 2025, 10:19:04 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Exit",
+        "ARAMIS"
+      ]
+    },
+    {
+      "index": 17,
+      "name": "Subin",
+      "datetime": "Jul 17, 2025, 07:28:00 AM (IST)",
+      "direction": "• Entry",
+      "allCells": [
+        "Subin",
+        "Jul 17, 2025, 07:28:00 AM (IST)",
+        "-",
+        "",
+        "Authorised Access",
+        "• Entry",
+        "ARAMIS"
+      ]
+    }
+  ],
+  "findings": {
+    "apiRequests": [],
+    "curlCommands": []
+  }
+}

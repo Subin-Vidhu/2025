@@ -1,0 +1,74 @@
+{
+  "investigation_metadata": {
+    "timestamp": "",
+    "investigator": "",
+    "spintly_url": "https://smart-access.spintly.com/dashboard/access/history",
+    "browser": "",
+    "notes": ""
+  },
+  "authentication_data": {
+    "cookies": {
+      "session_id": "",
+      "csrf_token": "",
+      "auth_token": "",
+      "other_cookies": {}
+    },
+    "local_storage": {},
+    "session_storage": {},
+    "csrf_tokens": {},
+    "headers": {
+      "authorization": "",
+      "x_csrf_token": "",
+      "x_requested_with": "",
+      "user_agent": ""
+    }
+  },
+  "discovered_endpoints": [
+    {
+      "url": "",
+      "method": "",
+      "purpose": "",
+      "requires_auth": true,
+      "parameters": {},
+      "response_format": ""
+    }
+  ],
+  "api_requests": [
+    {
+      "type": "fetch|xhr",
+      "method": "GET|POST|PUT|DELETE",
+      "url": "",
+      "headers": {},
+      "body": "",
+      "response_status": "",
+      "response_headers": {},
+      "timestamp": ""
+    }
+  ],
+  "table_data_sample": [
+    {
+      "name": "",
+      "datetime": "",
+      "direction": "Entry|Exit",
+      "all_columns": []
+    }
+  ],
+  "curl_commands": [
+    {
+      "description": "",
+      "command": ""
+    }
+  ],
+  "findings": {
+    "authentication_method": "",
+    "api_base_url": "",
+    "data_format": "json|html|xml",
+    "pagination": {
+      "method": "",
+      "parameters": {}
+    },
+    "rate_limiting": "",
+    "session_timeout": "",
+    "additional_notes": ""
+  }
+}

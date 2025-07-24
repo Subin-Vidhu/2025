@@ -15,7 +15,9 @@ def naive_rotation(array, k):
     for i in range(len(array)-k%len(array)):
         new_array.append(array[i])
     return new_array
-
+array = [1,2,3,4,5,6,7]
+k = 3
+print(naive_rotation(array,k))
 array = [1,2,3,4,5,6,7,8,9]
 k = 11
 print(naive_rotation(array,k))

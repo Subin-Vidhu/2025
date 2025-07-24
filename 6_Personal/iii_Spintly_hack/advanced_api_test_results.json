@@ -1,0 +1,328 @@
+{
+  "timestamp": "2025-07-23T14:01:55.206656",
+  "authentication": {
+    "base_url": "https://saams.api.spintly.com",
+    "user_id": "97b34de5-1854-4006-90ae-b0d2a140bb8d",
+    "access_token_preview": "eyJraWQiOiJ2QnZ3SVJrMUVJM2dXWlo5dnNIMWpNVXlPcWZDVD...",
+    "id_token_preview": "eyJraWQiOiJ4R2pRdVJWeVM1MVZKTEJsUXhIY3BheWpBWFwvdF..."
+  },
+  "endpoint_tests": [
+    {
+      "url": "https://saams.api.spintly.com/access/history",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:43 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:43.254080",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/access/logs",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:43 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:43.804710",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/user/access-history",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:44 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:44.344642",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/dashboard/access/history",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:44 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:44.881692",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/api/access/history",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:45 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:45.430791",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/api/v1/access/history",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:45 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:45.974390",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/api/v2/access/history",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:46 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:46.524092",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/users/97b34de5-1854-4006-90ae-b0d2a140bb8d/access",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:47 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:47.070167",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/users/97b34de5-1854-4006-90ae-b0d2a140bb8d/history",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:47 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:47.611148",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/api/users/97b34de5-1854-4006-90ae-b0d2a140bb8d/access",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:48 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:48.153645",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/organizations/access/history",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:48 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:48.695645",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/api/organizations/access",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:49 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:49.244156",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/events",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:49 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:49.790687",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/api/events",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:50 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:50.336675",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/logs",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:50 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:50.878873",
+      "text_response": ""
+    },
+    {
+      "url": "https://saams.api.spintly.com/api/logs",
+      "method": "GET",
+      "status_code": 404,
+      "success": false,
+      "headers": {
+        "Server": "awselb/2.0",
+        "Date": "Wed, 23 Jul 2025 08:31:51 GMT",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Content-Length": "0",
+        "Connection": "keep-alive"
+      },
+      "content_type": "text/plain; charset=utf-8",
+      "content_length": 0,
+      "timestamp": "2025-07-23T14:01:51.428582",
+      "text_response": ""
+    }
+  ],
+  "auth_method_tests": [
+    {
+      "auth_method": "Authorization",
+      "status_code": 404,
+      "success": false,
+      "content_length": 0
+    },
+    {
+      "auth_method": "Authorization",
+      "status_code": 404,
+      "success": false,
+      "content_length": 0
+    },
+    {
+      "auth_method": "Authorization",
+      "status_code": 404,
+      "success": false,
+      "content_length": 0
+    },
+    {
+      "auth_method": "X-Auth-Token",
+      "status_code": 404,
+      "success": false,
+      "content_length": 0
+    },
+    {
+      "auth_method": "X-Access-Token",
+      "status_code": 404,
+      "success": false,
+      "content_length": 0
+    },
+    {
+      "auth_method": "Authorization",
+      "status_code": 404,
+      "success": false,
+      "content_length": 0
+    }
+  ],
+  "successful_endpoints": [],
+  "summary": {
+    "total_endpoint_tests": 16,
+    "successful_endpoint_tests": 0,
+    "total_auth_tests": 6,
+    "successful_auth_tests": 0
+  }
+}
