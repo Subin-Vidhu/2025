@@ -12,6 +12,8 @@ STATUS_LOG = os.path.join(BASE_DIR, 'status_log.jsonl')
 CHECK_INTERVAL_SEC = int(os.getenv('CHECK_INTERVAL_SEC', '60'))
 NOTIFY_COOLDOWN_SEC = int(os.getenv('NOTIFY_COOLDOWN_SEC', '900'))
 LOCK = threading.Lock()
+LATENCY_HISTORY = {}
+MAX_HISTORY = 20  # short ring for sparkline
 
 
 def load():
@@ -173,6 +175,12 @@ def monitor_once():
             else:
                 if err:
                     svc['last_error'] = err
+            # update latency history
+            hid = svc['id']
+            hist = LATENCY_HISTORY.setdefault(hid, [])
+            hist.append(latency_ms)
+            if len(hist) > MAX_HISTORY:
+                del hist[0:len(hist)-MAX_HISTORY]
             notify = False
             if new_status != prev:
                 svc['last_change'] = now
@@ -238,6 +246,11 @@ def check_single_service(service_id):
         else:
             if err:
                 service['last_error'] = err
+        # latency history
+        hist = LATENCY_HISTORY.setdefault(service_id, [])
+        hist.append(latency_ms)
+        if len(hist) > MAX_HISTORY:
+            del hist[0:len(hist)-MAX_HISTORY]
         
         notify = False
         if new_status != prev:
@@ -342,6 +355,12 @@ class Handler(BaseHTTPRequestHandler):
             threading.Thread(target=monitor_once, daemon=True).start()
             self._json(200, {'started': True})
             return
+        if self.path.startswith('/api/history/'):
+            sid = self.path.split('/')[-1]
+            with LOCK:
+                hist = LATENCY_HISTORY.get(sid, [])
+            self._json(200, {'id': sid, 'latency_ms': hist})
+            return
         if self.path.startswith('/api/check/'):
             # Check single service by ID
             service_id = self.path.split('/')[-1]
@@ -405,6 +424,9 @@ class Handler(BaseHTTPRequestHandler):
                 payload.setdefault('id', payload.get('name'))
                 payload.setdefault('last_status', 'unknown')
                 payload.setdefault('active', True)
+                # env optional
+                if 'env' in payload and not payload['env']:
+                    payload.pop('env')
                 # Remove existing with same id
                 data = [d for d in data if d['id'] != payload['id']] + [payload]
                 save(data)

@@ -7,6 +7,11 @@ const dlg = document.getElementById('svcDialog');
 const form = document.getElementById('svcForm');
 const cancelBtn = document.getElementById('cancelBtn');
 let services = [];
+let filterMode = 'all';
+let searchTerm = '';
+let compact = false;
+const latencyWarn = 250; // ms threshold
+const latencyCritical = 800;
 
 async function load() {
   try {
@@ -17,6 +22,13 @@ async function load() {
   } catch (e) {
     console.error('Load failed', e);
   }
+}
+
+function classifyLatency(ms){
+  if (ms == null) return '';
+  if (ms >= latencyCritical) return 'critical';
+  if (ms >= latencyWarn) return 'warn';
+  return 'ok';
 }
 
 function updateStats() {
@@ -51,31 +63,34 @@ function updateSingleCard(id, service) {
   const errLine = service.last_error ? `<div class="error-text">Error: ${service.last_error}</div>` : '';
   const port = service.port && ![80, 443].includes(service.port) ? `:${service.port}` : '';
   
+  const latencyClass = classifyLatency(service.last_latency_ms);
+  const envBadge = service.env ? `<span class="env-badge">${service.env.toUpperCase()}</span>` : '';
   targetCard.innerHTML = `
-    <h3>${service.name}</h3>
-    <div class="host-info">${service.host}${port}</div>
+    <div class="card-header-row">
+      <div class="left-head">
+        <div class="svc-name">${service.name}</div>
+        <div class="host-line">${service.host}${port}</div>
+      </div>
+      ${envBadge}
+    </div>
     <div class="status-badge ${service.last_status || 'unknown'}">${(service.last_status || 'unknown').toUpperCase()}</div>
-    
     <div class="metrics">
       <div class="metric">
         <div class="metric-value">${service.last_http_status || '---'}</div>
-        <div class="metric-label">HTTP Status</div>
+        <div class="metric-label">HTTP</div>
       </div>
-      <div class="metric">
+      <div class="metric latency ${latencyClass}">
         <div class="metric-value">${service.last_latency_ms != null ? service.last_latency_ms + 'ms' : '---'}</div>
-        <div class="metric-label">Latency</div>
+        <div class="metric-label">LAT</div>
+        <canvas class="sparkline" data-spark="${service.id}"></canvas>
       </div>
     </div>
-    
     ${errLine}
-    
-    <div class="timestamp">Last change: ${service.last_change ? timeago(service.last_change) : '—'}</div>
-    <div class="timestamp">Last check: ${service.last_checked ? timeago(service.last_checked) : '—'}</div>
-    
+    <div class="timestamp">Δ ${service.last_change ? timeago(service.last_change) : '—'} • chk ${service.last_checked ? timeago(service.last_checked) : '—'}</div>
     <footer>
       <button data-edit="${service.id}" class="secondary">Edit</button>
       <button data-del="${service.id}" class="danger">Delete</button>
-      <button data-check="${service.id}" class="success">Check Now</button>
+      <button data-check="${service.id}" class="success">Check</button>
     </footer>`;
   
   // Update card class for status styling
@@ -84,42 +99,93 @@ function updateSingleCard(id, service) {
 
 function render() {
   cardsEl.innerHTML = '';
-  services.sort((a, b) => a.name.localeCompare(b.name));
-  services.forEach(s => {
+  const term = searchTerm.toLowerCase();
+  services.sort((a,b)=> a.name.localeCompare(b.name));
+  const now = Date.now();
+  const filtered = services.filter(s => {
+    if (term && !(`${s.name} ${s.host}`.toLowerCase().includes(term))) return false;
+    if (filterMode === 'up' && s.last_status !== 'up') return false;
+    if (filterMode === 'down' && s.last_status !== 'down') return false;
+    if (filterMode === 'unknown' && s.last_status !== 'unknown') return false;
+    if (filterMode === 'slow' && !(s.last_latency_ms >= latencyWarn)) return false;
+    if (filterMode === 'changed') {
+      if (!s.last_change) return false;
+      const diff = now - new Date(s.last_change).getTime();
+      if (diff > 10*60*1000) return false; // 10m window
+    }
+    return true;
+  });
+  filtered.forEach(s => {
     const div = document.createElement('div');
     div.className = `card ${s.last_status || 'unknown'}`;
-    
     const errLine = s.last_error ? `<div class="error-text">Error: ${s.last_error}</div>` : '';
     const port = s.port && ![80, 443].includes(s.port) ? `:${s.port}` : '';
-    
+    const latencyClass = classifyLatency(s.last_latency_ms);
+    const envBadge = s.env ? `<span class="env-badge">${s.env.toUpperCase()}</span>` : '';
     div.innerHTML = `
-      <h3>${s.name}</h3>
-      <div class="host-info">${s.host}${port}</div>
+      <div class="card-header-row">
+        <div class="left-head">
+          <div class="svc-name">${s.name}</div>
+          <div class="host-line">${s.host}${port}</div>
+        </div>
+        ${envBadge}
+      </div>
       <div class="status-badge ${s.last_status || 'unknown'}">${(s.last_status || 'unknown').toUpperCase()}</div>
-      
       <div class="metrics">
         <div class="metric">
           <div class="metric-value">${s.last_http_status || '---'}</div>
-          <div class="metric-label">HTTP Status</div>
+          <div class="metric-label">HTTP</div>
         </div>
-        <div class="metric">
+        <div class="metric latency ${latencyClass}">
           <div class="metric-value">${s.last_latency_ms != null ? s.last_latency_ms + 'ms' : '---'}</div>
-          <div class="metric-label">Latency</div>
+          <div class="metric-label">LAT</div>
+          <canvas class="sparkline" data-spark="${s.id}"></canvas>
         </div>
       </div>
-      
       ${errLine}
-      
-      <div class="timestamp">Last change: ${s.last_change ? timeago(s.last_change) : '—'}</div>
-      <div class="timestamp">Last check: ${s.last_checked ? timeago(s.last_checked) : '—'}</div>
-      
+      <div class="timestamp">Δ ${s.last_change ? timeago(s.last_change) : '—'} • chk ${s.last_checked ? timeago(s.last_checked) : '—'}</div>
       <footer>
         <button data-edit="${s.id}" class="secondary">Edit</button>
         <button data-del="${s.id}" class="danger">Delete</button>
-        <button data-check="${s.id}" class="success">Check Now</button>
+        <button data-check="${s.id}" class="success">Check</button>
       </footer>`;
     cardsEl.appendChild(div);
   });
+  // after mount fetch history for visible services for sparklines
+  filtered.forEach(s=> loadHistorySpark(s.id));
+}
+
+async function loadHistorySpark(id){
+  try {
+    const r = await fetch('/api/history/' + id);
+    if(!r.ok) return;
+    const data = await r.json();
+    const canvas = document.querySelector(`canvas[data-spark="${id}"]`);
+    if(!canvas) return;
+    const values = data.latency_ms || [];
+    drawSparkline(canvas, values);
+  } catch(e){ console.warn('spark failed', e); }
+}
+
+function drawSparkline(canvas, values){
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width = canvas.clientWidth || 80;
+  const h = canvas.height = canvas.clientHeight || 14;
+  ctx.clearRect(0,0,w,h);
+  if(!values.length) return;
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const span = max - min || 1;
+  ctx.strokeStyle = '#00b5e6';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  values.forEach((v,i)=>{
+    const x = (i/(values.length-1))* (w-2) +1;
+    const y = h - ((v-min)/span)* (h-2) -1;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
 }
 
 function timeago(ts){
@@ -150,6 +216,7 @@ function openEdit(id){
   form.port.value = svc.port || '';
   form.protocol.value = svc.protocol || 'https';
   form.path.value = svc.path || '/';
+  form.env.value = svc.env || '';
   form.active.checked = svc.active !== false;
   document.getElementById('formTitle').textContent = svc.id ? 'Edit Service' : 'New Service';
   dlg.showModal();
@@ -221,6 +288,7 @@ form.addEventListener('submit', async e => {
     port: form.port.value ? Number(form.port.value) : undefined,
     protocol: form.protocol.value,
     path: form.path.value.trim() || '/',
+  env: form.env.value.trim(),
     active: form.active.checked
   };
   await fetch('/api/services', {
@@ -254,6 +322,42 @@ window.triggerCheckNow = async function(){
   await fetch('/api/check', authToken? {headers:{'X-Auth-Token':authToken}}: undefined);
   setTimeout(load, 2000);
 };
+
+// Filtering & search
+document.addEventListener('click', e=>{
+  if(e.target.classList && e.target.classList.contains('filt')){
+    document.querySelectorAll('.filt').forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    filterMode = e.target.dataset.filter;
+    render();
+  }
+});
+const searchInput = document.getElementById('searchInput');
+if(searchInput){
+  searchInput.addEventListener('input', ()=>{ searchTerm = searchInput.value; render(); });
+}
+const compactToggle = document.getElementById('compactToggle');
+if(compactToggle){
+  compactToggle.addEventListener('change', ()=>{ compact = compactToggle.checked; document.body.classList.toggle('compact', compact); });
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e=>{
+  if(e.ctrlKey && e.key.toLowerCase()==='k'){ e.preventDefault(); searchInput && searchInput.focus(); }
+  else if(e.key==='r'){ refreshDataBtn.click(); }
+  else if(e.key==='a'){ refreshBtn.click(); }
+  else if(e.key==='n'){ addBtn.click(); }
+  else if(e.key==='u'){ setFilterKey('up'); }
+  else if(e.key==='d'){ setFilterKey('down'); }
+  else if(e.key==='c'){ setFilterKey('changed'); }
+  else if(e.key==='l'){ setFilterKey('slow'); }
+  else if(e.key==='?'){ setFilterKey('unknown'); }
+});
+
+function setFilterKey(mode){
+  const btn = document.querySelector(`.filt[data-filter="${mode}"]`);
+  if(btn){ btn.click(); }
+}
 
 load();
 setInterval(load, 15000);

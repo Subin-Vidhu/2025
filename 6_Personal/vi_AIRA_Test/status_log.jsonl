@@ -46,3 +46,5 @@
 {"ts": "2025-08-13T08:50:51.531281+00:00", "id": "PROTOS", "status": "down", "latency_ms": 333, "http": 502, "error": "http:502"}
 {"ts": "2025-08-13T08:51:14.494829+00:00", "id": "PROTOS", "status": "up", "latency_ms": 215, "http": 200, "error": null}
 {"ts": "2025-08-13T08:51:16.110365+00:00", "id": "PROTOS", "status": "up", "latency_ms": 178, "http": 200, "error": null}
+{"ts": "2025-08-13T09:00:33.221807+00:00", "id": "PROTOS", "status": "down", "latency_ms": 357, "http": 502, "error": "http:502"}
+{"ts": "2025-08-13T09:12:56.013153+00:00", "id": "PROTOS", "status": "up", "latency_ms": 182, "http": 200, "error": null}

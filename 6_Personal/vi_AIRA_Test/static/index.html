@@ -17,6 +17,23 @@
       </div>
     </header>
 
+    <div id="utilityBar">
+      <div class="filters">
+        <input id="searchInput" type="search" placeholder="Search (Ctrl+K)" autocomplete="off" />
+        <div class="filter-buttons" role="tablist">
+          <button data-filter="all" class="filt active" title="Show all (A)">All</button>
+          <button data-filter="up" class="filt" title="Up only (U)">Up</button>
+          <button data-filter="down" class="filt" title="Down only (D)">Down</button>
+          <button data-filter="unknown" class="filt" title="Unknown (?)">Unknown</button>
+          <button data-filter="slow" class="filt" title="> Latency threshold (L)">Slow</button>
+          <button data-filter="changed" class="filt" title="Changed recently (C)">Changed</button>
+        </div>
+      </div>
+      <div class="view-prefs">
+        <label class="toggle"><input type="checkbox" id="compactToggle" /> <span>Compact</span></label>
+      </div>
+    </div>
+
     <div class="stats-bar">
       <div class="stat-card">
         <div class="stat-value" id="totalServices">0</div>
@@ -46,6 +63,7 @@
       <label>Name <input name="name" required /></label>
       <label>Host <input name="host" required /></label>
       <label>Port <input name="port" type="number" /></label>
+  <label>Environment <input name="env" placeholder="prod / stage" /></label>
       <label>Protocol
         <select name="protocol">
           <option>https</option>
