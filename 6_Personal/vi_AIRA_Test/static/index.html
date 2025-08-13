@@ -7,13 +7,38 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 </head>
 <body>
-  <div class="container">
+  <!-- Authentication Screen -->
+  <div id="authScreen" class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>🏥 PACS Monitor</h1>
+        <p>Medical Imaging Server Monitoring Dashboard</p>
+      </div>
+      <form id="authForm" class="auth-form">
+        <div class="form-group">
+          <label for="secretKey">Access Key</label>
+          <input type="password" id="secretKey" placeholder="Enter secret key" required autocomplete="off">
+        </div>
+        <button type="submit" class="auth-btn">Access Dashboard</button>
+        <div id="authError" class="auth-error" style="display: none;">
+          Invalid access key. Please try again.
+        </div>
+      </form>
+      <div class="auth-footer">
+        <p>🔒 Secure access to medical server monitoring</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard (hidden by default) -->
+  <div id="mainDashboard" class="container" style="display: none;">
     <header>
       <h1>PACS Monitor</h1>
       <div class="header-actions">
         <button id="refreshDataBtn" class="secondary">↻ Refresh Data</button>
         <button id="refreshBtn" class="success">🔄 Check All</button>
         <button id="addBtn">+ Add Service</button>
+        <button id="logoutBtn" class="danger" onclick="logout()">🚪 Logout</button>
       </div>
     </header>
 

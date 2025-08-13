@@ -1,3 +1,60 @@
+// Authentication variables
+const SECRET_KEY = 'PROTOS25';
+let isAuthenticated = false;
+
+// Check if user is already authenticated
+window.addEventListener('DOMContentLoaded', function() {
+  const savedAuth = sessionStorage.getItem('pacsAuth');
+  if (savedAuth === SECRET_KEY) {
+    showDashboard();
+  } else {
+    showAuthScreen();
+  }
+});
+
+// Authentication functions
+function showAuthScreen() {
+  document.getElementById('authScreen').style.display = 'flex';
+  document.getElementById('mainDashboard').style.display = 'none';
+  isAuthenticated = false;
+}
+
+function showDashboard() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('mainDashboard').style.display = 'block';
+  isAuthenticated = true;
+  // Initialize dashboard
+  load();
+  setupEventListeners();
+}
+
+function logout() {
+  sessionStorage.removeItem('pacsAuth');
+  showAuthScreen();
+  // Clear any intervals/timeouts
+  if (window.refreshInterval) {
+    clearInterval(window.refreshInterval);
+  }
+}
+
+// Handle authentication form
+document.getElementById('authForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const enteredKey = document.getElementById('secretKey').value;
+  const errorDiv = document.getElementById('authError');
+  
+  if (enteredKey === SECRET_KEY) {
+    sessionStorage.setItem('pacsAuth', SECRET_KEY);
+    showDashboard();
+    errorDiv.style.display = 'none';
+  } else {
+    errorDiv.style.display = 'block';
+    document.getElementById('secretKey').value = '';
+    document.getElementById('secretKey').focus();
+  }
+});
+
+// Main application variables
 const cardsEl = document.getElementById('cards');
 const addBtn = document.getElementById('addBtn');
 const refreshBtn = document.getElementById('refreshBtn');
@@ -14,6 +71,7 @@ const latencyWarn = 250; // ms threshold
 const latencyCritical = 800;
 
 async function load() {
+  if (!isAuthenticated) return;
   try {
     const r = await fetch('/api/services', authToken ? { headers: { 'X-Auth-Token': authToken } } : undefined);
     services = await r.json();
@@ -279,85 +337,94 @@ async function checkSingle(id){
   }
 }
 
-form.addEventListener('submit', async e => {
-  e.preventDefault();
-  const payload = {
-    id: form.id.value || form.name.value.trim(),
-    name: form.name.value.trim(),
-    host: form.host.value.trim(),
-    port: form.port.value ? Number(form.port.value) : undefined,
-    protocol: form.protocol.value,
-    path: form.path.value.trim() || '/',
-  env: form.env.value.trim(),
-    active: form.active.checked
-  };
-  await fetch('/api/services', {
-    method: 'POST',
-    headers: Object.assign({'Content-Type': 'application/json'}, authToken? {'X-Auth-Token':authToken}: {}),
-    body: JSON.stringify(payload)
+// Setup event listeners (called after authentication)
+function setupEventListeners() {
+  // Form submission
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const payload = {
+      id: form.id.value || form.name.value.trim(),
+      name: form.name.value.trim(),
+      host: form.host.value.trim(),
+      port: form.port.value ? Number(form.port.value) : undefined,
+      protocol: form.protocol.value,
+      path: form.path.value.trim() || '/',
+    env: form.env.value.trim(),
+      active: form.active.checked
+    };
+    await fetch('/api/services', {
+      method: 'POST',
+      headers: Object.assign({'Content-Type': 'application/json'}, authToken? {'X-Auth-Token':authToken}: {}),
+      body: JSON.stringify(payload)
+    });
+    dlg.close();
+    await load();
   });
-  dlg.close();
-  await load();
-});
 
-cancelBtn.onclick = () => dlg.close();
-addBtn.onclick = () => openEdit('');
+  cancelBtn.onclick = () => dlg.close();
+  addBtn.onclick = () => openEdit('');
 
-// Refresh Data: Just reload current data from server (fast)
-refreshDataBtn.onclick = () => load();
+  // Refresh Data: Just reload current data from server (fast)
+  refreshDataBtn.onclick = () => load();
 
-// Check All: Trigger new health checks for all services (slow)
-refreshBtn.onclick = async () => {
-  refreshBtn.textContent = '🔄 Checking...';
-  refreshBtn.disabled = true;
-  try {
-    await triggerCheckNow();
-  } finally {
-    refreshBtn.textContent = '🔄 Check All';
-    refreshBtn.disabled = false;
+  // Check All: Trigger new health checks for all services (slow)
+  refreshBtn.onclick = async () => {
+    refreshBtn.textContent = '🔄 Checking...';
+    refreshBtn.disabled = true;
+    try {
+      await triggerCheckNow();
+    } finally {
+      refreshBtn.textContent = '🔄 Check All';
+      refreshBtn.disabled = false;
+    }
+  };
+
+  // Filtering & search
+  document.addEventListener('click', e=>{
+    if(e.target.classList && e.target.classList.contains('filt')){
+      document.querySelectorAll('.filt').forEach(b=>b.classList.remove('active'));
+      e.target.classList.add('active');
+      filterMode = e.target.dataset.filter;
+      render();
+    }
+  });
+  
+  const searchInput = document.getElementById('searchInput');
+  if(searchInput){
+    searchInput.addEventListener('input', ()=>{ searchTerm = searchInput.value; render(); });
   }
-};
+  
+  const compactToggle = document.getElementById('compactToggle');
+  if(compactToggle){
+    compactToggle.addEventListener('change', ()=>{ compact = compactToggle.checked; document.body.classList.toggle('compact', compact); });
+  }
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', e=>{
+    if(!isAuthenticated) return; // Don't handle shortcuts if not authenticated
+    if(e.ctrlKey && e.key.toLowerCase()==='k'){ e.preventDefault(); searchInput && searchInput.focus(); }
+    else if(e.key==='r'){ refreshDataBtn.click(); }
+    else if(e.key==='a'){ refreshBtn.click(); }
+    else if(e.key==='n'){ addBtn.click(); }
+    else if(e.key==='u'){ setFilterKey('up'); }
+    else if(e.key==='d'){ setFilterKey('down'); }
+    else if(e.key==='c'){ setFilterKey('changed'); }
+    else if(e.key==='l'){ setFilterKey('slow'); }
+    else if(e.key==='?'){ setFilterKey('unknown'); }
+  });
+
+  // Start auto-refresh
+  window.refreshInterval = setInterval(load, 15000);
+}
 
 window.triggerCheckNow = async function(){
   await fetch('/api/check', authToken? {headers:{'X-Auth-Token':authToken}}: undefined);
   setTimeout(load, 2000);
 };
 
-// Filtering & search
-document.addEventListener('click', e=>{
-  if(e.target.classList && e.target.classList.contains('filt')){
-    document.querySelectorAll('.filt').forEach(b=>b.classList.remove('active'));
-    e.target.classList.add('active');
-    filterMode = e.target.dataset.filter;
-    render();
-  }
-});
-const searchInput = document.getElementById('searchInput');
-if(searchInput){
-  searchInput.addEventListener('input', ()=>{ searchTerm = searchInput.value; render(); });
-}
-const compactToggle = document.getElementById('compactToggle');
-if(compactToggle){
-  compactToggle.addEventListener('change', ()=>{ compact = compactToggle.checked; document.body.classList.toggle('compact', compact); });
-}
-
-// Keyboard shortcuts
-document.addEventListener('keydown', e=>{
-  if(e.ctrlKey && e.key.toLowerCase()==='k'){ e.preventDefault(); searchInput && searchInput.focus(); }
-  else if(e.key==='r'){ refreshDataBtn.click(); }
-  else if(e.key==='a'){ refreshBtn.click(); }
-  else if(e.key==='n'){ addBtn.click(); }
-  else if(e.key==='u'){ setFilterKey('up'); }
-  else if(e.key==='d'){ setFilterKey('down'); }
-  else if(e.key==='c'){ setFilterKey('changed'); }
-  else if(e.key==='l'){ setFilterKey('slow'); }
-  else if(e.key==='?'){ setFilterKey('unknown'); }
-});
-
 function setFilterKey(mode){
   const btn = document.querySelector(`.filt[data-filter="${mode}"]`);
   if(btn){ btn.click(); }
 }
 
-load();
-setInterval(load, 15000);
+// Initialization is now handled by the authentication system

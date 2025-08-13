@@ -7,10 +7,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T09:13:35.039110+00:00",
+    "last_checked": "2025-08-13T10:22:09.310122+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 234,
+    "last_latency_ms": 157,
     "last_http_status": 401
   },
   {
@@ -21,10 +21,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T09:13:35.039110+00:00",
+    "last_checked": "2025-08-13T10:22:09.310122+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 208,
+    "last_latency_ms": 220,
     "last_http_status": 401
   },
   {
@@ -35,10 +35,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T09:13:35.039110+00:00",
+    "last_checked": "2025-08-13T10:22:09.310122+00:00",
     "last_change": "2025-08-13T06:09:58.408187+00:00",
     "last_notified": "2025-08-13T06:09:58.408187+00:00",
-    "last_latency_ms": 211,
+    "last_latency_ms": 212,
     "last_http_status": 401
   },
   {
@@ -49,10 +49,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T09:13:35.039110+00:00",
+    "last_checked": "2025-08-13T10:22:09.310122+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 218,
+    "last_latency_ms": 248,
     "last_http_status": 401
   },
   {
@@ -63,10 +63,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T09:13:35.039110+00:00",
+    "last_checked": "2025-08-13T10:22:09.310122+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 227,
+    "last_latency_ms": 236,
     "last_http_status": 401
   },
   {
@@ -77,10 +77,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T09:13:35.039110+00:00",
+    "last_checked": "2025-08-13T10:22:09.310122+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 176,
+    "last_latency_ms": 249,
     "last_http_status": 401
   },
   {
@@ -91,10 +91,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T09:13:35.039110+00:00",
+    "last_checked": "2025-08-13T10:22:09.310122+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 251,
+    "last_latency_ms": 178,
     "last_http_status": 401
   },
   {
@@ -105,10 +105,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T09:13:35.039110+00:00",
+    "last_checked": "2025-08-13T10:22:09.310122+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 238,
+    "last_latency_ms": 175,
     "last_http_status": 401
   },
   {
@@ -119,8 +119,8 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T09:13:35.039110+00:00",
-    "last_latency_ms": 220,
+    "last_checked": "2025-08-13T10:22:09.310122+00:00",
+    "last_latency_ms": 219,
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
     "last_http_status": 401
@@ -134,9 +134,9 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T09:13:35.039110+00:00",
+    "last_checked": "2025-08-13T10:22:09.310122+00:00",
     "last_http_status": 200,
-    "last_latency_ms": 173,
+    "last_latency_ms": 216,
     "last_change": "2025-08-13T04:49:29.473098+00:00",
     "last_notified": "2025-08-13T04:49:29.473098+00:00"
   },
@@ -148,10 +148,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T09:13:35.039110+00:00",
+    "last_checked": "2025-08-13T10:22:09.310122+00:00",
     "last_http_status": 200,
-    "last_latency_ms": 214,
-    "last_change": "2025-08-13T09:12:56.013153+00:00",
-    "last_notified": "2025-08-13T09:12:56.013153+00:00"
+    "last_latency_ms": 194,
+    "last_change": "2025-08-13T10:05:17.448031+00:00",
+    "last_notified": "2025-08-13T10:05:17.448031+00:00"
   }
 ]
