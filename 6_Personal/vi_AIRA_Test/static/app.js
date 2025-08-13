@@ -144,7 +144,7 @@ function updateSingleCard(id, service) {
       </div>
     </div>
     ${errLine}
-    <div class="timestamp">Δ ${service.last_change ? timeago(service.last_change) : '—'} • chk ${service.last_checked ? timeago(service.last_checked) : '—'}</div>
+    <div class="timestamp">📅 Changed: ${service.last_change ? timeago(service.last_change) : '—'} • ✅ Checked: ${service.last_checked ? timeago(service.last_checked) : '—'}</div>
     <footer>
       <button data-edit="${service.id}" class="secondary">Edit</button>
       <button data-del="${service.id}" class="danger">Delete</button>
@@ -201,7 +201,7 @@ function render() {
         </div>
       </div>
       ${errLine}
-      <div class="timestamp">Δ ${s.last_change ? timeago(s.last_change) : '—'} • chk ${s.last_checked ? timeago(s.last_checked) : '—'}</div>
+      <div class="timestamp">📅 Changed: ${s.last_change ? timeago(s.last_change) : '—'} • ✅ Checked: ${s.last_checked ? timeago(s.last_checked) : '—'}</div>
       <footer>
         <button data-edit="${s.id}" class="secondary">Edit</button>
         <button data-del="${s.id}" class="danger">Delete</button>

@@ -410,9 +410,11 @@ button.secondary:hover {
 }
 
 .timestamp {
-  font-size: 0.7rem;
-  color: #6e7681;
-  margin-bottom: 3px;
+  font-size: 0.8rem;
+  color: #8b949e;
+  margin-bottom: 5px;
+  font-weight: 500;
+  line-height: 1.3;
 }
 
 .card footer {
@@ -723,7 +725,7 @@ menu button { font-size:.75rem; }
 .metric-label { font-size:.55rem; letter-spacing:.5px; }
 .metric .sparkline { position:absolute; left:4px; right:4px; bottom:3px; height:14px; }
 
-.timestamp { font-size:.6rem; opacity:.65; }
+.timestamp { font-size:.8rem; opacity:.8; font-weight:500; color:#8b949e; }
 .card footer { margin-top:4px; }
 .card footer button { font-size:.6rem; padding:.38rem .45rem; }
 
@@ -732,6 +734,7 @@ body.compact #cards { grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
 body.compact .card { padding:10px 10px 8px; }
 body.compact .metric { padding:4px; }
 body.compact .metric-value { font-size:.75rem; }
+body.compact .timestamp { font-size:.75rem; }
 body.compact .card footer button { font-size:.55rem; }
 
 /* Update pulse */
