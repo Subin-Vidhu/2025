@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PACS Monitor</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>PACS Monitor</h1>
+      <div class="header-actions">
+        <button id="refreshDataBtn" class="secondary">↻ Refresh Data</button>
+        <button id="refreshBtn" class="success">🔄 Check All</button>
+        <button id="addBtn">+ Add Service</button>
+      </div>
+    </header>
+
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-value" id="totalServices">0</div>
+        <div class="stat-label">Total Services</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="upServices">0</div>
+        <div class="stat-label">Services Up</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="downServices">0</div>
+        <div class="stat-label">Services Down</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="avgLatency">0ms</div>
+        <div class="stat-label">Avg Latency</div>
+      </div>
+    </div>
+
+    <main id="cards"></main>
+  </div>
+
+  <dialog id="svcDialog">
+    <form id="svcForm">
+      <h3 id="formTitle">Service</h3>
+      <input name="id" type="hidden" />
+      <label>Name <input name="name" required /></label>
+      <label>Host <input name="host" required /></label>
+      <label>Port <input name="port" type="number" /></label>
+      <label>Protocol
+        <select name="protocol">
+          <option>https</option>
+          <option>http</option>
+        </select>
+      </label>
+      <label>Path <input name="path" value="/" /></label>
+      <label class="row">Active <input name="active" type="checkbox" checked /></label>
+      <menu>
+        <button type="submit" class="success">Save</button>
+        <button type="button" id="cancelBtn" class="secondary">Cancel</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
