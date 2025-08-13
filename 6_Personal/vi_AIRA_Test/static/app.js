@@ -1,16 +1,26 @@
 // Authentication variables
-const SECRET_KEY = 'PROTOS25';
 let isAuthenticated = false;
 
-// Check if user is already authenticated
+// Check if user is already authenticated (via cookie)
 window.addEventListener('DOMContentLoaded', function() {
-  const savedAuth = sessionStorage.getItem('pacsAuth');
-  if (savedAuth === SECRET_KEY) {
-    showDashboard();
-  } else {
+  checkAuthenticationStatus();
+});
+
+// Check authentication status by trying to access protected endpoint
+async function checkAuthenticationStatus() {
+  try {
+    const response = await fetch('/api/ping', {
+      credentials: 'include'  // Include cookies
+    });
+    if (response.ok) {
+      showDashboard();
+    } else {
+      showAuthScreen();
+    }
+  } catch (error) {
     showAuthScreen();
   }
-});
+}
 
 // Authentication functions
 function showAuthScreen() {
@@ -29,12 +39,22 @@ function showDashboard() {
 }
 
 function logout() {
-  sessionStorage.removeItem('pacsAuth');
-  showAuthScreen();
-  // Clear any intervals/timeouts
-  if (window.refreshInterval) {
-    clearInterval(window.refreshInterval);
-  }
+  fetch('/api/logout', {
+    method: 'POST',
+    credentials: 'include'
+  }).then(() => {
+    showAuthScreen();
+    // Clear any intervals/timeouts
+    if (window.refreshInterval) {
+      clearInterval(window.refreshInterval);
+    }
+  }).catch(() => {
+    // Even if logout fails, show auth screen
+    showAuthScreen();
+    if (window.refreshInterval) {
+      clearInterval(window.refreshInterval);
+    }
+  });
 }
 
 // Handle authentication form
@@ -43,15 +63,36 @@ document.getElementById('authForm').addEventListener('submit', function(e) {
   const enteredKey = document.getElementById('secretKey').value;
   const errorDiv = document.getElementById('authError');
   
-  if (enteredKey === SECRET_KEY) {
-    sessionStorage.setItem('pacsAuth', SECRET_KEY);
-    showDashboard();
-    errorDiv.style.display = 'none';
-  } else {
+  // Send login request to server
+  fetch('/api/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',  // Include cookies in request
+    body: JSON.stringify({
+      password: enteredKey
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      showDashboard();
+      errorDiv.style.display = 'none';
+    } else {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = data.message || 'Invalid access key. Please try again.';
+      document.getElementById('secretKey').value = '';
+      document.getElementById('secretKey').focus();
+    }
+  })
+  .catch(error => {
+    console.error('Authentication error:', error);
     errorDiv.style.display = 'block';
+    errorDiv.textContent = 'Authentication failed. Please try again.';
     document.getElementById('secretKey').value = '';
     document.getElementById('secretKey').focus();
-  }
+  });
 });
 
 // Main application variables
@@ -59,7 +100,6 @@ const cardsEl = document.getElementById('cards');
 const addBtn = document.getElementById('addBtn');
 const refreshBtn = document.getElementById('refreshBtn');
 const refreshDataBtn = document.getElementById('refreshDataBtn');
-let authToken = window.DASHBOARD_TOKEN || null;
 const dlg = document.getElementById('svcDialog');
 const form = document.getElementById('svcForm');
 const cancelBtn = document.getElementById('cancelBtn');
@@ -73,12 +113,19 @@ const latencyCritical = 800;
 async function load() {
   if (!isAuthenticated) return;
   try {
-    const r = await fetch('/api/services', authToken ? { headers: { 'X-Auth-Token': authToken } } : undefined);
+    const r = await fetch('/api/services', {
+      credentials: 'include'
+    });
+    if (r.status === 401) {
+      showAuthScreen();
+      return;
+    }
     services = await r.json();
     render();
     updateStats();
   } catch (e) {
     console.error('Load failed', e);
+    showAuthScreen();
   }
 }
 
@@ -215,8 +262,13 @@ function render() {
 
 async function loadHistorySpark(id){
   try {
-    const r = await fetch('/api/history/' + id);
-    if(!r.ok) return;
+    const r = await fetch('/api/history/' + id, {
+      credentials: 'include'
+    });
+    if(!r.ok) {
+      if (r.status === 401) showAuthScreen();
+      return;
+    }
     const data = await r.json();
     const canvas = document.querySelector(`canvas[data-spark="${id}"]`);
     if(!canvas) return;
@@ -282,7 +334,10 @@ function openEdit(id){
 
 async function remove(id){
   if (!confirm('Delete service?')) return;
-  await fetch('/api/services/' + id, { method: 'DELETE' });
+  await fetch('/api/services/' + id, { 
+    method: 'DELETE',
+    credentials: 'include' 
+  });
   await load();
 }
 
@@ -298,12 +353,16 @@ async function checkSingle(id){
     card.classList.add('checking');
     
     // Trigger the check
-    await fetch('/api/check/' + id, authToken ? { headers: { 'X-Auth-Token': authToken } } : undefined);
+    await fetch('/api/check/' + id, {
+      credentials: 'include'
+    });
     
     // Wait for check to complete, then fetch only this service's updated data
     setTimeout(async () => {
       try {
-        const r = await fetch(`/api/services/${id}`, authToken ? { headers: { 'X-Auth-Token': authToken } } : undefined);
+        const r = await fetch(`/api/services/${id}`, {
+          credentials: 'include'
+        });
         
         if (r.ok) {
           const updatedService = await r.json();
@@ -354,7 +413,8 @@ function setupEventListeners() {
     };
     await fetch('/api/services', {
       method: 'POST',
-      headers: Object.assign({'Content-Type': 'application/json'}, authToken? {'X-Auth-Token':authToken}: {}),
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'include',
       body: JSON.stringify(payload)
     });
     dlg.close();
@@ -418,7 +478,9 @@ function setupEventListeners() {
 }
 
 window.triggerCheckNow = async function(){
-  await fetch('/api/check', authToken? {headers:{'X-Auth-Token':authToken}}: undefined);
+  await fetch('/api/check', {
+    credentials: 'include'
+  });
   setTimeout(load, 2000);
 };
 

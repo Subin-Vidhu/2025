@@ -7,10 +7,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T10:26:07.996128+00:00",
+    "last_checked": "2025-08-13T10:44:38.502272+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 233,
+    "last_latency_ms": 200,
     "last_http_status": 401
   },
   {
@@ -21,10 +21,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T10:26:07.996128+00:00",
+    "last_checked": "2025-08-13T10:44:38.502272+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 206,
+    "last_latency_ms": 168,
     "last_http_status": 401
   },
   {
@@ -35,10 +35,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T10:26:07.996128+00:00",
+    "last_checked": "2025-08-13T10:44:38.502272+00:00",
     "last_change": "2025-08-13T06:09:58.408187+00:00",
     "last_notified": "2025-08-13T06:09:58.408187+00:00",
-    "last_latency_ms": 213,
+    "last_latency_ms": 167,
     "last_http_status": 401
   },
   {
@@ -49,10 +49,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T10:26:07.996128+00:00",
+    "last_checked": "2025-08-13T10:44:38.502272+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 238,
+    "last_latency_ms": 266,
     "last_http_status": 401
   },
   {
@@ -63,10 +63,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T10:26:07.996128+00:00",
+    "last_checked": "2025-08-13T10:44:38.502272+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 246,
+    "last_latency_ms": 213,
     "last_http_status": 401
   },
   {
@@ -77,10 +77,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T10:26:07.996128+00:00",
+    "last_checked": "2025-08-13T10:44:38.502272+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 307,
+    "last_latency_ms": 178,
     "last_http_status": 401
   },
   {
@@ -91,10 +91,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T10:26:07.996128+00:00",
+    "last_checked": "2025-08-13T10:44:38.502272+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 194,
+    "last_latency_ms": 220,
     "last_http_status": 401
   },
   {
@@ -105,10 +105,10 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T10:26:07.996128+00:00",
+    "last_checked": "2025-08-13T10:44:38.502272+00:00",
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
-    "last_latency_ms": 254,
+    "last_latency_ms": 205,
     "last_http_status": 401
   },
   {
@@ -119,8 +119,8 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T10:26:07.996128+00:00",
-    "last_latency_ms": 215,
+    "last_checked": "2025-08-13T10:44:38.502272+00:00",
+    "last_latency_ms": 189,
     "last_change": "2025-08-13T04:43:45.756935+00:00",
     "last_notified": "2025-08-13T04:43:45.756935+00:00",
     "last_http_status": 401
@@ -134,9 +134,9 @@
     "path": "/",
     "active": true,
     "last_status": "up",
-    "last_checked": "2025-08-13T10:26:07.996128+00:00",
+    "last_checked": "2025-08-13T10:44:38.502272+00:00",
     "last_http_status": 200,
-    "last_latency_ms": 233,
+    "last_latency_ms": 202,
     "last_change": "2025-08-13T04:49:29.473098+00:00",
     "last_notified": "2025-08-13T04:49:29.473098+00:00"
   },
@@ -147,12 +147,11 @@
     "protocol": "https",
     "path": "/",
     "active": true,
-    "last_status": "down",
-    "last_checked": "2025-08-13T10:26:07.996128+00:00",
-    "last_http_status": 502,
-    "last_latency_ms": 353,
-    "last_change": "2025-08-13T10:25:34.854833+00:00",
-    "last_notified": "2025-08-13T10:25:34.854833+00:00",
-    "last_error": "http:502"
+    "last_status": "up",
+    "last_checked": "2025-08-13T10:44:38.502272+00:00",
+    "last_http_status": 200,
+    "last_latency_ms": 175,
+    "last_change": "2025-08-13T10:37:20.463690+00:00",
+    "last_notified": "2025-08-13T10:37:20.463690+00:00"
   }
 ]

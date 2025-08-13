@@ -1,10 +1,11 @@
-import json, threading, time, os, smtplib, ssl, socket, tempfile, shutil
+import json, threading, time, os, smtplib, ssl, socket, tempfile, shutil, hashlib, secrets
 from urllib.error import HTTPError, URLError
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 from urllib.request import urlopen, Request
 from email.message import EmailMessage
 from datetime import datetime, timezone
+from http.cookies import SimpleCookie
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, 'services.json')
@@ -15,6 +16,46 @@ LOCK = threading.Lock()
 LATENCY_HISTORY = {}
 MAX_HISTORY = 20  # short ring for sparkline
 
+# Authentication settings
+SECRET_KEY = 'PROTOS25'  # This is now only on the server side
+ACTIVE_SESSIONS = {}  # Store active session tokens
+
+
+def generate_session_token():
+    """Generate a secure session token."""
+    return secrets.token_urlsafe(32)
+
+def is_authenticated(request_handler):
+    """Check if the request has valid authentication."""
+    # Check for existing token-based auth (backwards compatibility)
+    token = os.getenv('DASHBOARD_TOKEN')
+    if token and request_handler.headers.get('X-Auth-Token') == token:
+        return True
+    
+    # Check for session-based auth
+    cookie_header = request_handler.headers.get('Cookie')
+    if cookie_header:
+        cookies = SimpleCookie()
+        cookies.load(cookie_header)
+        session_token = cookies.get('pacs_session')
+        if session_token and session_token.value in ACTIVE_SESSIONS:
+            # Check if session is still valid (24 hours)
+            session_time = ACTIVE_SESSIONS[session_token.value]
+            if time.time() - session_time < 24 * 3600:  # 24 hours
+                return True
+            else:
+                # Session expired, remove it
+                del ACTIVE_SESSIONS[session_token.value]
+    
+    return False
+
+def authenticate_user(password):
+    """Authenticate user with password and return session token."""
+    if password == SECRET_KEY:
+        session_token = generate_session_token()
+        ACTIVE_SESSIONS[session_token] = time.time()
+        return session_token
+    return None
 
 def load():
     """Load services list with corruption fallback."""
@@ -291,10 +332,8 @@ def monitor_loop():
 
 class Handler(BaseHTTPRequestHandler):
     def _auth_ok(self):
-        token = os.getenv('DASHBOARD_TOKEN')
-        if not token:
-            return True
-        return self.headers.get('X-Auth-Token') == token
+        return is_authenticated(self)
+        
     def _safe_write(self, data: bytes):
         try:
             self.wfile.write(data)
@@ -331,10 +370,22 @@ class Handler(BaseHTTPRequestHandler):
         return  # silence default logging
 
     def do_GET(self):
-        if not self._auth_ok():
-            self.send_response(401)
-            self.end_headers()
+        # Allow access to login page and static files without authentication
+        if self.path == '/' or self.path == '/index.html':
+            self.serve_file(os.path.join(BASE_DIR, 'static', 'index.html'), 'text/html')
             return
+        if self.path.startswith('/static/'):
+            # Normalize path to prevent directory escape
+            rel = self.path[len('/static/'):]
+            safe = os.path.normpath(rel).replace('..', '')
+            self.serve_file(os.path.join(BASE_DIR, 'static', safe), None)
+            return
+        
+        # All other endpoints require authentication
+        if not self._auth_ok():
+            self._json(401, {'error': 'Authentication required'})
+            return
+            
         if self.path.startswith('/api/services/') and not self.path.endswith('/'):
             # Get single service
             service_id = self.path.split('/')[-1]
@@ -368,7 +419,10 @@ class Handler(BaseHTTPRequestHandler):
             self._json(200, {'started': True, 'service_id': service_id})
             return
         if self.path.startswith('/api/ping'):
-            self._json(200, {'ok': True, 'time': utcnow()})
+            if self._auth_ok():
+                self._json(200, {'ok': True, 'time': utcnow()})
+            else:
+                self._json(401, {'error': 'Authentication required'})
             return
         if self.path.startswith('/metrics'):
             # Prometheus metrics
@@ -401,21 +455,56 @@ class Handler(BaseHTTPRequestHandler):
             except Exception as e:
                 log('metrics error:', e)
             return
-        # Static
-        if self.path == '/' or self.path == '/index.html':
-            self.serve_file(os.path.join(BASE_DIR, 'static', 'index.html'), 'text/html')
-            return
-        if self.path.startswith('/static/'):
-            # Normalize path to prevent directory escape
-            rel = self.path[len('/static/'):]
-            safe = os.path.normpath(rel).replace('..', '')
-            self.serve_file(os.path.join(BASE_DIR, 'static', safe), None)
-            return
         self._json(404, {'error': 'not found'})
 
     def do_POST(self):
+        # Login endpoint doesn't require authentication
+        if self.path.startswith('/api/login'):
+            length = int(self.headers.get('Content-Length', 0))
+            try:
+                payload = json.loads(self.rfile.read(length) or '{}')
+                session_token = authenticate_user(payload.get('password', ''))
+                if session_token:
+                    # Set secure cookie
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.send_header('Set-Cookie', f'pacs_session={session_token}; HttpOnly; SameSite=Strict; Max-Age=86400')  # 24 hours
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.send_header('Access-Control-Allow-Credentials', 'true')
+                    self.end_headers()
+                    response = json.dumps({'success': True, 'message': 'Authentication successful'}).encode()
+                    self._safe_write(response)
+                else:
+                    self._json(401, {'success': False, 'message': 'Invalid password'})
+            except Exception as e:
+                log('Login error:', e)
+                self._json(400, {'success': False, 'message': 'Invalid request'})
+            return
+            
+        # Logout endpoint
+        if self.path.startswith('/api/logout'):
+            cookie_header = self.headers.get('Cookie')
+            if cookie_header:
+                cookies = SimpleCookie()
+                cookies.load(cookie_header)
+                session_token = cookies.get('pacs_session')
+                if session_token and session_token.value in ACTIVE_SESSIONS:
+                    del ACTIVE_SESSIONS[session_token.value]
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Set-Cookie', 'pacs_session=; HttpOnly; SameSite=Strict; Max-Age=0')  # Clear cookie
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            response = json.dumps({'success': True, 'message': 'Logged out'}).encode()
+            self._safe_write(response)
+            return
+        
+        # All other POST endpoints require authentication
         if not self._auth_ok():
-            self.send_response(401); self.end_headers(); return
+            self._json(401, {'error': 'Authentication required'})
+            return
+            
         if self.path.startswith('/api/services'):
             length = int(self.headers.get('Content-Length', 0))
             payload = json.loads(self.rfile.read(length) or '{}')
@@ -439,7 +528,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_DELETE(self):
         if not self._auth_ok():
-            self.send_response(401); self.end_headers(); return
+            self._json(401, {'error': 'Authentication required'})
+            return
         if self.path.startswith('/api/services/'):
             sid = self.path.split('/')[-1]
             with LOCK:
