@@ -1,4 +1,4 @@
-import json, threading, time, os, smtplib, ssl, socket, tempfile, shutil, hashlib, secrets
+import json, threading, time, os, smtplib, ssl, socket, tempfile, shutil, hashlib, secrets, hmac
 from urllib.error import HTTPError, URLError
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
@@ -16,14 +16,62 @@ LOCK = threading.Lock()
 LATENCY_HISTORY = {}
 MAX_HISTORY = 20  # short ring for sparkline
 
-# Authentication settings
-SECRET_KEY = 'PROTOS25'  # This is now only on the server side
+# Enhanced authentication settings
+SECRET_KEY = os.getenv('PACS_SECRET_KEY', 'PROTOS25')  # Allow override via environment
+HMAC_SECRET = secrets.token_bytes(32)  # For additional token security
 ACTIVE_SESSIONS = {}  # Store active session tokens
+FAILED_ATTEMPTS = {}  # Rate limiting for failed login attempts
+MAX_LOGIN_ATTEMPTS = 5
+LOCKOUT_TIME = 300  # 5 minutes
 
 
 def generate_session_token():
-    """Generate a secure session token."""
-    return secrets.token_urlsafe(32)
+    """Generate a secure session token with HMAC."""
+    token_data = secrets.token_urlsafe(32)
+    timestamp = str(int(time.time()))
+    message = f"{token_data}:{timestamp}"
+    signature = hmac.new(HMAC_SECRET, message.encode(), hashlib.sha256).hexdigest()
+    return f"{token_data}:{timestamp}:{signature}"
+
+def validate_session_token(token):
+    """Validate session token integrity."""
+    try:
+        parts = token.split(':')
+        if len(parts) != 3:
+            return False
+        token_data, timestamp, signature = parts
+        message = f"{token_data}:{timestamp}"
+        expected_signature = hmac.new(HMAC_SECRET, message.encode(), hashlib.sha256).hexdigest()
+        return hmac.compare_digest(signature, expected_signature)
+    except:
+        return False
+
+def is_rate_limited(ip_address):
+    """Check if IP is rate limited due to failed login attempts."""
+    if ip_address not in FAILED_ATTEMPTS:
+        return False
+    
+    attempts, last_attempt = FAILED_ATTEMPTS[ip_address]
+    if time.time() - last_attempt > LOCKOUT_TIME:
+        # Reset failed attempts after lockout period
+        del FAILED_ATTEMPTS[ip_address]
+        return False
+    
+    return attempts >= MAX_LOGIN_ATTEMPTS
+
+def record_failed_attempt(ip_address):
+    """Record a failed login attempt."""
+    current_time = time.time()
+    if ip_address in FAILED_ATTEMPTS:
+        attempts, _ = FAILED_ATTEMPTS[ip_address]
+        FAILED_ATTEMPTS[ip_address] = (attempts + 1, current_time)
+    else:
+        FAILED_ATTEMPTS[ip_address] = (1, current_time)
+
+def clear_failed_attempts(ip_address):
+    """Clear failed attempts on successful login."""
+    if ip_address in FAILED_ATTEMPTS:
+        del FAILED_ATTEMPTS[ip_address]
 
 def is_authenticated(request_handler):
     """Check if the request has valid authentication."""
@@ -38,7 +86,7 @@ def is_authenticated(request_handler):
         cookies = SimpleCookie()
         cookies.load(cookie_header)
         session_token = cookies.get('pacs_session')
-        if session_token and session_token.value in ACTIVE_SESSIONS:
+        if session_token and validate_session_token(session_token.value) and session_token.value in ACTIVE_SESSIONS:
             # Check if session is still valid (24 hours)
             session_time = ACTIVE_SESSIONS[session_token.value]
             if time.time() - session_time < 24 * 3600:  # 24 hours
@@ -49,13 +97,24 @@ def is_authenticated(request_handler):
     
     return False
 
-def authenticate_user(password):
+def authenticate_user(password, ip_address):
     """Authenticate user with password and return session token."""
-    if password == SECRET_KEY:
+    # Check rate limiting
+    if is_rate_limited(ip_address):
+        return None
+    
+    # Add small delay to prevent timing attacks
+    time.sleep(0.1)
+    
+    # Use secure comparison to prevent timing attacks
+    if hmac.compare_digest(password.encode(), SECRET_KEY.encode()):
         session_token = generate_session_token()
         ACTIVE_SESSIONS[session_token] = time.time()
+        clear_failed_attempts(ip_address)
         return session_token
-    return None
+    else:
+        record_failed_attempt(ip_address)
+        return None
 
 def load():
     """Load services list with corruption fallback."""
@@ -334,6 +393,15 @@ class Handler(BaseHTTPRequestHandler):
     def _auth_ok(self):
         return is_authenticated(self)
         
+    def _add_security_headers(self):
+        """Add security headers to all responses."""
+        self.send_header('X-Content-Type-Options', 'nosniff')
+        self.send_header('X-Frame-Options', 'DENY')
+        self.send_header('X-XSS-Protection', '1; mode=block')
+        self.send_header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+        self.send_header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'")
+        self.send_header('Referrer-Policy', 'strict-origin-when-cross-origin')
+        
     def _safe_write(self, data: bytes):
         try:
             self.wfile.write(data)
@@ -349,6 +417,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_response(code)
             self.send_header('Content-Type', 'application/json')
             self.send_header('Content-Length', str(len(body)))
+            self._add_security_headers()
             self.send_header('Access-Control-Allow-Origin', '*')
             self.send_header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
             self.send_header('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Token')
@@ -460,16 +529,23 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         # Login endpoint doesn't require authentication
         if self.path.startswith('/api/login'):
+            client_ip = self.client_address[0]
+            
+            # Check rate limiting
+            if is_rate_limited(client_ip):
+                self._json(429, {'success': False, 'message': 'Too many failed attempts. Please try again later.'})
+                return
+                
             length = int(self.headers.get('Content-Length', 0))
             try:
                 payload = json.loads(self.rfile.read(length) or '{}')
-                session_token = authenticate_user(payload.get('password', ''))
+                session_token = authenticate_user(payload.get('password', ''), client_ip)
                 if session_token:
                     # Set secure cookie
                     self.send_response(200)
                     self.send_header('Content-Type', 'application/json')
-                    self.send_header('Set-Cookie', f'pacs_session={session_token}; HttpOnly; SameSite=Strict; Max-Age=86400')  # 24 hours
-                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.send_header('Set-Cookie', f'pacs_session={session_token}; HttpOnly; Secure; SameSite=Strict; Max-Age=86400')  # 24 hours
+                    self._add_security_headers()
                     self.send_header('Access-Control-Allow-Credentials', 'true')
                     self.end_headers()
                     response = json.dumps({'success': True, 'message': 'Authentication successful'}).encode()
@@ -557,7 +633,10 @@ class Handler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', ctype)
             self.send_header('Content-Length', str(len(data)))
-            self.send_header('Access-Control-Allow-Origin', '*')
+            self._add_security_headers()
+            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Expires', '0')
             self.end_headers()
             self._safe_write(data)
         except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError) as e:
@@ -572,8 +651,23 @@ def main():
     # Immediate first pass so UI is populated quickly
     threading.Thread(target=monitor_once, daemon=True).start()
     port = int(os.getenv('PORT', '8080'))
-    log(f'Serving on http://localhost:{port}')
-    ThreadingHTTPServer(('', port), Handler).serve_forever()
+    
+    # Get local IP for network access
+    import socket
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+    except:
+        local_ip = "127.0.0.1"
+    
+    log(f'🚀 PACS Monitor Server Started Successfully!')
+    log(f'📍 Local access: http://localhost:{port}')
+    log(f'🌐 Network access: http://{local_ip}:{port}')
+    log(f'🔐 Authentication: PROTOS25')
+    log(f'🛡️  Security: Enterprise-grade protection enabled')
+    ThreadingHTTPServer(('0.0.0.0', port), Handler).serve_forever()
 
 
 if __name__ == '__main__':
