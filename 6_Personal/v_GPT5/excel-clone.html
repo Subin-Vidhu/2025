@@ -67,14 +67,16 @@
     .grid-wrap { position: relative; display: grid; grid-template-columns: 60px 1fr; grid-template-rows: 28px 1fr; min-height: 0; }
     .corner { grid-column: 1; grid-row: 1; background: var(--surface-2); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
     .col-headers { grid-column: 2; grid-row: 1; display: grid; grid-auto-flow: column; align-items: stretch; border-bottom: 1px solid var(--border); overflow: hidden; }
-    .col-h { min-width: 100px; border-right: 1px solid var(--border); background: var(--surface-2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; }
+  .col-h { min-width: 100px; border-right: 1px solid var(--border); background: var(--surface-2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; position: relative; }
     .row-headers { grid-column: 1; grid-row: 2; display: grid; grid-auto-rows: 28px; border-right: 1px solid var(--border); overflow: hidden; }
     .row-h { border-bottom: 1px solid var(--border); background: var(--surface-2); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; }
 
     .grid { grid-column: 2; grid-row: 2; position: relative; overflow: auto; background: var(--cell-bg); }
     .grid-inner { display: grid; grid-template-columns: repeat(var(--cols), 100px); grid-auto-rows: 28px; }
-    .cell { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 4px 6px; outline: none; color: var(--cell-fg); background: var(--cell-bg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .cell.sel { box-shadow: inset 0 0 0 2px var(--sel); background: var(--sel-bg); }
+  .cell { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 4px 6px; outline: none; color: var(--cell-fg); background: var(--cell-bg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; user-select: none; }
+  .cell.sel { box-shadow: inset 0 0 0 2px var(--sel); background: var(--sel-bg); }
+  .cell.rng { background: var(--sel-bg); }
+  .col-resizer { position: absolute; top: 0; right: 0; width: 6px; cursor: col-resize; user-select: none; height: 100%; }
 
     .status-bar { border-top: 1px solid var(--border); background: var(--surface); padding: 6px 12px; color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; }
 
@@ -196,7 +198,8 @@
       fmt: {
         bold: false, italic: false, underline: false,
         align: 'left', size: 12,
-        color: '#000000', bg: '#ffffff',
+        color: '', // empty or #000000 => theme adaptive
+        bg: '', // empty string means use theme variable
         num: 'general'
       }
     });
@@ -209,7 +212,8 @@
       active: 0
     };
 
-    let sel = { r: 0, c: 0 };
+  let sel = { r: 0, c: 0 }; // active cell
+  let selection = { r1: 0, c1: 0, r2: 0, c2: 0 }; // rectangular selection
 
     const undoStack = [];
     const redoStack = [];
@@ -221,9 +225,11 @@
 
     // --- Persistence ---
     const STORAGE_KEY = 'excel_clone_workbook_v1';
-    const saveToLocal = () => {
+  const saveToLocal = () => {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(workbook));
+    const clone = deepClone(workbook);
+    delete clone.theme; // theme stored separately
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(clone));
         setStatus('Saved to browser');
       } catch (e) { setStatus('Save failed: ' + e.message); }
     };
@@ -234,6 +240,9 @@
         const data = JSON.parse(raw);
         if (!data || !Array.isArray(data.sheets)) return false;
         workbook = data;
+    // Preserve current theme preference after load
+    const storedTheme = localStorage.getItem('excel_clone_theme');
+    workbook.theme = (storedTheme === 'dark' || storedTheme === 'light') ? storedTheme : 'light';
         return true;
       } catch (e) { setStatus('Load failed: ' + e.message); return false; }
     };
@@ -377,10 +386,31 @@
         rowHeadersEl.appendChild(d);
       }
       colHeadersEl.innerHTML = '';
+      const sheet = workbook.sheets[workbook.active];
+      if (!sheet.colWidths) sheet.colWidths = Array.from({length: sheet.cols}, () => 100);
       for (let c = 0; c < COLS; c++) {
         const d = document.createElement('div');
         d.className = 'col-h';
+        d.style.width = sheet.colWidths[c] + 'px';
         d.textContent = String.fromCharCode(A_CODE + c);
+        d.addEventListener('click', () => {
+          setSelection({ r1: 0, c1: c, r2: ROWS - 1, c2: c });
+          sel = { r: 0, c };
+          syncFormulaBar();
+        });
+        // Resizer
+        const res = document.createElement('div');
+        res.className = 'col-resizer';
+        let startX, startW;
+        res.addEventListener('mousedown', (ev) => {
+          ev.preventDefault(); ev.stopPropagation();
+          startX = ev.clientX; startW = sheet.colWidths[c];
+          const move = (mv) => { sheet.colWidths[c] = Math.max(40, startW + (mv.clientX - startX)); renderGridPreserveScroll(); };
+          const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
+          document.addEventListener('mousemove', move);
+          document.addEventListener('mouseup', up);
+        });
+        d.appendChild(res);
         colHeadersEl.appendChild(d);
       }
     }
@@ -392,8 +422,10 @@
       cellDiv.classList.remove('align-left', 'align-center', 'align-right');
       cellDiv.classList.add('align-' + (fmt.align || 'left'));
       cellDiv.style.fontSize = (fmt.size || 12) + 'px';
-      cellDiv.style.color = fmt.color || '#000000';
-      cellDiv.style.background = fmt.bg || '#ffffff';
+  // Theme-adaptive font color: if user hasn't chosen a color (empty or #000000), use CSS var
+  const adaptiveColor = (!fmt.color || fmt.color.toLowerCase() === '#000000') ? 'var(--cell-fg)' : fmt.color;
+  cellDiv.style.color = adaptiveColor;
+  cellDiv.style.background = fmt.bg ? fmt.bg : 'var(--cell-bg)';
     }
 
     function renderGrid() {
@@ -401,7 +433,8 @@
       gridEl.innerHTML = '';
       const inner = document.createElement('div');
       inner.className = 'grid-inner';
-      inner.style.setProperty('--cols', sheet.cols);
+      if (!sheet.colWidths) sheet.colWidths = Array.from({length: sheet.cols}, () => 100);
+      inner.style.gridTemplateColumns = sheet.colWidths.map(w => w + 'px').join(' ');
 
       for (let r = 0; r < sheet.rows; r++) {
         for (let c = 0; c < sheet.cols; c++) {
@@ -420,11 +453,18 @@
           } else {
             d.textContent = '';
           }
-          if (r === sel.r && c === sel.c) d.classList.add('sel');
+          // Selection styling applied later for performance
           inner.appendChild(d);
         }
       }
       gridEl.appendChild(inner);
+      highlightSelection();
+    }
+
+    function renderGridPreserveScroll() {
+      const sl = gridEl.scrollLeft; const st = gridEl.scrollTop;
+      renderGrid();
+      gridEl.scrollLeft = sl; gridEl.scrollTop = st;
     }
 
     function renderTabs() {
@@ -443,6 +483,10 @@
       buildHeaders();
       renderTabs();
       renderGrid();
+      syncFormulaBar();
+    }
+
+    function syncFormulaBar() {
       const addr = addrFromRC(sel.r, sel.c);
       addrEl.textContent = addr;
       const sheet = workbook.sheets[workbook.active];
@@ -463,46 +507,84 @@
       }
     }
 
-    function onCellFocus(r, c) {
-      const addr = addrFromRC(r, c);
-      const sheet = workbook.sheets[workbook.active];
-      const cell = sheet.cells[addr];
-      formulaEl.value = cell?.formula || cell?.value || '';
-      addrEl.textContent = addr;
-      sel = { r, c };
+    function onCellFocus(r, c, extend=false) {
+      if (extend) {
+        selection.r2 = r; selection.c2 = c; highlightSelection();
+      } else {
+        sel = { r, c }; setSelection({ r1: r, c1: c, r2: r, c2: c });
+      }
+      syncFormulaBar();
+    }
+
+    function setSelection(rng) {
+      selection = { ...rng };
+      highlightSelection();
+    }
+
+    function normalizedSelection() {
+      return {
+        r1: Math.min(selection.r1, selection.r2),
+        c1: Math.min(selection.c1, selection.c2),
+        r2: Math.max(selection.r1, selection.r2),
+        c2: Math.max(selection.c1, selection.c2)
+      };
+    }
+
+    function highlightSelection() {
+      const { r1, c1, r2, c2 } = normalizedSelection();
+      gridEl.querySelectorAll('.cell.sel,.cell.rng').forEach(n => { n.classList.remove('sel','rng'); });
+      for (let r = r1; r <= r2; r++) {
+        for (let c = c1; c <= c2; c++) {
+          const node = gridEl.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+          if (!node) continue;
+          if (r === sel.r && c === sel.c) node.classList.add('sel'); else node.classList.add('rng');
+        }
+      }
     }
 
     function applyFormatToSelection(mutator) {
       pushHistory();
       const sheet = workbook.sheets[workbook.active];
-      const addr = addrFromRC(sel.r, sel.c);
-      const cell = ensureCell(sheet, addr);
-      cell.fmt = cell.fmt || defaultCell().fmt;
-      mutator(cell.fmt);
-      syncUI();
+      const { r1, c1, r2, c2 } = normalizedSelection();
+      for (let r = r1; r <= r2; r++) {
+        for (let c = c1; c <= c2; c++) {
+          const addr = addrFromRC(r, c);
+          const cell = ensureCell(sheet, addr);
+          cell.fmt = cell.fmt || defaultCell().fmt;
+          mutator(cell.fmt);
+        }
+      }
+      renderGridPreserveScroll();
     }
 
     function changeNumFormat(fmt) {
       applyFormatToSelection((f) => f.num = fmt);
     }
 
-    function handleGridClick(e) {
+    let dragging = false;
+    function handleGridMouseDown(e) {
       const div = e.target.closest('.cell');
       if (!div) return;
-      gridEl.querySelectorAll('.cell.sel').forEach(n => n.classList.remove('sel'));
-      div.classList.add('sel');
-      onCellFocus(parseInt(div.dataset.r, 10), parseInt(div.dataset.c, 10));
+      const r = parseInt(div.dataset.r, 10); const c = parseInt(div.dataset.c, 10);
+      onCellFocus(r, c, e.shiftKey);
+      dragging = true;
     }
+    function handleGridMouseMove(e) {
+      if (!dragging) return;
+      const div = e.target.closest('.cell'); if (!div) return;
+      const r = parseInt(div.dataset.r, 10); const c = parseInt(div.dataset.c, 10);
+      selection.r2 = r; selection.c2 = c; highlightSelection();
+    }
+    function handleGridMouseUp() { dragging = false; }
 
     function handleGridInput(e) {
       const div = e.target.closest('.cell');
       if (!div) return;
-      const r = parseInt(div.dataset.r, 10);
-      const c = parseInt(div.dataset.c, 10);
+      const r = parseInt(div.dataset.r, 10); const c = parseInt(div.dataset.c, 10);
       const addr = addrFromRC(r, c);
       pushHistory();
       setCellFromInput(addr, div.textContent);
-      syncUI();
+      if (r === sel.r && c === sel.c) formulaEl.value = div.textContent; // avoid full re-render
     }
 
     function commitFormulaBar() {
@@ -515,9 +597,10 @@
     function moveSel(dr, dc) {
       const sheet = workbook.sheets[workbook.active];
       sel = { r: clamp(sel.r + dr, 0, sheet.rows - 1), c: clamp(sel.c + dc, 0, sheet.cols - 1) };
-      syncUI();
+      setSelection({ r1: sel.r, c1: sel.c, r2: sel.r, c2: sel.c });
+      syncFormulaBar();
       const cell = gridEl.querySelector(`.cell[data-r="${sel.r}"][data-c="${sel.c}"]`);
-      if (cell) cell.focus();
+      cell?.focus();
     }
 
     // --- CSV helpers ---
@@ -613,9 +696,9 @@
     // --- Toolbar bindings ---
     function initToolbar() {
       document.getElementById('themeToggle').onclick = () => {
-        workbook.theme = (workbook.theme === 'dark') ? 'light' : 'dark';
-        applyTheme();
-        localStorage.setItem('excel_clone_theme', workbook.theme);
+  workbook.theme = (workbook.theme === 'dark') ? 'light' : 'dark';
+  localStorage.setItem('excel_clone_theme', workbook.theme);
+  applyTheme();
       };
       document.getElementById('newSheetBtn').onclick = addSheet;
       document.getElementById('renameSheetBtn').onclick = renameSheet;
@@ -653,7 +736,10 @@
             pushHistory();
             const data = JSON.parse(reader.result);
             if (!data || !Array.isArray(data.sheets)) throw new Error('Invalid file');
+            const currentTheme = workbook.theme; // keep existing theme
             workbook = data;
+            const storedTheme = localStorage.getItem('excel_clone_theme');
+            workbook.theme = (storedTheme === 'dark' || storedTheme === 'light') ? storedTheme : currentTheme;
             syncUI();
           } catch (err) { alert('Import failed: ' + err.message); }
         };
@@ -721,9 +807,19 @@
     }
 
     function initGridEvents() {
-      gridEl.addEventListener('click', handleGridClick);
+      gridEl.addEventListener('mousedown', handleGridMouseDown);
+      gridEl.addEventListener('mousemove', handleGridMouseMove);
+      window.addEventListener('mouseup', handleGridMouseUp);
       gridEl.addEventListener('input', handleGridInput);
       gridEl.addEventListener('keydown', (e) => {
+        if (e.shiftKey && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+          e.preventDefault();
+          if (e.key === 'ArrowUp') selection.r2 = clamp(selection.r2 - 1, 0, ROWS - 1);
+          if (e.key === 'ArrowDown') selection.r2 = clamp(selection.r2 + 1, 0, ROWS - 1);
+          if (e.key === 'ArrowLeft') selection.c2 = clamp(selection.c2 - 1, 0, COLS - 1);
+          if (e.key === 'ArrowRight') selection.c2 = clamp(selection.c2 + 1, 0, COLS - 1);
+          highlightSelection(); return;
+        }
         if (e.key === 'Enter') { e.preventDefault(); moveSel(1, 0); return; }
         if (e.key === 'Tab') { e.preventDefault(); moveSel(0, 1); return; }
         if (e.key === 'ArrowUp') { e.preventDefault(); moveSel(-1, 0); return; }
@@ -743,6 +839,53 @@
           document.getElementById('redoBtn').click(); return; }
       });
     }
+
+    // Clipboard copy/paste (tab/line separated) & cut
+    document.addEventListener('copy', (e) => {
+      if (!gridEl.contains(document.activeElement)) return;
+      const { r1, c1, r2, c2 } = normalizedSelection();
+      const sheet = workbook.sheets[workbook.active];
+      const lines = [];
+      for (let r = r1; r <= r2; r++) {
+        const row = [];
+        for (let c = c1; c <= c2; c++) {
+          const cell = sheet.cells[addrFromRC(r,c)];
+          row.push(cell ? (cell.formula || cell.value || '') : '');
+        }
+        lines.push(row.join('\t'));
+      }
+      e.clipboardData.setData('text/plain', lines.join('\n'));
+      e.preventDefault();
+    });
+    document.addEventListener('cut', (e) => {
+      if (!gridEl.contains(document.activeElement)) return;
+      document.execCommand('copy');
+      pushHistory();
+      const { r1, c1, r2, c2 } = normalizedSelection();
+      const sheet = workbook.sheets[workbook.active];
+      for (let r = r1; r <= r2; r++) {
+        for (let c = c1; c <= c2; c++) delete sheet.cells[addrFromRC(r,c)];
+      }
+      renderGridPreserveScroll();
+      e.preventDefault();
+    });
+    document.addEventListener('paste', (e) => {
+      if (!gridEl.contains(document.activeElement)) return;
+      const text = e.clipboardData.getData('text/plain');
+      if (!text) return;
+      pushHistory();
+      const rows = text.replace(/\r\n?/g,'\n').split('\n').map(l => l.split('\t'));
+      const sheet = workbook.sheets[workbook.active];
+      for (let r = 0; r < rows.length; r++) {
+        for (let c = 0; c < rows[r].length; c++) {
+          const rr = sel.r + r, cc = sel.c + c; if (rr>=ROWS||cc>=COLS) continue;
+          const addr = addrFromRC(rr, cc);
+          setCellFromInput(addr, rows[r][c]);
+        }
+      }
+      renderGridPreserveScroll();
+      e.preventDefault();
+    });
 
     function restoreThemePref() {
       const t = localStorage.getItem('excel_clone_theme');
