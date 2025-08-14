@@ -52,3 +52,9 @@
 {"ts": "2025-08-13T10:05:17.448031+00:00", "id": "PROTOS", "status": "up", "latency_ms": 249, "http": 200, "error": null}
 {"ts": "2025-08-13T10:25:34.854833+00:00", "id": "PROTOS", "status": "down", "latency_ms": 392, "http": 502, "error": "http:502"}
 {"ts": "2025-08-13T10:37:20.463690+00:00", "id": "PROTOS", "status": "up", "latency_ms": 266, "http": 200, "error": null}
+{"ts": "2025-08-13T12:12:57.480136+00:00", "id": "protosruby", "status": "down", "latency_ms": 10041, "http": 401, "error": "tcp:TimeoutError"}
+{"ts": "2025-08-13T12:13:18.983359+00:00", "id": "protosruby", "status": "up", "latency_ms": 228, "http": 401, "error": null}
+{"ts": "2025-08-13T19:15:57.433987+00:00", "id": "fdapacstest", "status": "down", "latency_ms": 10007, "http": 401, "error": "tcp:TimeoutError"}
+{"ts": "2025-08-13T19:16:58.403171+00:00", "id": "fdapacstest", "status": "up", "latency_ms": 174, "http": 401, "error": null}
+{"ts": "2025-08-13T22:43:54.485992+00:00", "id": "skpacs", "status": "down", "latency_ms": 10009, "http": 401, "error": "tcp:TimeoutError"}
+{"ts": "2025-08-13T22:44:56.865388+00:00", "id": "skpacs", "status": "up", "latency_ms": 251, "http": 401, "error": null}
