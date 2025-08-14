@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PACS Server Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #fc466b, #3f5efb);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .status-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .status-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .status-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .servers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .server-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .server-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .server-card.online::before {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+        }
+
+        .server-card.offline::before {
+            background: linear-gradient(135deg, #fc466b, #3f5efb);
+        }
+
+        .server-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .server-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .server-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.online {
+            background: #38ef7d;
+        }
+
+        .status-indicator.offline {
+            background: #fc466b;
+        }
+
+        .status-indicator.checking {
+            background: #ffa726;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .server-details {
+            margin-bottom: 20px;
+        }
+
+        .server-url {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+
+        .server-port {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .server-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .settings-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #fc466b, #3f5efb);
+        }
+
+        .notification.info {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .last-check {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+            
+            .servers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🏥 PACS Server Monitor</h1>
+            <p>Real-time monitoring of your medical imaging servers</p>
+        </header>
+
+        <div class="controls">
+            <div class="controls-row">
+                <div>
+                    <button class="btn btn-primary" onclick="checkAllServers()">
+                        🔍 Check All Servers
+                    </button>
+                    <button class="btn btn-success" onclick="openModal('add')">
+                        ➕ Add Server
+                    </button>
+                    <button class="btn btn-secondary" onclick="openModal('settings')">
+                        ⚙️ Settings
+                    </button>
+                </div>
+                <div class="auto-refresh">
+                    <span>Auto Refresh:</span>
+                    <label class="switch">
+                        <input type="checkbox" id="autoRefresh" onchange="toggleAutoRefresh()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-overview">
+            <div class="status-card">
+                <div class="status-number" style="color: #38ef7d;" id="onlineCount">0</div>
+                <div class="status-label">Online</div>
+            </div>
+            <div class="status-card">
+                <div class="status-number" style="color: #fc466b;" id="offlineCount">0</div>
+                <div class="status-label">Offline</div>
+            </div>
+            <div class="status-card">
+                <div class="status-number" style="color: #667eea;" id="totalCount">0</div>
+                <div class="status-label">Total Servers</div>
+            </div>
+            <div class="status-card">
+                <div class="status-number" style="color: #ffa726;" id="uptime">--</div>
+                <div class="status-label">Avg Uptime</div>
+            </div>
+        </div>
+
+        <div class="servers-grid" id="serversGrid">
+            <!-- Servers will be dynamically populated here -->
+        </div>
+
+        <div class="last-check" id="lastCheck">
+            Last checked: Never
+        </div>
+    </div>
+
+    <!-- Add/Edit Server Modal -->
+    <div class="modal" id="serverModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add New Server</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="serverForm" onsubmit="saveServer(event)">
+                <div class="form-group">
+                    <label class="form-label">Server Name</label>
+                    <input type="text" class="form-input" id="serverName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Domain/URL</label>
+                    <input type="text" class="form-input" id="serverUrl" required placeholder="e.g., fdapacslive.protosonline.in">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Port</label>
+                    <input type="number" class="form-input" id="serverPort" required placeholder="e.g., 8049">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes (Optional)</label>
+                    <input type="text" class="form-input" id="serverNotes" placeholder="e.g., no studies">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Server</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Notification Settings</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="settings-grid">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="emailAddress" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Telegram Bot Token</label>
+                    <input type="text" class="form-input" id="telegramToken" placeholder="Bot token from @BotFather">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Telegram Chat ID</label>
+                    <input type="text" class="form-input" id="telegramChatId" placeholder="Your chat ID">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Check Interval (seconds)</label>
+                    <input type="number" class="form-input" id="checkInterval" value="300" min="30">
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Default servers data
+        let servers = [
+            { id: 1, name: 'fdapacslive', url: 'fdapacslive.protosonline.in', port: 8049, notes: '', status: 'unknown' },
+            { id: 2, name: 'fdapacstest', url: 'fdapacstest.protosonline.in', port: 8048, notes: '', status: 'unknown' },
+            { id: 3, name: 'orthanc1', url: 'pacsingest.protosonline.in', port: 8043, notes: '', status: 'unknown' },
+            { id: 4, name: 'protosradium', url: 'protospacs.protosonline.in', port: 7777, notes: '', status: 'unknown' },
+            { id: 5, name: 'protosuroul', url: 'protosurokulpacs.protosonline.in', port: 7778, notes: '', status: 'unknown' },
+            { id: 6, name: 'protosruby', url: 'protosrubypacs.protosonline.in', port: 7779, notes: '', status: 'unknown' },
+            { id: 7, name: 'radiumpacs', url: 'radiumpacs.protosonline.in', port: 8047, notes: '', status: 'unknown' },
+            { id: 8, name: 'skpacs', url: 'skpacs.protosonline.in', port: 8045, notes: '', status: 'unknown' },
+            { id: 9, name: 'testpacs', url: 'testpacs.protosonline.in', port: 8046, notes: '', status: 'unknown' },
+            { id: 10, name: 'urokul', url: 'no domain', port: 8044, notes: 'no studies', status: 'unknown' }
+        ];
+
+        let settings = {
+            email: '',
+            telegramToken: '',
+            telegramChatId: '',
+            checkInterval: 300
+        };
+
+        let autoRefreshInterval = null;
+        let currentEditingId = null;
+
+        // Load data from localStorage
+        function loadData() {
+            const savedServers = localStorage.getItem('pacsServers');
+            const savedSettings = localStorage.getItem('pacsSettings');
+            
+            if (savedServers) {
+                servers = JSON.parse(savedServers);
+            }
+            
+            if (savedSettings) {
+                settings = JSON.parse(savedSettings);
+                document.getElementById('emailAddress').value = settings.email || '';
+                document.getElementById('telegramToken').value = settings.telegramToken || '';
+                document.getElementById('telegramChatId').value = settings.telegramChatId || '';
+                document.getElementById('checkInterval').value = settings.checkInterval || 300;
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('pacsServers', JSON.stringify(servers));
+            localStorage.setItem('pacsSettings', JSON.stringify(settings));
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
+        }
+
+        // Check server status (simulated)
+        async function checkServer(server) {
+            // Simulate network request with random delay
+            await new Promise(resolve => setTimeout(resolve, Math.random() * 2000 + 500));
+            
+            // Simulate success/failure (80% success rate)
+            const isOnline = Math.random() > 0.2;
+            server.status = isOnline ? 'online' : 'offline';
+            server.lastCheck = new Date().toISOString();
+            
+            return server;
+        }
+
+        // Check all servers
+        async function checkAllServers() {
+            showNotification('Checking all servers...', 'info');
+            
+            // Set all servers to checking status
+            servers.forEach(server => server.status = 'checking');
+            renderServers();
+            
+            // Check each server
+            const promises = servers.map(server => checkServer(server));
+            await Promise.all(promises);
+            
+            // Check for newly offline servers and send notifications
+            const offlineServers = servers.filter(s => s.status === 'offline');
+            if (offlineServers.length > 0) {
+                const message = `🚨 ${offlineServers.length} server(s) are offline: ${offlineServers.map(s => s.name).join(', ')}`;
+                showNotification(message, 'error');
+                sendNotifications(message);
+            }
+            
+            renderServers();
+            updateStatusCounts();
+            updateLastCheck();
+            saveData();
+            
+            showNotification('Server check completed', 'success');
+        }
+
+        // Check single server
+        async function checkSingleServer(serverId) {
+            const server = servers.find(s => s.id === serverId);
+            if (!server) return;
+            
+            server.status = 'checking';
+            renderServers();
+            
+            await checkServer(server);
+            renderServers();
+            updateStatusCounts();
+            saveData();
+        }
+
+        // Send notifications
+        async function sendNotifications(message) {
+            // Send email (simulated)
+            if (settings.email) {
+                console.log(`Would send email to ${settings.email}: ${message}`);
+                // In a real implementation, you would send this to your backend API
+            }
+            
+            // Send Telegram message
+            if (settings.telegramToken && settings.telegramChatId) {
+                try {
+                    const response = await fetch(`https://api.telegram.org/bot${settings.telegramToken}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: settings.telegramChatId,
+                            text: message,
+                            parse_mode: 'HTML'
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        console.log('Telegram notification sent successfully');
+                    }
+                } catch (error) {
+                    console.error('Failed to send Telegram notification:', error);
+                }
+            }
+        }
+
+        // Render servers
+        function renderServers() {
+            const grid = document.getElementById('serversGrid');
+            grid.innerHTML = servers.map(server => `
+                <div class="server-card ${server.status}">
+                    <div class="server-header">
+                        <div class="server-name">${server.name}</div>
+                        <div class="status-indicator ${server.status}"></div>
+                    </div>
+                    <div class="server-details">
+                        <div class="server-url">${server.url}</div>
+                        <div class="server-port">Port: ${server.port}</div>
+                        ${server.notes ? `<div class="server-port">Notes: ${server.notes}</div>` : ''}
+                        ${server.lastCheck ? `<div class="server-port">Last checked: ${new Date(server.lastCheck).toLocaleString()}</div>` : ''}
+                    </div>
+                    <div class="server-actions">
+                        <button class="btn btn-sm btn-primary" onclick="checkSingleServer(${server.id})">
+                            🔍 Check
+                        </button>
+                        <button class="btn btn-sm btn-secondary" onclick="editServer(${server.id})">
+                            ✏️ Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteServer(${server.id})">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update status counts
+        function updateStatusCounts() {
+            const online = servers.filter(s => s.status === 'online').length;
+            const offline = servers.filter(s => s.status === 'offline').length;
+            const total = servers.length;
+            const uptime = total > 0 ? Math.round((online / total) * 100) : 0;
+            
+            document.getElementById('onlineCount').textContent = online;
+            document.getElementById('offlineCount').textContent = offline;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('uptime').textContent = `${uptime}%`;
+        }
+
+        // Update last check time
+        function updateLastCheck() {
+            document.getElementById('lastCheck').textContent = `Last checked: ${new Date().toLocaleString()}`;
+        }
+
+        // Modal functions
+        function openModal(type) {
+            if (type === 'add') {
+                document.getElementById('modalTitle').textContent = 'Add New Server';
+                document.getElementById('serverForm').reset();
+                currentEditingId = null;
+                document.getElementById('serverModal').style.display = 'block';
+            } else if (type === 'settings') {
+                document.getElementById('settingsModal').style.display = 'block';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('serverModal').style.display = 'none';
+            document.getElementById('settingsModal').style.display = 'none';
+            currentEditingId = null;
+        }
+
+        // Edit server
+        function editServer(serverId) {
+            const server = servers.find(s => s.id === serverId);
+            if (!server) return;
+            
+            document.getElementById('modalTitle').textContent = 'Edit Server';
+            document.getElementById('serverName').value = server.name;
+            document.getElementById('serverUrl').value = server.url;
+            document.getElementById('serverPort').value = server.port;
+            document.getElementById('serverNotes').value = server.notes;
+            
+            currentEditingId = serverId;
+            document.getElementById('serverModal').style.display = 'block';
+        }
+
+        // Save server
+        function saveServer(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('serverName').value;
+            const url = document.getElementById('serverUrl').value;
+            const port = parseInt(document.getElementById('serverPort').value);
+            const notes = document.getElementById('serverNotes').value;
+            
+            if (currentEditingId) {
+                // Edit existing server
+                const server = servers.find(s => s.id === currentEditingId);
+                if (server) {
+                    server.name = name;
+                    server.url = url;
+                    server.port = port;
+                    server.notes = notes;
+                }
+                showNotification('Server updated successfully', 'success');
+            } else {
+                // Add new server
+                const newId = Math.max(...servers.map(s => s.id)) + 1;
+                servers.push({
+                    id: newId,
+                    name,
+                    url,
+                    port,
+                    notes,
+                    status: 'unknown'
+                });
+                showNotification('Server added successfully', 'success');
+            }
+            
+            renderServers();
+            updateStatusCounts();
+            saveData();
+            closeModal();
+        }
+
+        // Delete server
+        function deleteServer(serverId) {
+            if (confirm('Are you sure you want to delete this server?')) {
+                servers = servers.filter(s => s.id !== serverId);
+                renderServers();
+                updateStatusCounts();
+                saveData();
+                showNotification('Server deleted successfully', 'success');
+            }
+        }
+
+        // Save settings
+        function saveSettings() {
+            settings.email = document.getElementById('emailAddress').value;
+            settings.telegramToken = document.getElementById('telegramToken

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PACS Monitor</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body>
+  <!-- Authentication Screen -->
+  <div id="authScreen" class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>🏥 PACS Monitor</h1>
+        <p>Medical Imaging Server Monitoring Dashboard</p>
+      </div>
+      <form id="authForm" class="auth-form">
+        <div class="form-group">
+          <label for="secretKey">Access Key</label>
+          <input type="password" id="secretKey" placeholder="Enter secret key" required autocomplete="off">
+        </div>
+        <button type="submit" class="auth-btn">Access Dashboard</button>
+        <div id="authError" class="auth-error" style="display: none;">
+          Invalid access key. Please try again.
+        </div>
+      </form>
+      <div class="auth-footer">
+        <p>🔒 Secure access to medical server monitoring</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard (hidden by default) -->
+  <div id="mainDashboard" class="container" style="display: none;">
+    <header>
+      <h1>PACS Monitor</h1>
+      <div class="header-actions">
+        <button id="refreshDataBtn" class="secondary">↻ Refresh Data</button>
+        <button id="refreshBtn" class="success">🔄 Check All</button>
+        <button id="addBtn">+ Add Service</button>
+        <button id="logoutBtn" class="danger" onclick="logout()">🚪 Logout</button>
+      </div>
+    </header>
+
+    <div id="utilityBar">
+      <div class="filters">
+        <input id="searchInput" type="search" placeholder="Search (Ctrl+K)" autocomplete="off" />
+        <div class="filter-buttons" role="tablist">
+          <button data-filter="all" class="filt active" title="Show all (A)">All</button>
+          <button data-filter="up" class="filt" title="Up only (U)">Up</button>
+          <button data-filter="down" class="filt" title="Down only (D)">Down</button>
+          <button data-filter="unknown" class="filt" title="Unknown (?)">Unknown</button>
+          <button data-filter="slow" class="filt" title="> Latency threshold (L)">Slow</button>
+          <button data-filter="changed" class="filt" title="Changed recently (C)">Changed</button>
+        </div>
+      </div>
+      <div class="view-prefs">
+        <label class="toggle"><input type="checkbox" id="compactToggle" /> <span>Compact</span></label>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-value" id="totalServices">0</div>
+        <div class="stat-label">Total Services</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="upServices">0</div>
+        <div class="stat-label">Services Up</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="downServices">0</div>
+        <div class="stat-label">Services Down</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="avgLatency">0ms</div>
+        <div class="stat-label">Avg Latency</div>
+      </div>
+    </div>
+
+    <main id="cards"></main>
+  </div>
+
+  <dialog id="svcDialog">
+    <form id="svcForm">
+      <h3 id="formTitle">Service</h3>
+      <input name="id" type="hidden" />
+      <label>Name <input name="name" required /></label>
+      <label>Host <input name="host" required /></label>
+      <label>Port <input name="port" type="number" /></label>
+  <label>Environment <input name="env" placeholder="prod / stage" /></label>
+      <label>Protocol
+        <select name="protocol">
+          <option>https</option>
+          <option>http</option>
+        </select>
+      </label>
+      <label>Path <input name="path" value="/" /></label>
+      <label class="row">Active <input name="active" type="checkbox" checked /></label>
+      <menu>
+        <button type="submit" class="success">Save</button>
+        <button type="button" id="cancelBtn" class="secondary">Cancel</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <script src="/static/app.min.js"></script>
+</body>
+</html>
