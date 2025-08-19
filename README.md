@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: Best1 -  Building a new life, Calorie deficit, and Fitness Journey
+- New Life: Best2 -  Building a new life, Calorie deficit, and Fitness Journey
 
 ---
 Order of Projects
