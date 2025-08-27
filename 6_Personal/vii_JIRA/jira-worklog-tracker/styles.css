@@ -1,0 +1,253 @@
+/* Jira Worklog Tracker Extension Styles */
+
+.worklog-tracker-button {
+  background: #0052cc !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  margin: 5px !important;
+  font-size: 14px !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.worklog-tracker-button:hover {
+  background: #0065ff !important;
+}
+
+.worklog-tracker-button:active {
+  background: #003d99 !important;
+}
+
+#worklog-tracker-toolbar {
+  padding: 10px !important;
+  background: #f4f5f7 !important;
+  border: 1px solid #ddd !important;
+  margin-bottom: 10px !important;
+  border-radius: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+#worklog-tracker-toolbar::before {
+  content: "🛠️" !important;
+  font-size: 16px !important;
+}
+
+/* Loading spinner animation */
+.loading-spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Dialog styles */
+#worklog-dialog {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  background: white !important;
+  border: 2px solid #0052cc !important;
+  border-radius: 8px !important;
+  padding: 20px !important;
+  width: 500px !important;
+  max-width: 90vw !important;
+  max-height: 80vh !important;
+  overflow-y: auto !important;
+  z-index: 10000 !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+#worklog-dialog h3 {
+  margin: 0 0 20px 0 !important;
+  color: #0052cc !important;
+  font-size: 18px !important;
+}
+
+#worklog-dialog input {
+  width: calc(100% - 16px) !important;
+  padding: 8px !important;
+  border: 1px solid #ccc !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+}
+
+#worklog-dialog input:focus {
+  outline: none !important;
+  border-color: #0052cc !important;
+  box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2) !important;
+}
+
+#worklog-dialog button {
+  padding: 10px 16px !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  transition: background-color 0.2s ease !important;
+}
+
+#worklog-dialog button:hover {
+  opacity: 0.9 !important;
+}
+
+#worklog-dialog label {
+  display: block !important;
+  margin-bottom: 5px !important;
+  font-weight: bold !important;
+  color: #333 !important;
+}
+
+#worklog-dialog small {
+  color: #666 !important;
+  font-size: 12px !important;
+}
+
+/* Results styles */
+#worklog-results {
+  margin-top: 20px !important;
+}
+
+#worklog-results h4 {
+  color: #0052cc !important;
+  margin: 15px 0 10px 0 !important;
+}
+
+#worklog-results h5 {
+  color: #0052cc !important;
+  margin: 0 0 8px 0 !important;
+}
+
+#worklog-results details {
+  margin-top: 8px !important;
+}
+
+#worklog-results summary {
+  cursor: pointer !important;
+  color: #0052cc !important;
+  font-weight: bold !important;
+}
+
+#worklog-results summary:hover {
+  text-decoration: underline !important;
+}
+
+#worklog-results a {
+  color: #0052cc !important;
+  text-decoration: none !important;
+}
+
+#worklog-results a:hover {
+  text-decoration: underline !important;
+}
+
+#worklog-results ul {
+  margin: 5px 0 !important;
+  padding-left: 20px !important;
+}
+
+#worklog-results li {
+  margin-bottom: 3px !important;
+}
+
+/* Backdrop for dialog */
+.worklog-backdrop {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0,0,0,0.5) !important;
+  z-index: 9999 !important;
+}
+
+/* Status containers */
+.worklog-status-success {
+  padding: 15px !important;
+  background: #d4edda !important;
+  border: 1px solid #c3e6cb !important;
+  border-radius: 4px !important;
+  color: #155724 !important;
+}
+
+.worklog-status-error {
+  padding: 15px !important;
+  background: #f8d7da !important;
+  border: 1px solid #f5c6cb !important;
+  border-radius: 4px !important;
+  color: #721c24 !important;
+}
+
+.worklog-status-warning {
+  padding: 15px !important;
+  background: #fff3cd !important;
+  border: 1px solid #ffeaa7 !important;
+  border-radius: 4px !important;
+  color: #856404 !important;
+}
+
+.worklog-status-info {
+  padding: 15px !important;
+  background: #d1ecf1 !important;
+  border: 1px solid #bee5eb !important;
+  border-radius: 4px !important;
+  color: #0c5460 !important;
+}
+
+/* Issue breakdown styles */
+.worklog-issue-breakdown {
+  margin-bottom: 15px !important;
+  padding: 12px !important;
+  border: 1px solid #ddd !important;
+  border-radius: 6px !important;
+  background: #f9f9f9 !important;
+}
+
+.worklog-summary-box {
+  margin-top: 15px !important;
+  padding: 12px !important;
+  background: #d1ecf1 !important;
+  border: 1px solid #bee5eb !important;
+  border-radius: 6px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  #worklog-dialog {
+    width: 95vw !important;
+    padding: 15px !important;
+  }
+  
+  #worklog-tracker-toolbar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  
+  .worklog-tracker-button {
+    width: 100% !important;
+    margin: 5px 0 !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  #worklog-dialog,
+  .worklog-backdrop,
+  .worklog-tracker-button,
+  #worklog-tracker-toolbar {
+    display: none !important;
+  }
+}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jira Worklog Tracker</title>
+  <style>
+    body {
+      width: 300px;
+      padding: 15px;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #0052cc;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .status.success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .status.error {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .status.info {
+      background: #d1ecf1;
+      border: 1px solid #bee5eb;
+      color: #0c5460;
+    }
+
+    .instructions {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 15px;
+    }
+
+    .instructions h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #495057;
+    }
+
+    .instructions ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .instructions li {
+      margin-bottom: 5px;
+    }
+
+    .button {
+      width: 100%;
+      padding: 10px;
+      background: #0052cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .button:hover {
+      background: #0065ff;
+    }
+
+    .button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+      margin-top: 15px;
+    }
+
+    .version {
+      font-size: 10px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📊 Jira Worklog Tracker</h1>
+    <div class="version">v1.0.0</div>
+  </div>
+
+  <div id="status-message">
+    <div class="status info">
+      <div id="page-status">Checking Jira page...</div>
+    </div>
+  </div>
+
+  <div class="instructions">
+    <h3>📋 How to use:</h3>
+    <ol>
+      <li>Navigate to a Jira issue search page</li>
+      <li>Run a JQL search to show issues</li>
+      <li>Click the "📊 Daily Worklog Tracker" button</li>
+      <li>Enter date and optional user name</li>
+      <li>View detailed worklog breakdown</li>
+    </ol>
+  </div>
+
+  <button id="open-tracker" class="button" disabled>
+    📊 Open Worklog Tracker
+  </button>
+
+  <button id="refresh-page" class="button">
+    🔄 Refresh Extension
+  </button>
+
+  <div class="footer">
+    <p>Works with Jira Cloud & Server</p>
+    <p>No data is stored or transmitted</p>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
