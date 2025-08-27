@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Icon Generator for JIRA Extension</title>
+</head>
+<body>
+    <h2>Generate Icons for Your Extension</h2>
+    <canvas id="canvas16" width="16" height="16" style="border: 1px solid #000; margin: 5px;"></canvas> 16x16<br>
+    <canvas id="canvas32" width="32" height="32" style="border: 1px solid #000; margin: 5px;"></canvas> 32x32<br>
+    <canvas id="canvas48" width="48" height="48" style="border: 1px solid #000; margin: 5px;"></canvas> 48x48<br>
+    <canvas id="canvas128" width="128" height="128" style="border: 1px solid #000; margin: 5px;"></canvas> 128x128<br>
+    
+    <button onclick="generateIcons()">Generate Icons</button>
+    <button onclick="downloadAll()">Download All</button>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#0052cc';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Chart/Graph representation
+            ctx.fillStyle = '#ffffff';
+            
+            if (size >= 32) {
+                // Draw a simple chart icon
+                const padding = size * 0.15;
+                const chartWidth = size - (padding * 2);
+                const chartHeight = size - (padding * 2);
+                
+                // Draw bars
+                const barWidth = chartWidth / 4;
+                const maxBarHeight = chartHeight * 0.8;
+                
+                // Bar 1
+                ctx.fillRect(padding, padding + maxBarHeight * 0.6, barWidth * 0.6, maxBarHeight * 0.4);
+                // Bar 2
+                ctx.fillRect(padding + barWidth, padding + maxBarHeight * 0.3, barWidth * 0.6, maxBarHeight * 0.7);
+                // Bar 3
+                ctx.fillRect(padding + barWidth * 2, padding + maxBarHeight * 0.1, barWidth * 0.6, maxBarHeight * 0.9);
+                
+                if (size >= 48) {
+                    // Add clock symbol for time tracking
+                    const clockX = size - padding - 8;
+                    const clockY = padding + 8;
+                    ctx.beginPath();
+                    ctx.arc(clockX, clockY, 6, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1;
+                    
+                    // Clock hands
+                    ctx.beginPath();
+                    ctx.moveTo(clockX, clockY);
+                    ctx.lineTo(clockX, clockY - 3);
+                    ctx.moveTo(clockX, clockY);
+                    ctx.lineTo(clockX + 2, clockY);
+                    ctx.stroke();
+                }
+            } else {
+                // Simple icon for small sizes
+                ctx.fillRect(2, 6, 3, 8);
+                ctx.fillRect(6, 4, 3, 10);
+                ctx.fillRect(10, 2, 3, 12);
+            }
+        }
+
+        function generateIcons() {
+            [16, 32, 48, 128].forEach(size => {
+                const canvas = document.getElementById(`canvas${size}`);
+                drawIcon(canvas, size);
+            });
+        }
+
+        function downloadCanvas(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function downloadAll() {
+            [16, 32, 48, 128].forEach(size => {
+                const canvas = document.getElementById(`canvas${size}`);
+                downloadCanvas(canvas, `icon${size}.png`);
+            });
+        }
+
+        // Generate icons on load
+        generateIcons();
+    </script>
+</body>
+</html>
