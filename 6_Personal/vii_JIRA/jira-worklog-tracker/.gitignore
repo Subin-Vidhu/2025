@@ -1,0 +1,25 @@
+# Build and Package Files
+package_temp/
+firefox_package/
+edge_package/
+*.zip
+
+# Development Files
+create_icons.html
+create_package.bat
+create_firefox_package.bat
+create_all_packages.bat
+
+# Icons (generated)
+icon161.png
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE Files
+.vscode/
+.idea/
+
+# Logs
+*.log

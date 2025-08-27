@@ -1,6 +1,10 @@
-# 📊 Jira Daily Worklog Tracker - Chrome Extension
+# 🎯 JIRA Daily Worklog Tracker
 
-A Chrome extension that helps you track daily worklogs in Jira Free with detailed breakdowns by user and date.
+A Chrome extension that helps you track daily worklogs in Jira with detailed breakdowns by user and date. Perfect for teams using Jira Free!
+
+[![Download Latest Release](https://img.shields.io/github/v/release/Subin-Vidhu/jira-worklog-tracker?label=Download&style=for-the-badge)](https://github.com/Subin-Vidhu/jira-worklog-tracker/releases/latest)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Browser Support](https://img.shields.io/badge/Browser-Chrome%20%7C%20Firefox%20%7C%20Edge-brightgreen.svg?style=for-the-badge)](#installation)
 
 ## 🚀 Installation Steps
 
