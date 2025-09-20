@@ -6,8 +6,20 @@
   "permissions": [
     "tabs"
   ],
+  "icons": {
+    "16": "tab_export.png",
+    "32": "tab_export.png",
+    "48": "tab_export.png",
+    "128": "tab_export.png"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Export Tabs"
+    "default_title": "Export Tabs",
+    "default_icon": {
+      "16": "tab_export.png",
+      "32": "tab_export.png",
+      "48": "tab_export.png",
+      "128": "tab_export.png"
+    }
   }
 }

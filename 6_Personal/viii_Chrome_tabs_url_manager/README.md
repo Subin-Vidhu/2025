@@ -32,6 +32,7 @@ viii_Chrome_tabs_url_manager/
 │   ├── manifest.json     # Extension configuration and metadata
 │   ├── popup.html       # User interface for the extension popup
 │   ├── popup.js         # Main functionality and event handling
+│   ├── tab_export.png   # Extension icon (16x16, 32x32, 48x48, 128x128)
 └── README.md           # This documentation file
 ```
 
@@ -43,6 +44,7 @@ viii_Chrome_tabs_url_manager/
 - **Extension Name**: "Export Tabs URLs"
 - **Version**: 1.0
 - **Action**: Popup-based interface
+- **Icons**: Custom PNG icon (`tab_export.png`) for multiple sizes (16px, 32px, 48px, 128px)
 
 ### `popup.html`
 - Clean, responsive interface (520px width)
