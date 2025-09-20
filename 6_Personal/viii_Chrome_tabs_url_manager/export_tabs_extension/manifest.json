@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Export Tabs URLs",
+  "version": "1.0",
+  "description": "Copy all open tabs' URLs to clipboard or download as a file.",
+  "permissions": [
+    "tabs"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Export Tabs"
+  }
+}
