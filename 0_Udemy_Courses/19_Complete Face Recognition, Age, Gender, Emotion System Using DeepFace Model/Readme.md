@@ -210,3 +210,4 @@ This project is for educational purposes. Please respect privacy and obtain cons
 
 **Note**: Always ensure you have proper permissions and comply with privacy laws when using facial recognition systems.
 
+- Certificate of Completion: [Complete Face Recognition System Using Deep Face Model](Face,%20Age,%20Gender,%20Emotion%20Recognition%20Using%20Facenet%20Model.pdf)
