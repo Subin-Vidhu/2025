@@ -10,5 +10,6 @@
     "[python]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "ms-python.python"
-    }
+    },
+    "liveServer.settings.port": 5502
 }
