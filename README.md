@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: Day 7
+- New Life: Day 8
 
 ---
 Order of Projects
