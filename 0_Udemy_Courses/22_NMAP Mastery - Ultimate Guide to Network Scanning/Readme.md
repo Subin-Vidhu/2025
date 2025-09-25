@@ -1,150 +1,126 @@
-- [Course Link](https://www.udemy.com/course/nmap-mastery-ultimate-guide-to-network-scanning)
----
+# NMAP Mastery - Ultimate Guide to Network Scanning
 
-- What is NMAP?
+[![Udemy Course](https://img.shields.io/badge/Udemy-Course-blue?style=flat-square&logo=udemy)](https://www.udemy.com/course/nmap-mastery-ultimate-guide-to-network-scanning)
+[![PDF Certificate](https://img.shields.io/badge/Certificate-PDF-red?style=flat-square&logo=adobe)](NMAP%20Mastery%20-%20Ultimate%20Guide%20to%20Network%20Scanning.pdf)
 
-- Nmap (Network Mapper) is a powerful open-source tool used for network discovery and security auditing. It is widely used by network administrators, security professionals, and penetration testers to identify hosts and services on a computer network, as well as to detect vulnerabilities.
+## 📖 Course Overview
 
-Nmap can be used to perform a variety of tasks, including:
+This comprehensive course covers NMAP (Network Mapper), a powerful open-source tool essential for network security professionals, penetration testers, and system administrators.
 
-- Host discovery: Identifying live hosts on a network.
-- Port scanning: Determining which ports are open on a target host.
-- Service enumeration: Identifying services running on open ports.
-- OS detection: Determining the operating system of a target host.
-- Vulnerability scanning: Identifying known vulnerabilities in services running on a target host.
+## 🔍 What is NMAP?
 
+**Nmap (Network Mapper)** is a free and open-source network discovery and security auditing utility. It uses raw IP packets in novel ways to determine:
 
-- nmap -sp 192.168.1.0/24 # Ping Scan - List all active devices on the network
+### Core Capabilities:
+- **Host Discovery** - Identifying live hosts on a network
+- **Port Scanning** - Determining which ports are open on target hosts  
+- **Service Enumeration** - Identifying services running on open ports
+- **OS Detection** - Determining the operating system of target hosts
+- **Vulnerability Scanning** - Identifying known vulnerabilities in running services
 
-- sudo nmap -sn 192.168.1.0/24 # Ping Scan - List all active devices on the network (Linux)
+## 🚀 Quick Start Commands
 
-- nmap -p 8080 10.0.2.15 # Scan a specific port (8080) on a target IP address (Windows)
+### Basic Network Discovery
+```bash
+# Windows - Ping Scan (List all active devices on network)
+nmap -sn 192.168.1.0/24
 
-- Set up virutalbox, install kali linux, and scan the host machine from the kali linux vm using nmap, also install metasploit and use it to exploit a vulnerability found by nmap
+# Linux - Ping Scan (requires sudo for raw packets)
+sudo nmap -sn 192.168.1.0/24
 
-
-- types of scans in nmap
-
-    - pin scan (-sn): This scan type is used to determine which hosts are up and running on a network. It sends ICMP echo requests (ping) to the target hosts and waits for a response. If a host responds, it is considered "up"; otherwise, it is considered "down".
-
-    eg - nmap -sn <target>
-
-    - syn scan (-sS): This is the default and most popular scan type. It sends SYN packets to the target ports and waits for a response. If a SYN-ACK is received, the port is considered open; if a RST is received, the port is closed.
-
-    eg - nmap -sS <target>
-
-    - udp scan (-sU): This scan type is used to scan for open UDP ports on a target host. It sends UDP packets to the target ports and waits for a response. If a port is open, it may respond with a UDP packet; if it is closed, it may respond with an ICMP "port unreachable" message.
-
-    eg - nmap -sU <target>
-
-
-    - service version detection (-sV): This scan type is used to determine the version of services running on open ports. It sends probes to the target ports and analyzes the responses to identify the service and its version.
-
-    eg - nmap -sV <target>
-
-    - operating system detection (-O): This scan type is used to determine the operating system of a target host. It analyzes various characteristics of the target host, such as TCP/IP stack behavior, to make an educated guess about the OS.
-
-    eg - nmap -O <target>
-
-    - agressive scan (-A): This scan type combines several scan types, including SYN scan, service version detection, OS detection, and script scanning. It provides a comprehensive overview of the target host.
-
-    eg - nmap -A <target>
-
-    - tcp connect scan (-sT): This scan type establishes a full TCP connection with the target ports. It sends SYN packets to the target ports and waits for a response. If a SYN-ACK is received, the port is considered open; if a RST is received, the port is closed.
-
-    eg - nmap -sT <target>
-
-    - idle scan (-sI): This scan type uses a "zombie" host to perform the scan on behalf of the attacker. It sends spoofed packets to the target ports and analyzes the responses to determine the state of the ports.
-
-    eg - nmap -sI <target>
-
-- nmap -p 1-65535 -T4 -A -v <target> # Full port scan with version detection, OS detection, script scanning, and traceroute
-
-nmap -top-ports 20 192.168.0.41 # Scan top 20 common ports on target IP address
-
-
+# Scan specific port on target
+nmap -p 8080 10.0.2.15
 ```
-D:\__SHARED__\subin_gpu_server_3>nmap -top-ports 20 192.168.0.41
-Starting Nmap 7.98 ( https://nmap.org ) at 2025-09-25 09:53 +0530
-Nmap scan report for 192.168.0.41
-Host is up (0.00023s latency).
 
+### Advanced Comprehensive Scan
+```bash
+# Full port scan with comprehensive analysis
+nmap -p 1-65535 -T4 -A -v <target>
+
+# Scan top 20 most common ports
+nmap --top-ports 20 192.168.0.41
+```
+
+## 🔬 Scan Types and Techniques
+
+### Primary Scan Types
+
+| Scan Type | Flag | Description | Use Case |
+|-----------|------|-------------|----------|
+| **Ping Scan** | `-sn` | Determines which hosts are up using ICMP echo requests | Network discovery |
+| **SYN Scan** | `-sS` | Half-open scan using SYN packets (default) | Stealthy port scanning |
+| **UDP Scan** | `-sU` | Scans for open UDP ports | Finding UDP services |
+| **TCP Connect** | `-sT` | Establishes full TCP connections | When SYN scan not possible |
+| **Idle Scan** | `-sI` | Uses zombie host for ultra-stealthy scanning | Advanced evasion |
+
+### Detection and Analysis
+
+| Feature | Flag | Description |
+|---------|------|-------------|
+| **Service Version** | `-sV` | Determines service versions on open ports |
+| **OS Detection** | `-O` | Identifies target operating system |
+| **Aggressive Scan** | `-A` | Combines OS detection, version detection, script scanning, and traceroute |
+
+### Examples
+
+```bash
+# Ping scan to find live hosts
+nmap -sn 192.168.1.0/24
+
+# SYN scan (default, stealthy)
+nmap -sS target.com
+
+# UDP port scan
+nmap -sU target.com
+
+# Service version detection
+nmap -sV target.com
+
+# OS detection
+nmap -O target.com
+
+# Aggressive comprehensive scan
+nmap -A target.com
+
+# TCP connect scan
+nmap -sT target.com
+
+# Idle scan using zombie host
+nmap -sI zombie_host target.com
+```
+
+
+## 💻 Practical Examples and Output Analysis
+
+### Example 1: Top Ports Scan
+```bash
+nmap --top-ports 20 192.168.0.41
+```
+
+**Output Analysis:**
+```
 PORT     STATE    SERVICE
-21/tcp   filtered ftp
-22/tcp   filtered ssh
-23/tcp   filtered telnet
-25/tcp   filtered smtp
-53/tcp   filtered domain
-80/tcp   filtered http
-110/tcp  filtered pop3
-111/tcp  filtered rpcbind
-135/tcp  open     msrpc
-139/tcp  filtered netbios-ssn
-143/tcp  filtered imap
-443/tcp  filtered https
-445/tcp  filtered microsoft-ds
-993/tcp  filtered imaps
-995/tcp  filtered pop3s
-1723/tcp filtered pptp
-3306/tcp open     mysql
-3389/tcp filtered ms-wbt-server
-5900/tcp filtered vnc
-8080/tcp filtered http-proxy
-MAC Address: D8:5E:D3:DA:B0:0D (Giga-byte Technology)
-
-Nmap done: 1 IP address (1 host up) scanned in 5.24 seconds
-
-D:\__SHARED__\subin_gpu_server_3>nmap http://testphp.vulnweb.com/
-Starting Nmap 7.98 ( https://nmap.org ) at 2025-09-25 10:00 +0530
-Unable to split netmask from target expression: "http://testphp.vulnweb.com/"
-WARNING: No targets were specified, so 0 hosts scanned.
-Nmap done: 0 IP addresses (0 hosts up) scanned in 0.04 seconds
-
-D:\__SHARED__\subin_gpu_server_3>nmap testphp.vulnweb.com
-Starting Nmap 7.98 ( https://nmap.org ) at 2025-09-25 10:00 +0530
-Nmap scan report for testphp.vulnweb.com (44.228.249.3)
-Host is up (0.25s latency).
-rDNS record for 44.228.249.3: ec2-44-228-249-3.us-west-2.compute.amazonaws.com
-Not shown: 999 filtered tcp ports (no-response)
-PORT   STATE SERVICE
-80/tcp open  http
-
-Nmap done: 1 IP address (1 host up) scanned in 24.23 seconds
-
-D:\__SHARED__\subin_gpu_server_3>nmap -p 80 -Pn testphp.vulnweb.com
-Starting Nmap 7.98 ( https://nmap.org ) at 2025-09-25 10:02 +0530
-Nmap scan report for testphp.vulnweb.com (44.228.249.3)
-Host is up (0.24s latency).
-rDNS record for 44.228.249.3: ec2-44-228-249-3.us-west-2.compute.amazonaws.com
-
-PORT   STATE  SERVICE
-80/tcp closed http
-
-Nmap done: 1 IP address (1 host up) scanned in 0.94 seconds
-
-D:\__SHARED__\subin_gpu_server_3>nmap -p 80 -Pn testphp.vulnweb.com
-Starting Nmap 7.98 ( https://nmap.org ) at 2025-09-25 10:02 +0530
-Nmap scan report for testphp.vulnweb.com (44.228.249.3)
-Host is up (0.26s latency).
-rDNS record for 44.228.249.3: ec2-44-228-249-3.us-west-2.compute.amazonaws.com
-
-PORT   STATE SERVICE
-80/tcp open  http
-
-Nmap done: 1 IP address (1 host up) scanned in 6.50 seconds
-
-D:\__SHARED__\subin_gpu_server_3>nmap -p 80 -Pn -sV testphp.vulnweb.com
-Starting Nmap 7.98 ( https://nmap.org ) at 2025-09-25 10:02 +0530
-Nmap scan report for testphp.vulnweb.com (44.228.249.3)
-Host is up (0.25s latency).
-rDNS record for 44.228.249.3: ec2-44-228-249-3.us-west-2.compute.amazonaws.com
-
-PORT   STATE SERVICE VERSION
-80/tcp open  http    nginx 1.19.0
-
-Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-Nmap done: 1 IP address (1 host up) scanned in 25.12 seconds
+135/tcp  open     msrpc          # Windows RPC service
+3306/tcp open     mysql          # MySQL database
+21/tcp   filtered ftp            # FTP potentially blocked by firewall
+22/tcp   filtered ssh            # SSH potentially blocked by firewall
+80/tcp   filtered http           # HTTP potentially blocked by firewall
+443/tcp  filtered https          # HTTPS potentially blocked by firewall
 ```
+
+### Example 2: Web Service Analysis
+```bash
+# Basic scan
+nmap testphp.vulnweb.com
+
+# Targeted port scan with service detection
+nmap -p 80 -Pn -sV testphp.vulnweb.com
+```
+
+**Key Findings:**
+- **Port 80/tcp**: Open HTTP service
+- **Service**: nginx 1.19.0
+- **Host Status**: Active and responding
 
 ```
 D:\__SHARED__\subin_gpu_server_3>nmap -O -sV 192.168.0.41
@@ -1008,17 +984,12 @@ C:\Program Files (x86)\Nmap\scripts>dir
              613 File(s)      3,897,701 bytes
                2 Dir(s)  24,234,340,352 bytes free
 
-C:\Program Files (x86)\Nmap\scripts>nmap --script=whois-domain.nse testphp.vulnweb.com
-Starting Nmap 7.98 ( https://nmap.org ) at 2025-09-25 10:14 +0530
-Nmap scan report for testphp.vulnweb.com (44.228.249.3)
-Host is up (0.25s latency).
-rDNS record for 44.228.249.3: ec2-44-228-249-3.us-west-2.compute.amazonaws.com
-Not shown: 999 filtered tcp ports (no-response)
-PORT   STATE SERVICE
-80/tcp open  http
+### Script Example: Domain WHOIS Lookup
+```bash
+nmap --script=whois-domain.nse testphp.vulnweb.com
+```
 
-Host script results:
-| whois-domain:
+**Script Output Analysis:**
 |
 | Domain name record found at whois.verisign-grs.com
 | No match for "TESTPHP.VULNWEB.COM".\x0D
@@ -1857,22 +1828,28 @@ Nmap done: 1 IP address (1 host up) scanned in 6.95 seconds
 ```
 
 
-- Host Discovery
+## 🌐 Host Discovery Techniques
 
- - is the process of identifying active hosts on a network.
+**Host Discovery** is the fundamental process of identifying active hosts on a network before conducting detailed port scans.
 
+### Network Discovery Example
+```bash
+nmap -sn 192.168.0.0/24
 ```
-C:\Program Files (x86)\Nmap\scripts>nmap -sn 192.168.0.0/24
-Starting Nmap 7.98 ( https://nmap.org ) at 2025-09-25 10:33 +0530
+
+**Sample Results:**
+```
 Nmap scan report for 192.168.0.1
 Host is up (0.0010s latency).
-MAC Address: 9C:A2:F4:8F:40:A5 (TP-Link Limited)
-Nmap scan report for 192.168.0.8
+MAC Address: 9C:A2:F4:8F:40:A5 (TP-Link Limited)      # Router/Gateway
+
+Nmap scan report for 192.168.0.8  
 Host is up (0.00s latency).
-MAC Address: D8:5E:D3:D3:CA:FA (Giga-byte Technology)
+MAC Address: D8:5E:D3:D3:CA:FA (Giga-byte Technology)  # Desktop/Server
+
 Nmap scan report for 192.168.0.18
-Host is up (0.0010s latency).
-MAC Address: 08:BF:B8:76:CD:A3 (ASUSTek Computer)
+Host is up (0.0010s latency). 
+MAC Address: 08:BF:B8:76:CD:A3 (ASUSTek Computer)      # ASUS Device
 Nmap scan report for 192.168.0.21
 Host is up (0.00s latency).
 MAC Address: D8:5E:D3:DA:AE:14 (Giga-byte Technology)
@@ -1952,27 +1929,27 @@ Host is up.
 Nmap done: 256 IP addresses (29 hosts up) scanned in 17.57 seconds
 ```
 
-- Vulnerability Scanning
+## 🛡️ Vulnerability Scanning
 
-    - is the process of identifying, quantifying, and prioritizing (or ranking) the vulnerabilities in a system.
+**Vulnerability Scanning** is the systematic process of identifying, quantifying, and prioritizing security vulnerabilities in network systems and services.
     
+### Vulnerability Scan Example
+```bash
+nmap -sV -p5001 --script=vulners.nse 192.168.0.41
 ```
-C:\Program Files (x86)\Nmap\scripts>nmap -sV -p5001 --script=vulners.nse 192.168.0.41
-Starting Nmap 7.98 ( https://nmap.org ) at 2025-09-25 10:39 +0530
-Nmap scan report for 192.168.0.41
-Host is up (0.00013s latency).
 
+**Critical Findings:**
+```
 PORT     STATE SERVICE VERSION
 5001/tcp open  http    Werkzeug httpd 3.1.3 (Python 3.9.13)
-| vulners:
-|   cpe:/a:python:python:3.9.13:
-|       VERACODE:43894  9.8     https://vulners.com/veracode/VERACODE:43894
-|       CVE-2022-37454  9.8     https://vulners.com/cve/CVE-2022-37454
-|       CVE-2007-4559   9.8     https://vulners.com/cve/CVE-2007-4559
-|       105E2099-15F9-5B91-A120-77949E442651    9.8     https://vulners.com/githubexploit/105E2099-15F9-5B91-A120-77949E442651  *EXPLOIT*
-|       CVE-2015-20107  8.0     https://vulners.com/cve/CVE-2015-20107
-|       CVE-2024-9287   7.8     https://vulners.com/cve/CVE-2024-9287
-|       CVE-2022-42919  7.8     https://vulners.com/cve/CVE-2022-42919
+
+High-Risk Vulnerabilities:
+├── CVE-2022-37454 (9.8) - Critical Python vulnerability
+├── CVE-2007-4559  (9.8) - Tar extraction vulnerability  
+├── CVE-2015-20107 (8.0) - Python mailcap module issue
+└── CVE-2024-9287  (7.8) - Recent Python security flaw
+
+⚠️  Multiple exploits available for identified vulnerabilities
 |       DA7CD4B2-2AD0-5735-A5DE-26D392D51DDA    7.5     https://vulners.com/githubexploit/DA7CD4B2-2AD0-5735-A5DE-26D392D51DDA  *EXPLOIT*
 |       CVE-2024-7592   7.5     https://vulners.com/cve/CVE-2024-7592
 |       CVE-2024-6232   7.5     https://vulners.com/cve/CVE-2024-6232
@@ -1996,40 +1973,101 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 20.97 seconds
 ```
 
-- Integration with other tools like metasploit
+## 🔗 Integration with Security Tools
 
-- mac address spoofing
+### Metasploit Integration
+NMAP reconnaissance data can be imported directly into Metasploit for exploitation:
+```bash
+# Export NMAP results to XML
+nmap -A -oX scan_results.xml target.com
 
-    - is the process of changing the factory-assigned Media Access Control (MAC) address of a network interface on a device.
+# Import into Metasploit
+msf> db_import scan_results.xml
+```
 
-    - MAC addresses are unique identifiers assigned to network interfaces for communications on the physical network segment. Spoofing a MAC address can be used for various purposes, including enhancing privacy, bypassing network restrictions, or impersonating another device on the network.
+## 🥷 Advanced Evasion Techniques
 
+### MAC Address Spoofing
+**Purpose**: Change network interface MAC address for privacy or bypassing restrictions
+```bash
+nmap --spoof-mac 00:11:22:33:44:55 target.com
+nmap --spoof-mac random target.com
+nmap --spoof-mac apple target.com    # Use Apple OUI
+```
 
-- zombie scan
+### Idle/Zombie Scan
+**Purpose**: Ultra-stealthy scanning using third-party "zombie" host
+```bash
+nmap -sI zombie_host:port target.com
+```
+- Packets appear to originate from zombie host
+- Scanner's IP address remains hidden
+- Requires predictable IP ID sequence from zombie
 
-    - is a network scanning technique that leverages a third-party host (the "zombie") to send packets to a target system, making it appear as though the packets are originating from the zombie rather than the scanner's own machine. This method is used to obscure the identity of the scanner and can help bypass certain security measures.
+### Firewall Evasion Techniques
 
-- firewall evasion techniques
+| Technique | NMAP Flag | Description |
+|-----------|-----------|-------------|
+| **Fragmentation** | `-f`, `--mtu` | Split packets into fragments |
+| **Decoy Scanning** | `-D` | Use decoy IP addresses |
+| **Source Port** | `--source-port` | Spoof source port number |
+| **Timing Templates** | `-T0` to `-T5` | Adjust scan timing (slower = stealthier) |
+| **Randomization** | `--randomize-hosts` | Randomize target order |
 
-    - are strategies and methods used to bypass or circumvent firewall protections in order to gain unauthorized access to a network or system. Firewalls are designed to block unauthorized access while permitting outward communication, so evasion techniques aim to exploit vulnerabilities or weaknesses in firewall configurations.
+#### Fragmentation Examples
+```bash
+# Fragment packets
+nmap -f target.com
 
-    - Common firewall evasion techniques include:
+# Custom MTU size
+nmap --mtu 24 target.com
 
-        - Fragmentation: Breaking down packets into smaller fragments to avoid detection by firewalls that inspect packet headers.
+# Maximum fragmentation
+nmap -f -f target.com
+```
 
-        - Tunneling: Encapsulating one protocol within another (e.g., using HTTP or DNS tunneling) to bypass firewall rules that block certain types of traffic.
+#### Decoy Scanning
+```bash
+# Use decoy IP addresses
+nmap -D 192.168.1.100,192.168.1.101,ME target.com
 
-        - Obfuscation: Modifying the payload of packets to evade signature-based detection systems.
+# Random decoys
+nmap -D RND:10 target.com
+```
 
-        - Using Alternate Ports: Sending traffic through non-standard ports that may not be monitored as closely by the firewall.
+#### Timing and Stealth
+```bash
+# Paranoid timing (very slow, stealthy)
+nmap -T0 target.com
 
-        - IP Spoofing: Altering the source IP address of packets to make them appear as if they are coming from a trusted source.
+# Sneaky timing
+nmap -T1 target.com
 
-        - Encryption: Using encrypted protocols (like HTTPS or VPNs) to hide the content of the traffic from inspection.
+# Normal timing (default)
+nmap -T3 target.com
 
-        - Timing Attacks: Sending packets at specific intervals to avoid triggering rate-based detection mechanisms.
+# Aggressive timing
+nmap -T4 target.com
+```
 
-    - It's important to note that while these techniques can be used for legitimate purposes, such as penetration testing and security research, they can also be exploited by malicious actors for unauthorized access and cyberattacks.
+## ⚠️ Legal and Ethical Considerations
 
+> **Important**: These techniques should only be used for:
+> - Authorized penetration testing
+> - Security research on your own systems
+> - Educational purposes in controlled environments
+> 
+> Unauthorized scanning can be illegal and unethical. Always obtain proper permission before testing systems you don't own.
 
-- [Certificate Link](NMAP%20Mastery%20-%20Ultimate%20Guide%20to%20Network%20Scanning.pdf)
+## 📚 Additional Resources
+
+- **Official Documentation**: [nmap.org](https://nmap.org)
+- **NSE Script Database**: [nmap.org/nsedoc](https://nmap.org/nsedoc/)
+- **NMAP Book**: "Nmap Network Scanning" by Gordon Lyon
+
+## 📜 Course Certificate
+
+🎓 **[View Course Completion Certificate](NMAP%20Mastery%20-%20Ultimate%20Guide%20to%20Network%20Scanning.pdf)**
+
+---
+*This README covers the essential concepts from the NMAP Mastery Udemy course with practical examples and advanced techniques for network security professionals.*
