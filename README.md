@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: Day 16
+- New Life: Day 0
 
 ---
 Order of Projects
