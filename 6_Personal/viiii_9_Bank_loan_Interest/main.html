@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Repayment Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .calculator-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #c4b5fd;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            background: #0f172a;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-type {
+            background: #334155;
+            color: #fff;
+        }
+
+        .btn-type:hover {
+            background: #475569;
+        }
+
+        .btn-type.active {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .custom-payments {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .custom-payments::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-payments::-webkit-scrollbar-track {
+            background: rgba(51, 65, 85, 0.5);
+            border-radius: 10px;
+        }
+
+        .custom-payments::-webkit-scrollbar-thumb {
+            background: #a855f7;
+            border-radius: 10px;
+        }
+
+        .payment-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .payment-label {
+            min-width: 100px;
+            color: #a855f7;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .summary-card.purple {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+        }
+
+        .summary-card.pink {
+            background: linear-gradient(135deg, #ec4899, #f472b6);
+        }
+
+        .summary-card.green {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .summary-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        thead {
+            background: rgba(168, 85, 247, 0.1);
+        }
+
+        th {
+            padding: 15px;
+            text-align: right;
+            color: #c4b5fd;
+            font-weight: 600;
+        }
+
+        th:first-child {
+            text-align: left;
+        }
+
+        td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+        }
+
+        td:first-child {
+            text-align: left;
+            font-weight: 600;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .interest {
+            color: #f472b6;
+        }
+
+        .payment {
+            color: #34d399;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 10px 5px;
+            }
+
+            .summary-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="calculator-icon">🧮</div>
+            <h1>Loan Repayment Calculator</h1>
+            <p class="subtitle">Calculate your loan schedule with precision</p>
+        </div>
+
+        <div id="inputForm" class="card">
+            <div class="form-group">
+                <label for="principal">Principal Loan Amount ($)</label>
+                <input type="number" id="principal" placeholder="Enter loan amount" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="annualRate">Annual Interest Rate (%)</label>
+                <input type="number" id="annualRate" placeholder="Enter interest rate" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="months">Loan Duration (Months)</label>
+                <input type="number" id="months" placeholder="Enter number of months" step="1">
+            </div>
+
+            <div class="form-group">
+                <label>Repayment Type</label>
+                <div class="button-group">
+                    <button class="btn btn-type" data-type="S">Same Amount</button>
+                    <button class="btn btn-type" data-type="D">Different Amounts</button>
+                    <button class="btn btn-type" data-type="N">No Payments</button>
+                </div>
+            </div>
+
+            <div id="sameAmountInput" class="form-group hidden">
+                <label for="monthlyAmount">Monthly Payment Amount ($)</label>
+                <input type="number" id="monthlyAmount" placeholder="Enter monthly payment" step="0.01">
+            </div>
+
+            <div id="differentAmountsInput" class="custom-payments hidden">
+                <label>Enter Payment for Each Month ($)</label>
+                <div id="customPaymentsList"></div>
+            </div>
+
+            <button class="btn btn-primary" id="calculateBtn" style="width: 100%;">Calculate Schedule</button>
+        </div>
+
+        <div id="results" class="hidden">
+            <div id="summarySection"></div>
+            <div class="card">
+                <h2 style="color: #c4b5fd; margin-bottom: 20px;">Repayment Schedule</h2>
+                <div style="overflow-x: auto;">
+                    <table id="scheduleTable">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Opening Balance</th>
+                                <th>Interest</th>
+                                <th>Payment</th>
+                                <th>Closing Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduleBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="text-center" style="margin-top: 30px;">
+                <button class="btn btn-secondary" id="resetBtn">Calculate Another Loan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedType = '';
+
+        // Type selection buttons
+        document.querySelectorAll('.btn-type').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.btn-type').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedType = this.dataset.type;
+
+                document.getElementById('sameAmountInput').classList.add('hidden');
+                document.getElementById('differentAmountsInput').classList.add('hidden');
+
+                if (selectedType === 'S') {
+                    document.getElementById('sameAmountInput').classList.remove('hidden');
+                } else if (selectedType === 'D') {
+                    const months = parseInt(document.getElementById('months').value);
+                    if (months > 0) {
+                        generateCustomPaymentInputs(months);
+                        document.getElementById('differentAmountsInput').classList.remove('hidden');
+                    } else {
+                        alert('Please enter the number of months first');
+                        this.classList.remove('active');
+                        selectedType = '';
+                    }
+                }
+            });
+        });
+
+        // Update custom payment inputs when months change
+        document.getElementById('months').addEventListener('input', function() {
+            if (selectedType === 'D') {
+                const months = parseInt(this.value);
+                if (months > 0) {
+                    generateCustomPaymentInputs(months);
+                }
+            }
+        });
+
+        function generateCustomPaymentInputs(months) {
+            const container = document.getElementById('customPaymentsList');
+            container.innerHTML = '';
+            for (let i = 0; i < months; i++) {
+                const div = document.createElement('div');
+                div.className = 'payment-input';
+                div.innerHTML = `
+                    <span class="payment-label">Month ${i + 1}</span>
+                    <input type="number" class="custom-payment" placeholder="Amount" step="0.01" style="flex: 1;">
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        function generateSchedule(principal, annualRate, payments) {
+            const monthlyRate = annualRate / 12;
+            let balance = principal;
+            let totalInterest = 0;
+            const scheduleData = [];
+
+            for (let i = 0; i < payments.length; i++) {
+                const openingBalance = balance;
+                const interest = Math.round(openingBalance * monthlyRate * 100) / 100;
+                const totalDue = openingBalance + interest;
+                totalInterest += interest;
+
+                let actualPayment, closingBalance;
+
+                if (payments[i] >= totalDue) {
+                    actualPayment = totalDue;
+                    closingBalance = 0;
+                } else {
+                    actualPayment = payments[i];
+                    closingBalance = Math.round((totalDue - payments[i]) * 100) / 100;
+                }
+
+                scheduleData.push({
+                    month: i + 1,
+                    openingBalance: openingBalance.toFixed(2),
+                    interest: interest.toFixed(2),
+                    payment: actualPayment.toFixed(2),
+                    closingBalance: closingBalance.toFixed(2)
+                });
+
+                balance = closingBalance;
+                if (balance <= 0) break;
+            }
+
+            return { scheduleData, totalInterest: totalInterest.toFixed(2) };
+        }
+
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const annualRate = parseFloat(document.getElementById('annualRate').value) / 100;
+            const months = parseInt(document.getElementById('months').value);
+
+            if (!principal || !annualRate || !months || !selectedType) {
+                alert('Please fill in all required fields and select a repayment type');
+                return;
+            }
+
+            let schedule;
+
+            if (selectedType === 'S') {
+                const monthlyAmount = parseFloat(document.getElementById('monthlyAmount').value);
+                if (!monthlyAmount) {
+                    alert('Please enter the monthly payment amount');
+                    return;
+                }
+                const payments = Array(months).fill(monthlyAmount);
+                schedule = generateSchedule(principal, annualRate, payments);
+            } else if (selectedType === 'D') {
+                const payments = [];
+                const inputs = document.querySelectorAll('.custom-payment');
+                for (let input of inputs) {
+                    const value = parseFloat(input.value);
+                    if (isNaN(value)) {
+                        alert('Please enter all monthly payments');
+                        return;
+                    }
+                    payments.push(value);
+                }
+                schedule = generateSchedule(principal, annualRate, payments);
+            } else if (selectedType === 'N') {
+                const totalInterest = Math.round(principal * annualRate * (months / 12) * 100) / 100;
+                const totalDue = principal + totalInterest;
+                schedule = {
+                    noPayment: true,
+                    totalInterest: totalInterest.toFixed(2),
+                    totalDue: totalDue.toFixed(2),
+                    months: months
+                };
+            }
+
+            displayResults(schedule);
+        });
+
+        function displayResults(schedule) {
+            document.getElementById('inputForm').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+
+            const summarySection = document.getElementById('summarySection');
+
+            if (schedule.noPayment) {
+                summarySection.innerHTML = `
+                    <div class="summary-cards">
+                        <div class="summary-card purple">
+                            <div class="summary-label">Loan Duration</div>
+                            <div class="summary-value">${schedule.months} months</div>
+                        </div>
+                        <div class="summary-card pink">
+                            <div class="summary-label">Total Interest</div>
+                            <div class="summary-value">$${schedule.totalInterest}</div>
+                        </div>
+                        <div class="summary-card green">
+                            <div class="summary-label">Total Payable</div>
+                            <div class="summary-value">$${schedule.totalDue}</div>
+                        </div>
+                    </div>
+                `;
+                document.querySelector('.card:has(#scheduleTable)').classList.add('hidden');
+            } else {
+                summarySection.innerHTML = `
+                    <div class="summary-cards">
+                        <div class="summary-card purple">
+                            <div class="summary-label">Total Interest Paid</div>
+                            <div class="summary-value">$${schedule.totalInterest}</div>
+                        </div>
+                        <div class="summary-card pink">
+                            <div class="summary-label">Total Payments</div>
+                            <div class="summary-value">${schedule.scheduleData.length} months</div>
+                        </div>
+                    </div>
+                `;
+
+                const tbody = document.getElementById('scheduleBody');
+                tbody.innerHTML = '';
+                schedule.scheduleData.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.month}</td>
+                        <td>$${row.openingBalance}</td>
+                        <td class="interest">$${row.interest}</td>
+                        <td class="payment">$${row.payment}</td>
+                        <td>$${row.closingBalance}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.querySelector('.card:has(#scheduleTable)').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            document.getElementById('inputForm').classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('principal').value = '';
+            document.getElementById('annualRate').value = '';
+            document.getElementById('months').value = '';
+            document.getElementById('monthlyAmount').value = '';
+            document.querySelectorAll('.btn-type').forEach(b => b.classList.remove('active'));
+            selectedType = '';
+            document.getElementById('sameAmountInput').classList.add('hidden');
+            document.getElementById('differentAmountsInput').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
