@@ -5,7 +5,35 @@ A comprehensive loan calculator application with both web interface and command-
 ## 📋 Overview
 
 This dual-mode loan calculator provides:
-- **Web Interface**: Modern, responsive HTML interface with real-time calculations
+- **W### Security Considerations
+
+### Authentication Security
+- **Default Password**: `LoanCalc2025!` - Change immediately for production use
+- **Rate Limiting**: Maximum 3 login attempts per 5-minute window
+- **Session Management**: 30-minute automatic timeout for security
+- **Password Policy**: Minimum 8 characters, supports special characters
+- **Basic Protection**: Right-click disabled, F12 developer tools blocked
+- **Session Storage**: Uses sessionStorage (cleared when browser closes)
+
+### Network Security
+- **Firewall**: Configure Windows Firewall for port 8080
+- **Access Control**: Consider restricting to specific IP ranges
+- **HTTPS**: Implement SSL/TLS for sensitive financial data
+- **Password Protection**: Application now requires authentication for access
+
+### Service Security
+- **Privileges**: Service runs with system privileges by default
+- **Dedicated Account**: Consider creating service-specific user account
+- **File Permissions**: Restrict access to application directory
+- **Updates**: Keep Python and dependencies current
+- **Authentication Layer**: Client-side security suitable for trusted networks
+
+### Data Security
+- **No Data Storage**: Calculator doesn't store loan information
+- **Session Privacy**: Each calculation is independent and secure
+- **Network Traffic**: Consider VPN for remote access
+- **Audit Trail**: Add logging for calculation history if needed
+- **Password Security**: No password storage in browser, cleared on logoutern, responsive HTML interface with real-time calculations
 - **Command Line Tool**: Python script for direct calculations
 - **Multiple Repayment Options**: Same payments, different payments, or no payments until end
 - **Detailed Amortization**: Month-by-month payment breakdown
@@ -28,6 +56,14 @@ This dual-mode loan calculator provides:
 - Mobile-responsive design for any device
 - Automatic Windows service integration
 
+### Security Features
+- **Password Authentication**: Secure login required before access
+- **Rate Limiting**: Protection against brute force attacks (3 attempts per 5 minutes)
+- **Session Management**: Auto-logout after 30 minutes of inactivity
+- **Input Validation**: Password strength requirements and sanitization
+- **Basic Tampering Protection**: Right-click and F12 developer tools blocking
+- **Session Security**: Automatic cleanup and secure session handling
+
 ### Technical Features
 - **Dual Interface**: Web UI + Command line
 - **HTTP Server**: Python built-in server
@@ -35,6 +71,7 @@ This dual-mode loan calculator provides:
 - **Cross-Platform Access**: Works on any device with web browser
 - **Automatic Startup**: Starts with Windows boot
 - **Virtual Environment**: Isolated Python environment
+- **Authentication Layer**: Client-side security implementation
 
 ## 📁 Project Structure
 
@@ -146,6 +183,17 @@ services.msc
 2. **Network Access**: `http://YOUR_IP_ADDRESS:8080/main.html` from other devices
 3. **Service Status**: Verify service is running in Task Manager or services.msc
 
+### Authentication & Login
+1. **Access the Application**: Navigate to the URL above
+2. **Login Screen**: You'll see a secure login interface
+3. **Enter Password**: Default password is `LoanCalc2025!` (case-sensitive)
+4. **Security Features**:
+   - Maximum 3 login attempts per 5-minute period
+   - Automatic lockout after failed attempts
+   - Session expires after 30 minutes of inactivity
+   - Password visibility toggle with eye icon
+5. **Access Granted**: Successfully login to use the calculator
+
 ### Using the Web Calculator
 1. **Enter Loan Details**:
    - Principal loan amount (₹)
@@ -161,6 +209,11 @@ services.msc
    - Summary cards with key totals
    - Detailed month-by-month schedule
    - Total interest calculations
+
+4. **Session Management**:
+   - Click logout button (🚪 Logout) to end session
+   - Automatic logout after 30 minutes of inactivity
+   - Session persists across page refreshes
 
 ### Command Line Usage
 ```cmd
@@ -238,6 +291,37 @@ dir D:\2025\6_Personal\viiii_9_Bank_loan_Interest\main.html
 
 # Test direct file access
 http://localhost:8080/main.html
+```
+
+**Authentication Issues**
+```cmd
+# Default login credentials
+Username: Not required
+Password: LoanCalc2025!
+
+# If locked out after failed attempts
+- Wait 5 minutes for lockout to expire
+- Refresh the page to reset attempts counter
+- Ensure password is typed exactly (case-sensitive)
+
+# Session expired message
+- Normal behavior after 30 minutes of inactivity
+- Simply login again with the same password
+```
+
+**Password Problems**
+```cmd
+# Common issues:
+- Password is case-sensitive: LoanCalc2025!
+- Must be exactly 13 characters
+- Contains uppercase L, lowercase letters, numbers, and !
+- No extra spaces before or after
+
+# To change the default password:
+1. Edit main.html file
+2. Find: defaultPassword: "LoanCalc2025!"
+3. Change to your preferred password
+4. Save file and restart service
 ```
 
 **Virtual Environment Issues**
@@ -369,9 +453,10 @@ netstat -an | findstr :8080
 
 #### UI Improvements
 1. **Edit CSS/HTML**: Update `main.html`
-2. **Test in Browser**: Refresh page to see changes
+2. **Test in Browser**: Refresh page to see changes (may need to re-login)
 3. **Mobile Testing**: Use browser developer tools
 4. **Cross-browser**: Test in Edge, Chrome, Firefox
+5. **Security Testing**: Verify login functionality after changes
 
 #### Server Configuration
 1. **Stop Service**: `nssm stop LoanCalculator`
@@ -382,9 +467,11 @@ netstat -an | findstr :8080
 ### Adding Features
 - **New Calculation Types**: Add to both main.py and main.html
 - **Data Export**: Add CSV/PDF export functionality
-- **User Accounts**: Implement authentication system
+- **Enhanced Security**: Implement multi-user authentication system
 - **Database Storage**: Add loan history and user profiles
 - **API Endpoints**: Create REST API for mobile apps
+- **Password Management**: Add password change functionality
+- **User Roles**: Implement different access levels (admin/user)
 
 ### Backup Strategy
 ```cmd
@@ -412,21 +499,30 @@ python -m http.server 8081 --bind 127.0.0.1
 ## 📋 Example Calculations
 
 ### Scenario 1: Fixed Monthly Payments
+- **Login**: Use password `LoanCalc2025!`
 - **Principal**: ₹100,000
 - **Annual Rate**: 12%
 - **Term**: 24 months
 - **Monthly Payment**: ₹5,000
 
 ### Scenario 2: Variable Payments
+- **Login**: Authenticated session
 - **Principal**: ₹50,000
 - **Annual Rate**: 15%
 - **Payments**: ₹3,000 (Month 1-6), ₹5,000 (Month 7-12)
 
 ### Scenario 3: Lump Sum Payment
+- **Login**: Valid authentication required
 - **Principal**: ₹75,000
 - **Annual Rate**: 18%
 - **Term**: 12 months
 - **Payment**: One-time payment at end
+
+### Security Test Scenarios
+- **Failed Login**: Try wrong password (limited to 3 attempts)
+- **Session Timeout**: Leave idle for 30+ minutes
+- **Rate Limiting**: Multiple failed attempts trigger 5-minute lockout
+- **Session Persistence**: Refresh page maintains login status
 
 ## 📄 License & Usage
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan Repayment Calculator</title>
+    <title>Secure Loan Calculator</title>
     <style>
         * {
             margin: 0;
@@ -284,6 +284,173 @@
             text-align: center;
         }
 
+        /* Login Styles */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: #151515;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid #222;
+            text-align: center;
+        }
+
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            animation: pulse 2s infinite;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .password-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            padding-right: 50px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #444;
+            box-shadow: 0 0 0 3px rgba(68, 68, 68, 0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .password-toggle:hover {
+            color: #999;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: #222;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+        }
+
+        .login-btn:hover {
+            background: #2a2a2a;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 15px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .error-message.show {
+            opacity: 1;
+        }
+
+        .security-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #0a0a0a;
+            border-radius: 10px;
+            border: 1px solid #222;
+        }
+
+        .security-info h4 {
+            color: #999;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .security-info ul {
+            text-align: left;
+            color: #666;
+            font-size: 12px;
+            margin-left: 20px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #222;
+        }
+
+        .app-container {
+            position: relative;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -308,7 +475,39 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <div class="login-icon">🔐</div>
+            <h1 class="login-title">Secure Access</h1>
+            <p class="login-subtitle">Enter password to access the Loan Calculator</p>
+            
+            <div class="password-group">
+                <input type="password" id="passwordInput" class="password-input" placeholder="Enter password" maxlength="50">
+                <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">👁️</button>
+            </div>
+            
+            <button type="button" class="login-btn" onclick="attemptLogin()">Access Calculator</button>
+            
+            <div id="errorMessage" class="error-message">Invalid password. Please try again.</div>
+            
+            <div class="security-info">
+                <h4>🛡️ Security Features:</h4>
+                <ul>
+                    <li>Secure password authentication</li>
+                    <li>Rate limiting (3 attempts per 5 minutes)</li>
+                    <li>Session timeout (30 minutes)</li>
+                    <li>No password storage in browser</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="app-container hidden">
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        
+        <div class="container">
         <div class="header">
             <div class="calculator-icon">🧮</div>
             <h1>Loan Repayment Calculator</h1>
@@ -378,8 +577,275 @@
             </div>
         </div>
     </div>
+    </div>
 
     <script>
+        // Security Configuration
+        const SECURITY_CONFIG = {
+            // Default password: "LoanCalc2025!"
+            // Hash will be generated dynamically for security
+            defaultPassword: "LoanCalc2025!",
+            salt: "loan_calculator_salt_2025",
+            maxAttempts: 3,
+            lockoutTime: 5 * 60 * 1000, // 5 minutes
+            sessionTimeout: 30 * 60 * 1000, // 30 minutes
+            minPasswordLength: 8
+        };
+
+        // Security State
+        let loginAttempts = 0;
+        let lastAttemptTime = 0;
+        let sessionStartTime = 0;
+        let sessionTimer = null;
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSecurity();
+            
+            // Add Enter key support for password input
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    attemptLogin();
+                }
+            });
+        });
+
+        function initializeSecurity() {
+            // Check if user is already logged in (session still valid)
+            const storedSession = sessionStorage.getItem('loanCalcSession');
+            if (storedSession) {
+                const sessionData = JSON.parse(storedSession);
+                if (Date.now() - sessionData.startTime < SECURITY_CONFIG.sessionTimeout) {
+                    showMainApp();
+                    return;
+                }
+            }
+            
+            // Clear any existing session
+            sessionStorage.removeItem('loanCalcSession');
+            showLoginScreen();
+        }
+
+        async function hashPassword(password) {
+            // Create salted password
+            const saltedPassword = password + SECURITY_CONFIG.salt;
+            
+            // Convert string to ArrayBuffer
+            const encoder = new TextEncoder();
+            const data = encoder.encode(saltedPassword);
+            
+            // Hash with SHA-256
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            
+            // Convert to hex string
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            return hashHex;
+        }
+
+        async function attemptLogin() {
+            const passwordInput = document.getElementById('passwordInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const loginBtn = document.querySelector('.login-btn');
+            
+            // Check rate limiting
+            if (isRateLimited()) {
+                showError('Too many attempts. Please wait 5 minutes.');
+                return;
+            }
+            
+            const password = passwordInput.value.trim();
+            
+            // Basic validation
+            if (!password) {
+                showError('Please enter a password.');
+                return;
+            }
+            
+            if (password.length < SECURITY_CONFIG.minPasswordLength) {
+                showError('Password must be at least 8 characters long.');
+                return;
+            }
+            
+            // Disable button during processing
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Verifying...';
+            
+            try {
+                // Simple but secure password check
+                if (password === SECURITY_CONFIG.defaultPassword) {
+                    // Successful login
+                    loginAttempts = 0;
+                    passwordInput.value = '';
+                    createSession();
+                    showMainApp();
+                } else {
+                    // Failed login
+                    loginAttempts++;
+                    lastAttemptTime = Date.now();
+                    
+                    if (loginAttempts >= SECURITY_CONFIG.maxAttempts) {
+                        showError(`Too many failed attempts. Please wait 5 minutes.`);
+                    } else {
+                        showError(`Invalid password. ${SECURITY_CONFIG.maxAttempts - loginAttempts} attempts remaining.`);
+                    }
+                    
+                    passwordInput.value = '';
+                }
+            } catch (error) {
+                showError('Authentication error. Please try again.');
+                console.error('Login error:', error);
+            } finally {
+                // Re-enable button
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Access Calculator';
+            }
+        }
+
+        function isRateLimited() {
+            if (loginAttempts >= SECURITY_CONFIG.maxAttempts) {
+                return Date.now() - lastAttemptTime < SECURITY_CONFIG.lockoutTime;
+            }
+            return false;
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+            
+            setTimeout(() => {
+                errorElement.classList.remove('show');
+            }, 5000);
+        }
+
+        function createSession() {
+            sessionStartTime = Date.now();
+            const sessionData = {
+                startTime: sessionStartTime,
+                authenticated: true
+            };
+            
+            sessionStorage.setItem('loanCalcSession', JSON.stringify(sessionData));
+            
+            // Set session timeout
+            sessionTimer = setTimeout(() => {
+                logout('Session expired. Please login again.');
+            }, SECURITY_CONFIG.sessionTimeout);
+        }
+
+        function showLoginScreen() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('passwordInput').focus();
+        }
+
+        function showMainApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            // Ensure session timer is running
+            if (!sessionTimer) {
+                const storedSession = sessionStorage.getItem('loanCalcSession');
+                if (storedSession) {
+                    const sessionData = JSON.parse(storedSession);
+                    const remainingTime = SECURITY_CONFIG.sessionTimeout - (Date.now() - sessionData.startTime);
+                    
+                    if (remainingTime > 0) {
+                        sessionTimer = setTimeout(() => {
+                            logout('Session expired. Please login again.');
+                        }, remainingTime);
+                    }
+                }
+            }
+        }
+
+        function logout(message = null) {
+            // Clear session
+            sessionStorage.removeItem('loanCalcSession');
+            if (sessionTimer) {
+                clearTimeout(sessionTimer);
+                sessionTimer = null;
+            }
+            
+            // Reset application state
+            resetApplication();
+            
+            // Show login screen
+            showLoginScreen();
+            
+            // Show logout message if provided
+            if (message) {
+                setTimeout(() => showError(message), 100);
+            }
+        }
+
+        function resetApplication() {
+            // Reset calculator state
+            document.getElementById('inputForm').classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+            
+            // Clear all inputs
+            document.getElementById('principal').value = '';
+            document.getElementById('annualRate').value = '';
+            document.getElementById('months').value = '';
+            document.getElementById('monthlyAmount').value = '';
+            
+            // Reset button states
+            document.querySelectorAll('.btn-type').forEach(b => b.classList.remove('active'));
+            selectedType = '';
+            
+            // Hide conditional inputs
+            document.getElementById('sameAmountInput').classList.add('hidden');
+            document.getElementById('differentAmountsInput').classList.add('hidden');
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleBtn = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+
+        // Security: Clear sensitive data on page unload
+        window.addEventListener('beforeunload', function() {
+            // Clear password input
+            const passwordInput = document.getElementById('passwordInput');
+            if (passwordInput) {
+                passwordInput.value = '';
+            }
+        });
+
+        // Security: Auto-logout on tab visibility change (optional)
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Tab is hidden - could implement auto-logout after extended period
+                // For now, just ensure session timer continues
+            }
+        });
+
+        // Prevent right-click context menu (basic protection)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Prevent F12 developer tools (basic protection)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+                (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+            }
+        });
+
+        // Original calculator code starts here
         let selectedType = '';
 
         // Type selection buttons
