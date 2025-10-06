@@ -13,9 +13,9 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: #0a0a0a;
             min-height: 100vh;
-            color: #fff;
+            color: #e0e0e0;
             padding: 20px;
         }
 
@@ -33,7 +33,8 @@
             width: 60px;
             height: 60px;
             margin: 0 auto 20px;
-            background: linear-gradient(135deg, #a855f7, #ec4899);
+            background: #1a1a1a;
+            border: 2px solid #333;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -49,25 +50,22 @@
 
         h1 {
             font-size: 3rem;
-            background: linear-gradient(135deg, #a855f7, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #e0e0e0;
             margin-bottom: 10px;
         }
 
         .subtitle {
-            color: #94a3b8;
+            color: #666;
             font-size: 1.1rem;
         }
 
         .card {
-            background: rgba(30, 41, 59, 0.6);
+            background: #151515;
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(168, 85, 247, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid #222;
             margin-bottom: 30px;
         }
 
@@ -78,25 +76,25 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: #c4b5fd;
+            color: #999;
             font-weight: 500;
         }
 
         input[type="number"] {
             width: 100%;
             padding: 15px;
-            background: #0f172a;
-            border: 1px solid rgba(168, 85, 247, 0.3);
+            background: #0a0a0a;
+            border: 1px solid #333;
             border-radius: 10px;
-            color: #fff;
+            color: #e0e0e0;
             font-size: 16px;
             transition: all 0.3s;
         }
 
         input[type="number"]:focus {
             outline: none;
-            border-color: #a855f7;
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+            border-color: #444;
+            box-shadow: 0 0 0 3px rgba(68, 68, 68, 0.1);
         }
 
         .button-group {
@@ -117,46 +115,51 @@
         }
 
         .btn-type {
-            background: #334155;
-            color: #fff;
+            background: #1a1a1a;
+            color: #e0e0e0;
         }
 
         .btn-type:hover {
-            background: #475569;
+            background: #222;
         }
 
         .btn-type.active {
-            background: linear-gradient(135deg, #a855f7, #ec4899);
-            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+            background: #333;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            border: 1px solid #444;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #a855f7, #ec4899);
-            color: #fff;
-            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+            background: #222;
+            color: #e0e0e0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(168, 85, 247, 0.4);
+            background: #2a2a2a;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
         }
 
         .btn-secondary {
-            background: #334155;
-            color: #fff;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            border: 1px solid #333;
         }
 
         .btn-secondary:hover {
-            background: #475569;
+            background: #222;
         }
 
         .custom-payments {
             max-height: 400px;
             overflow-y: auto;
             padding: 10px;
-            background: rgba(15, 23, 42, 0.5);
+            background: #0a0a0a;
             border-radius: 10px;
             margin-bottom: 25px;
+            border: 1px solid #222;
         }
 
         .custom-payments::-webkit-scrollbar {
@@ -164,12 +167,12 @@
         }
 
         .custom-payments::-webkit-scrollbar-track {
-            background: rgba(51, 65, 85, 0.5);
+            background: #1a1a1a;
             border-radius: 10px;
         }
 
         .custom-payments::-webkit-scrollbar-thumb {
-            background: #a855f7;
+            background: #333;
             border-radius: 10px;
         }
 
@@ -182,7 +185,7 @@
 
         .payment-label {
             min-width: 100px;
-            color: #a855f7;
+            color: #999;
         }
 
         .summary-cards {
@@ -195,30 +198,34 @@
         .summary-card {
             padding: 30px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .summary-card.purple {
-            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            background: #1a1a1a;
+            border: 1px solid #333;
         }
 
         .summary-card.pink {
-            background: linear-gradient(135deg, #ec4899, #f472b6);
+            background: #1a1a1a;
+            border: 1px solid #333;
         }
 
         .summary-card.green {
-            background: linear-gradient(135deg, #10b981, #34d399);
+            background: #1a1a1a;
+            border: 1px solid #333;
         }
 
         .summary-label {
             font-size: 0.9rem;
-            opacity: 0.9;
+            color: #666;
             margin-bottom: 10px;
         }
 
         .summary-value {
             font-size: 2.5rem;
             font-weight: 700;
+            color: #e0e0e0;
         }
 
         table {
@@ -228,13 +235,13 @@
         }
 
         thead {
-            background: rgba(168, 85, 247, 0.1);
+            background: #1a1a1a;
         }
 
         th {
             padding: 15px;
             text-align: right;
-            color: #c4b5fd;
+            color: #999;
             font-weight: 600;
         }
 
@@ -245,7 +252,7 @@
         td {
             padding: 15px;
             text-align: right;
-            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+            border-bottom: 1px solid #222;
         }
 
         td:first-child {
@@ -258,15 +265,15 @@
         }
 
         tbody tr:hover {
-            background: rgba(168, 85, 247, 0.05);
+            background: #1a1a1a;
         }
 
         .interest {
-            color: #f472b6;
+            color: #999;
         }
 
         .payment {
-            color: #34d399;
+            color: #ccc;
         }
 
         .hidden {
@@ -310,7 +317,7 @@
 
         <div id="inputForm" class="card">
             <div class="form-group">
-                <label for="principal">Principal Loan Amount ($)</label>
+                <label for="principal">Principal Loan Amount (₹)</label>
                 <input type="number" id="principal" placeholder="Enter loan amount" step="0.01">
             </div>
 
@@ -334,12 +341,12 @@
             </div>
 
             <div id="sameAmountInput" class="form-group hidden">
-                <label for="monthlyAmount">Monthly Payment Amount ($)</label>
+                <label for="monthlyAmount">Monthly Payment Amount (₹)</label>
                 <input type="number" id="monthlyAmount" placeholder="Enter monthly payment" step="0.01">
             </div>
 
             <div id="differentAmountsInput" class="custom-payments hidden">
-                <label>Enter Payment for Each Month ($)</label>
+                <label>Enter Payment for Each Month (₹)</label>
                 <div id="customPaymentsList"></div>
             </div>
 
@@ -349,7 +356,7 @@
         <div id="results" class="hidden">
             <div id="summarySection"></div>
             <div class="card">
-                <h2 style="color: #c4b5fd; margin-bottom: 20px;">Repayment Schedule</h2>
+                <h2 style="color: #999; margin-bottom: 20px;">Repayment Schedule</h2>
                 <div style="overflow-x: auto;">
                     <table id="scheduleTable">
                         <thead>
@@ -523,11 +530,11 @@
                         </div>
                         <div class="summary-card pink">
                             <div class="summary-label">Total Interest</div>
-                            <div class="summary-value">$${schedule.totalInterest}</div>
+                            <div class="summary-value">₹${schedule.totalInterest}</div>
                         </div>
                         <div class="summary-card green">
                             <div class="summary-label">Total Payable</div>
-                            <div class="summary-value">$${schedule.totalDue}</div>
+                            <div class="summary-value">₹${schedule.totalDue}</div>
                         </div>
                     </div>
                 `;
@@ -537,7 +544,7 @@
                     <div class="summary-cards">
                         <div class="summary-card purple">
                             <div class="summary-label">Total Interest Paid</div>
-                            <div class="summary-value">$${schedule.totalInterest}</div>
+                            <div class="summary-value">₹${schedule.totalInterest}</div>
                         </div>
                         <div class="summary-card pink">
                             <div class="summary-label">Total Payments</div>
@@ -552,10 +559,10 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${row.month}</td>
-                        <td>$${row.openingBalance}</td>
-                        <td class="interest">$${row.interest}</td>
-                        <td class="payment">$${row.payment}</td>
-                        <td>$${row.closingBalance}</td>
+                        <td>₹${row.openingBalance}</td>
+                        <td class="interest">₹${row.interest}</td>
+                        <td class="payment">₹${row.payment}</td>
+                        <td>₹${row.closingBalance}</td>
                     `;
                     tbody.appendChild(tr);
                 });
