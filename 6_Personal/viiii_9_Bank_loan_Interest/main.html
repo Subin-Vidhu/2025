@@ -277,7 +277,7 @@
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
         .text-center {
@@ -600,14 +600,26 @@
 
         // Initialize application
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing security...');
+            
+            // Reset any previous login attempts on page load
+            loginAttempts = 0;
+            lastAttemptTime = 0;
+            
             initializeSecurity();
             
             // Add Enter key support for password input
-            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    attemptLogin();
-                }
-            });
+            const passwordInput = document.getElementById('passwordInput');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        attemptLogin();
+                    }
+                });
+                console.log('Password input event listener added');
+            } else {
+                console.error('Password input not found!');
+            }
         });
 
         function initializeSecurity() {
@@ -645,9 +657,16 @@
         }
 
         async function attemptLogin() {
+            console.log('Attempting login...');
+            
             const passwordInput = document.getElementById('passwordInput');
             const errorMessage = document.getElementById('errorMessage');
             const loginBtn = document.querySelector('.login-btn');
+            
+            if (!passwordInput) {
+                console.error('Password input element not found!');
+                return;
+            }
             
             // Check rate limiting
             if (isRateLimited()) {
@@ -656,6 +675,8 @@
             }
             
             const password = passwordInput.value.trim();
+            console.log('Password length:', password.length);
+            console.log('Expected password:', SECURITY_CONFIG.defaultPassword);
             
             // Basic validation
             if (!password) {
@@ -675,12 +696,14 @@
             try {
                 // Simple but secure password check
                 if (password === SECURITY_CONFIG.defaultPassword) {
+                    console.log('Password correct! Logging in...');
                     // Successful login
                     loginAttempts = 0;
                     passwordInput.value = '';
                     createSession();
                     showMainApp();
                 } else {
+                    console.log('Password incorrect');
                     // Failed login
                     loginAttempts++;
                     lastAttemptTime = Date.now();
@@ -705,9 +728,22 @@
 
         function isRateLimited() {
             if (loginAttempts >= SECURITY_CONFIG.maxAttempts) {
-                return Date.now() - lastAttemptTime < SECURITY_CONFIG.lockoutTime;
+                const isLocked = Date.now() - lastAttemptTime < SECURITY_CONFIG.lockoutTime;
+                if (!isLocked) {
+                    // Reset attempts after lockout period
+                    loginAttempts = 0;
+                    lastAttemptTime = 0;
+                }
+                return isLocked;
             }
             return false;
+        }
+        
+        // Emergency reset function (for debugging)
+        function resetLoginAttempts() {
+            loginAttempts = 0;
+            lastAttemptTime = 0;
+            console.log('Login attempts reset');
         }
 
         function showError(message) {
@@ -721,6 +757,7 @@
         }
 
         function createSession() {
+            console.log('Creating session...');
             sessionStartTime = Date.now();
             const sessionData = {
                 startTime: sessionStartTime,
@@ -728,22 +765,90 @@
             };
             
             sessionStorage.setItem('loanCalcSession', JSON.stringify(sessionData));
+            console.log('Session created and stored');
             
             // Set session timeout
             sessionTimer = setTimeout(() => {
                 logout('Session expired. Please login again.');
             }, SECURITY_CONFIG.sessionTimeout);
+            console.log('Session timer set for', SECURITY_CONFIG.sessionTimeout, 'ms');
         }
 
         function showLoginScreen() {
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('passwordInput').focus();
+            console.log('showLoginScreen() called');
+            
+            const loginScreen = document.getElementById('loginScreen');
+            const mainApp = document.getElementById('mainApp');
+            const passwordInput = document.getElementById('passwordInput');
+            
+            if (loginScreen) {
+                console.log('Before - loginScreen classes:', loginScreen.className);
+                loginScreen.classList.remove('hidden');
+                loginScreen.style.display = 'flex'; // login-container uses flex
+                console.log('After - loginScreen classes:', loginScreen.className);
+                console.log('Login screen display:', window.getComputedStyle(loginScreen).display);
+                console.log('Login screen shown');
+            } else {
+                console.error('Login screen element not found');
+            }
+            
+            if (mainApp) {
+                console.log('Before - mainApp classes:', mainApp.className);
+                mainApp.classList.add('hidden');
+                mainApp.style.display = 'none';
+                console.log('After - mainApp classes:', mainApp.className);
+                console.log('Main app display:', window.getComputedStyle(mainApp).display);
+                console.log('Main app hidden');
+            } else {
+                console.error('Main app element not found');
+            }
+            
+            if (passwordInput) {
+                passwordInput.value = ''; // Clear password field on logout
+                setTimeout(() => {
+                    passwordInput.focus();
+                }, 100);
+                console.log('Password input focused and cleared');
+            } else {
+                console.error('Password input not found');
+            }
         }
 
         function showMainApp() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
+            console.log('showMainApp() called');
+            
+            const loginScreen = document.getElementById('loginScreen');
+            const mainApp = document.getElementById('mainApp');
+            
+            console.log('loginScreen element:', loginScreen);
+            console.log('mainApp element:', mainApp);
+            
+            if (loginScreen && mainApp) {
+                console.log('Before - loginScreen classes:', loginScreen.className);
+                console.log('Before - mainApp classes:', mainApp.className);
+                
+                loginScreen.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                
+                console.log('After - loginScreen classes:', loginScreen.className);
+                console.log('After - mainApp classes:', mainApp.className);
+                
+                // Force style application
+                loginScreen.style.display = 'none';
+                mainApp.style.display = 'block';
+                
+                // Force style check
+                console.log('loginScreen computed display:', window.getComputedStyle(loginScreen).display);
+                console.log('mainApp computed display:', window.getComputedStyle(mainApp).display);
+                
+                console.log('Successfully switched to main app');
+            } else {
+                console.error('Could not find login screen or main app elements');
+                console.log('Available elements with IDs:');
+                document.querySelectorAll('[id]').forEach(el => {
+                    console.log('ID:', el.id);
+                });
+            }
             
             // Ensure session timer is running
             if (!sessionTimer) {
@@ -762,12 +867,20 @@
         }
 
         function logout(message = null) {
+            console.log('Logout called with message:', message);
+            
             // Clear session
             sessionStorage.removeItem('loanCalcSession');
             if (sessionTimer) {
                 clearTimeout(sessionTimer);
                 sessionTimer = null;
+                console.log('Session timer cleared');
             }
+            
+            // Reset login attempts
+            loginAttempts = 0;
+            lastAttemptTime = 0;
+            console.log('Login attempts reset');
             
             // Reset application state
             resetApplication();
@@ -777,8 +890,10 @@
             
             // Show logout message if provided
             if (message) {
-                setTimeout(() => showError(message), 100);
+                setTimeout(() => showError(message), 500);
             }
+            
+            console.log('Logout completed');
         }
 
         function resetApplication() {
