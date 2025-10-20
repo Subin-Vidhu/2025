@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: Day 00/90 - Winter Arc
+- New Life: Day 1/63 - Winter Arc
 
 ---
 Order of Projects
