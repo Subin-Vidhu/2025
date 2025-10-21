@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Weather App{% endblock %}
+
+{% block styles %}
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-box {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.login-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.login-header h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.login-header p {
+    color: #a8b2d1;
+    font-size: 14px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #a8b2d1;
+    font-size: 14px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    font-size: 20px;
+    color: #667eea;
+}
+
+.form-input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.form-input::placeholder {
+    color: #a8b2d1;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.error-message {
+    background: rgba(245, 87, 108, 0.2);
+    border: 1px solid #f5576c;
+    color: #ff6b81;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.demo-info {
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #a8b2d1;
+}
+
+.demo-info strong {
+    color: #fff;
+}
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-box">
+        <div class="login-header">
+            <div class="login-icon">⛅</div>
+            <h1>Weather App</h1>
+            <p>Sign in to check the weather</p>
+        </div>
+
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/login">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="username" name="username" class="form-input" placeholder="Enter username" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="password" name="password" class="form-input" placeholder="Enter password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-login">Sign In</button>
+        </form>
+
+        <div class="demo-info">
+            <strong>Demo Credentials:</strong><br>
+            Username: <strong>admin</strong> or <strong>user</strong><br>
+            Password: <strong>weather123</strong>
+        </div>
+    </div>
+</div>
+{% endblock %}
