@@ -1,0 +1,235 @@
+{
+  "name": "Jira Reminder to Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9,14,17 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "2098bf90-6d47-4c89-b734-87b562c023f1",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -608,
+        112
+      ],
+      "notes": "Triggers at 9 AM, 2 PM, and 5 PM on weekdays"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 20,
+        "options": {}
+      },
+      "id": "55f81e82-cccb-4611-b469-79805d570301",
+      "name": "Get Jira Issues",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        112
+      ],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.length }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9876fd6b-452e-48b5-9d43-956e6be04e29",
+      "name": "Has Tasks?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format Jira issues for LLM\nconst items = $input.all();\nconst issues = items.map(item => item.json);\n\nconst formatted = issues.map(issue => ({\n  key: issue.key,\n  summary: issue.fields?.summary || 'No summary',\n  status: issue.fields?.status?.name || 'Unknown',\n  priority: issue.fields?.priority?.name || 'None',\n  assignee: issue.fields?.assignee?.displayName || 'Unassigned'\n}));\n\nconst taskList = formatted.map(t => \n  `• [${t.key}] ${t.summary} (${t.status} - ${t.priority})`\n).join('\\n');\n\nconst userContent = `I have ${formatted.length} Jira tasks. Here they are:\\n\\n${taskList}\\n\\nCreate a brief reminder message (2-3 sentences) about what I should focus on or log time for.`;\n\nconst llmPayload = {\n  model: \"local-model\",\n  messages: [\n    {\n      role: \"system\",\n      content: \"You are a helpful assistant that creates brief, actionable reminders about Jira tasks. Keep responses concise and focused on what needs to be done.\"\n    },\n    {\n      role: \"user\",\n      content: userContent\n    }\n  ],\n  temperature: 0.7,\n  max_tokens: 300\n};\n\nreturn [{\n  json: {\n    taskCount: formatted.length,\n    taskList: taskList,\n    rawTasks: formatted,\n    llmPayload: llmPayload\n  }\n}];"
+      },
+      "id": "dbe583ee-1d51-470a-91a0-7da4c4c70cff",
+      "name": "Format Tasks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.0.196:1234/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  model: \"local-model\",\n  messages: [\n    {\n      role: \"system\",\n      content: \"You are a helpful assistant that creates brief, actionable reminders about Jira tasks. Keep responses concise and focused on what needs to be done.\"\n    },\n    {\n      role: \"user\",\n      content: \"I have \" + $json.taskCount + \" Jira tasks. Here they are:\\n\\n\" + $json.taskList + \"\\n\\nCreate a brief reminder message (2-3 sentences) about what I should focus on or log time for.\"\n    }\n  ],\n  temperature: 0.7,\n  max_tokens: 300\n}) }}",
+        "options": {}
+      },
+      "id": "c356140d-d766-4784-ae5e-3264efe7af82",
+      "name": "LLM Summarize",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "589824303"
+            },
+            {
+              "name": "text",
+              "value": "🔔 *Jira Tasks Reminder*\n\n{{ $json.choices[0].message.content }}\n\n_Automated reminder • {{ new Date().toLocaleString() }}_"
+            },
+            {
+              "name": "parse_mode",
+              "value": "Markdown"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "59d5c0e1-53c8-45e0-9442-17af7ac419a1",
+      "name": "Send to Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5bIGme5bZOxl-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "application/json",
+        "options": {}
+      },
+      "id": "25423b7d-9eb7-49d5-a1e2-7d7fe188656b",
+      "name": "No Tasks Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        208
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Jira Issues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Jira Issues": {
+      "main": [
+        [
+          {
+            "node": "Has Tasks?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Tasks?": {
+      "main": [
+        [
+          {
+            "node": "Format Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Tasks Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Tasks": {
+      "main": [
+        [
+          {
+            "node": "LLM Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9cfae579-d786-4e34-ba24-9b76f99f6183",
+  "meta": {
+    "instanceId": "1fe0ea1b32dc2f6d9b6fe3272518c0432f5c36aee139d9a4cf93e49f008b9d58"
+  },
+  "id": "IdtS6CkfBujz1auQ",
+  "tags": []
+}
