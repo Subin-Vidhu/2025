@@ -1,0 +1,94 @@
+{
+  "name": "basic llm chain gemini",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -400,
+        -16
+      ],
+      "id": "0a21d80b-a5ac-46c6-b64a-97a2aeaf3b28",
+      "name": "When chat message received",
+      "webhookId": "1e302644-b423-4c4f-9df1-9ef62acf8dd2"
+    },
+    {
+      "parameters": {
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are  a helpful assistant, obsessed with hitchhikers galaxy"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "bf8cf90a-471c-46e1-b13c-190328b82b9a",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        192
+      ],
+      "id": "614f46c8-daf8-4fc5-8e1a-908adb19268f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wdVPqqYxc6KL2Zxi",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d5182a55-e303-4e9d-afce-699d78b7d75b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1fe0ea1b32dc2f6d9b6fe3272518c0432f5c36aee139d9a4cf93e49f008b9d58"
+  },
+  "id": "NeLEy7MNTs4InEUl",
+  "tags": []
+}

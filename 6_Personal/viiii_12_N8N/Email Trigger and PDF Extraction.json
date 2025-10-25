@@ -1,0 +1,102 @@
+{
+  "name": "Email Trigger and PDF Extraction",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "q": "from:chippyravindran6896@gmail.com"
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e2f662ee-395a-47f1-9c01-9029b60d3b09",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oBkMLrF2M1ClbeJR",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=C:/Users/Subin-PC/Downloads/n8ndata/{{ $('Gmail Trigger').item.binary.attachment_0.fileName }}",
+        "dataPropertyName": "attachment_0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "70a68025-7c61-443b-8ee5-c142af6e292d",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "command": "=pdftotext.exe C:/Users/Subin-PC/Downloads/n8ndata/{{ $('Gmail Trigger').item.binary.attachment_0.fileName }}\n"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "444d3939-fd3a-49f7-b63a-8e7cc7fe43f6",
+      "name": "Execute Command"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e03444b5-b236-4962-b493-ba09f885a887",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1fe0ea1b32dc2f6d9b6fe3272518c0432f5c36aee139d9a4cf93e49f008b9d58"
+  },
+  "id": "n674yD7oI6JW8ZjN",
+  "tags": []
+}

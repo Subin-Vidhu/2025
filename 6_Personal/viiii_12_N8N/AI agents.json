@@ -1,0 +1,147 @@
+{
+  "name": "AI agents",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -80
+      ],
+      "id": "cef2ef58-ef01-411c-b34a-66993f95ba56",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Send a random quote to each email recipients subinvidhu3232@gmail.com, chippyravindran6896@gmail.com, aswinthulasi2000@gmail.com",
+        "options": {
+          "systemMessage": "You are a helpful assistant who uses\n1. The HTTP tool to fetcha  random quote\n2. Use the gmail tool to send the email"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -192,
+        -80
+      ],
+      "id": "f85b60cc-1e34-427d-880a-a35d1b0c781b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        128
+      ],
+      "id": "d87ee59c-0ed2-4ea7-b156-6f1731b8eae8",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wdVPqqYxc6KL2Zxi",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=subinvidhu3232@gmail.com, chippyravindran6896@gmail.com, aswinthulasi2000@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        128
+      ],
+      "id": "acdc70cc-9443-43eb-8e6e-a389e4573af2",
+      "name": "Send a message in Gmail",
+      "webhookId": "5d99019a-6212-4215-8f91-045f70052b54",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oBkMLrF2M1ClbeJR",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Random Quote from Zenquotes",
+        "url": "https://zenquotes.io/api/random",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        112,
+        80
+      ],
+      "id": "b3011f0d-4aa3-4786-ba3d-b435c37710a4",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "91f6638c-e40a-48a7-9843-ab5de41caf96",
+  "meta": {
+    "instanceId": "1fe0ea1b32dc2f6d9b6fe3272518c0432f5c36aee139d9a4cf93e49f008b9d58"
+  },
+  "id": "P1xtrCCmcfzd4Xmn",
+  "tags": []
+}

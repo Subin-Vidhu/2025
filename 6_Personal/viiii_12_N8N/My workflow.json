@@ -1,0 +1,89 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -464,
+        -64
+      ],
+      "id": "a56140d9-40cc-46da-91e5-8797e5e18574",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://zenquotes.io/api/random",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -256,
+        -64
+      ],
+      "id": "ca2a2ee6-678a-4e1e-8ea9-6472913cbba3",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "sendTo": "subinvidhu3232@gmail.com, chippyravindran6896@gmail.com, aswinthulasi2000@gmail.com",
+        "subject": "Testing N8N",
+        "message": "={{ $json.h }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        -64
+      ],
+      "id": "b0aa6f24-4829-4255-be2c-a80768c66738",
+      "name": "Send a message",
+      "webhookId": "57490ef9-e7af-419d-bf24-db269ee113d9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "oBkMLrF2M1ClbeJR",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cf7bba08-a20f-4c48-bb58-a0ca9258dce9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1fe0ea1b32dc2f6d9b6fe3272518c0432f5c36aee139d9a4cf93e49f008b9d58"
+  },
+  "id": "XfdAXTTESFFMkf9i",
+  "tags": []
+}
