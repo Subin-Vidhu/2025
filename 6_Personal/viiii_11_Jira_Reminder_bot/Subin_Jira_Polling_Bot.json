@@ -1,0 +1,503 @@
+{
+  "name": "Subin's Jira Polling Bot (No Webhook Required)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds", 
+              "secondsInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "polling-trigger",
+      "name": "Check for Messages Every 5s",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/getUpdates",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "timeout",
+              "value": "10"
+            },
+            {
+              "name": "allowed_updates",
+              "value": "[\"message\",\"callback_query\"]"
+            }
+          ]
+        }
+      },
+      "id": "get-telegram-updates",
+      "name": "Get Telegram Updates",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [200, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process Telegram updates\nconst response = $input.first().json;\n\nif (!response.ok || !response.result || response.result.length === 0) {\n  return [];\n}\n\nconst updates = response.result;\nconst processedUpdates = [];\n\nfor (const update of updates) {\n  let command, text, userId, chatId;\n  \n  if (update.callback_query) {\n    // Button press\n    command = update.callback_query.data;\n    userId = update.callback_query.from.id;\n    chatId = update.callback_query.message.chat.id;\n    text = update.callback_query.data;\n  } else if (update.message) {\n    // Direct message\n    text = update.message.text || '';\n    userId = update.message.from.id;\n    chatId = update.message.chat.id;\n    \n    if (text.startsWith('/')) {\n      const parts = text.split(' ');\n      command = parts[0].toLowerCase();\n    } else {\n      continue; // Skip non-command messages\n    }\n  } else {\n    continue; // Skip other update types\n  }\n  \n  // Only respond to Subin (your user ID)\n  const allowedUserId = 589824303;\n  if (userId !== allowedUserId) {\n    continue;\n  }\n  \n  processedUpdates.push({\n    json: {\n      command: command,\n      originalText: text,\n      userId: userId,\n      chatId: chatId,\n      isCallbackQuery: !!update.callback_query,\n      updateId: update.update_id\n    }\n  });\n}\n\nreturn processedUpdates;"
+      },
+      "id": "process-updates",
+      "name": "Process Updates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "today-command",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "/today",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "today-button",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "today_plan",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        }
+      },
+      "id": "route-today",
+      "name": "Route: Today",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [600, -100]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "status-command",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "/status",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "status-button",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "status_check",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        }
+      },
+      "id": "route-status",
+      "name": "Route: Status",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [600, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "debug-command",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "/debug",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        }
+      },
+      "id": "route-debug",
+      "name": "Route: Debug",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [600, 100]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "jql": "assignee = currentUser()",
+        "options": {}
+      },
+      "id": "test-current-user",
+      "name": "Test currentUser()",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [800, 50],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "jql": "assignee = 'SUBIN S'",
+        "options": {}
+      },
+      "id": "test-email-query",
+      "name": "Test Email Query",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [800, 100],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "jql": "assignee = 'akhila@aramisimaging.com'",
+        "options": {}
+      },
+      "id": "test-akhila-query",
+      "name": "Test Akhila Query",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [800, 150],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 15,
+        "jql": "assignee = currentUser() AND status IN ('In Progress', 'To Do', 'Selected for Development', 'Open') AND status NOT IN ('Done', 'Closed', 'Resolved')",
+        "options": {}
+      },
+      "id": "get-today-tasks",
+      "name": "Get Today Tasks",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [800, -100],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "jql": "assignee = currentUser() AND status IN ('In Progress', 'To Do', 'Selected for Development', 'Open') AND status NOT IN ('Done', 'Closed', 'Resolved')",
+        "options": {}
+      },
+      "id": "get-status-tasks",
+      "name": "Get Status Tasks",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [800, 0],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Create detailed today's plan for Subin\nconst items = $input.all();\nconst issues = items.map(item => item.json);\nconst chatId = $('Process Updates').item.json.chatId;\n\nif (issues.length === 0) {\n  return [{\n    json: {\n      chatId: chatId,\n      message: \"🎉 All Clear, Subin!\\n\\nNo active tasks today. Perfect time to:\\n• Plan ahead for upcoming work\\n• Help teammates\\n• Review and organize\\n• Take a strategic break\\n\\nYou're staying on top of things! 💪\"\n    }\n  }];\n}\n\nconst formatted = issues.map(issue => ({\n  key: issue.key,\n  summary: issue.fields?.summary || 'No summary',\n  status: issue.fields?.status?.name || 'Unknown',\n  priority: issue.fields?.priority?.name || 'None',\n  project: issue.fields?.project?.key || 'UNKNOWN',\n  estimate: issue.fields?.timeoriginalestimate || 0,\n  spent: issue.fields?.timespent || 0,\n  assignee: issue.fields?.assignee?.displayName || 'Unassigned',\n  updated: new Date(issue.fields?.updated || Date.now())\n}));\n\n// Build detailed message\nlet message = `📋 Today's Plan for Subin\\n\\n`;\n\n// Current work\nconst inProgress = formatted.filter(t => t.status === 'In Progress');\nif (inProgress.length > 0) {\n  message += `🚀 CURRENTLY WORKING ON:\\n`;\n  inProgress.forEach(task => {\n    message += `• [${task.key}] ${task.summary}\\n`;\n  });\n  message += `\\n`;\n} else {\n  message += `⚡ NO CURRENT WORK - Start with a high priority task!\\n\\n`;\n}\n\n// High priority tasks\nconst highPriority = formatted.filter(t => ['High', 'Highest'].includes(t.priority) && t.status !== 'In Progress');\nif (highPriority.length > 0) {\n  message += `🔴 HIGH PRIORITY (Do Next):\\n`;\n  highPriority.slice(0, 3).forEach(task => {\n    message += `• [${task.key}] ${task.summary}\\n`;\n  });\n  message += `\\n`;\n}\n\n// Stats\nmessage += `📊 QUICK STATS:\\n`;\nmessage += `• Total Active: ${formatted.length}\\n`;\nmessage += `• In Progress: ${inProgress.length}\\n`;\nmessage += `• High Priority: ${highPriority.length}\\n\\n`;\n\nmessage += `Generated: ${new Date().toLocaleString('en-GB')}`;\n\nreturn [{\n  json: {\n    chatId: chatId,\n    message: message\n  }\n}];"
+      },
+      "id": "format-today-plan",
+      "name": "Format Today Plan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1000, -100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Create status summary\nconst items = $input.all();\nconst issues = items.map(item => item.json);\nconst chatId = $('Process Updates').item.json.chatId;\n\nif (issues.length === 0) {\n  return [{\n    json: {\n      chatId: chatId,\n      message: \"📊 Status: All Clear! 🎉\\n\\nNo active tasks assigned to you.\"\n    }\n  }];\n}\n\nconst formatted = issues.map(issue => ({\n  key: issue.key,\n  summary: issue.fields?.summary || 'No summary',\n  status: issue.fields?.status?.name || 'Unknown',\n  priority: issue.fields?.priority?.name || 'None'\n}));\n\nconst inProgress = formatted.filter(t => t.status === 'In Progress');\nconst highPriority = formatted.filter(t => ['High', 'Highest'].includes(t.priority));\n\nlet message = `📊 Subin's Current Status\\n\\n`;\n\nif (inProgress.length > 0) {\n  message += `🚀 CURRENTLY WORKING ON (${inProgress.length}):\\n`;\n  inProgress.forEach(task => {\n    message += `• [${task.key}] ${task.summary}\\n`;\n  });\n} else {\n  message += `⚡ NO CURRENT WORK - Ready to start!\\n`;\n}\n\nmessage += `\\n📈 SUMMARY:\\n`;\nmessage += `• Total Active: ${formatted.length}\\n`;\nmessage += `• High Priority: ${highPriority.length}\\n`;\nmessage += `• In Progress: ${inProgress.length}\\n\\n`;\nmessage += `Updated: ${new Date().toLocaleString('en-GB')}`;\n\nreturn [{\n  json: {\n    chatId: chatId,\n    message: message\n  }\n}];"
+      },
+      "id": "format-status",
+      "name": "Format Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1000, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Debug Jira responses\nconst currentUserData = $('Test currentUser()').all();\nconst emailQueryData = $('Test Email Query').all();\nconst akhilaQueryData = $('Test Akhila Query').all();\nconst chatId = $('Process Updates').item.json.chatId;\n\nlet message = `🔍 JIRA DEBUG RESULTS\\n\\n`;\nmessage += `1️⃣ currentUser() Query: ${currentUserData.length} tasks\\n`;\nif (currentUserData.length > 0) {\n  const assignee = currentUserData[0].json.fields?.assignee;\n  message += `   Assignee: ${assignee?.displayName || 'Unknown'} (${assignee?.emailAddress || 'No email'})\\n`;\n}\n\nmessage += `\\n2️⃣ subin@aramisimaging.com Query: ${emailQueryData.length} tasks\\n`;\nif (emailQueryData.length > 0) {\n  const assignee = emailQueryData[0].json.fields?.assignee;\n  message += `   Assignee: ${assignee?.displayName || 'Unknown'} (${assignee?.emailAddress || 'No email'})\\n`;\n}\n\nmessage += `\\n3️⃣ akhila@aramisimaging.com Query: ${akhilaQueryData.length} tasks\\n`;\nif (akhilaQueryData.length > 0) {\n  const assignee = akhilaQueryData[0].json.fields?.assignee;\n  message += `   Assignee: ${assignee?.displayName || 'Unknown'} (${assignee?.emailAddress || 'No email'})\\n`;\n}\n\nmessage += `\\n🎯 ANALYSIS:\\n`;\nif (currentUserData.length > 0 && emailQueryData.length === 0) {\n  message += `❌ Credential linked to different email than subin@aramisimaging.com`;\n} else if (emailQueryData.length > 0) {\n  message += `✅ subin@aramisimaging.com query works correctly`;\n} else if (akhilaQueryData.length > 0) {\n  message += `⚠️ Only Akhila's tasks found - credential is Akhila's account`;\n} else {\n  message += `❓ No tasks found - check Jira setup`;\n}\n\nmessage += `\\n\\nTime: ${new Date().toLocaleString('en-GB')}`;\n\nreturn [{\n  json: {\n    chatId: chatId,\n    message: message\n  }\n}];"
+      },
+      "id": "format-debug",
+      "name": "Format Debug",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1000, 100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  chat_id: $json.chatId,\n  text: $json.message,\n  reply_markup: JSON.stringify({\n    inline_keyboard: [\n      [\n        {text: \"🔄 Refresh\", callback_data: \"today_plan\"},\n        {text: \"📊 Status\", callback_data: \"status_check\"}\n      ],\n      [\n        {text: \"🔍 Debug\", callback_data: \"debug\"}\n      ]\n    ]\n  })\n}) }}"
+      },
+      "id": "send-response",
+      "name": "Send Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/getUpdates",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  offset: ($('Process Updates').item.json.updateId || 0) + 1\n}) }}"
+      },
+      "id": "acknowledge-update",
+      "name": "Acknowledge Update",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1400, 0]
+    }
+  ],
+  "connections": {
+    "Check for Messages Every 5s": {
+      "main": [
+        [
+          {
+            "node": "Get Telegram Updates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Telegram Updates": {
+      "main": [
+        [
+          {
+            "node": "Process Updates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Updates": {
+      "main": [
+        [
+          {
+            "node": "Route: Today",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Route: Status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Route: Debug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: Today": {
+      "main": [
+        [
+          {
+            "node": "Get Today Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: Status": {
+      "main": [
+        [
+          {
+            "node": "Get Status Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: Debug": {
+      "main": [
+        [
+          {
+            "node": "Test currentUser()",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Test Email Query",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Test Akhila Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Today Tasks": {
+      "main": [
+        [
+          {
+            "node": "Format Today Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Status Tasks": {
+      "main": [
+        [
+          {
+            "node": "Format Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test currentUser()": {
+      "main": [
+        [
+          {
+            "node": "Format Debug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Email Query": {
+      "main": [
+        [
+          {
+            "node": "Format Debug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Akhila Query": {
+      "main": [
+        [
+          {
+            "node": "Format Debug",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Today Plan": {
+      "main": [
+        [
+          {
+            "node": "Send Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Status": {
+      "main": [
+        [
+          {
+            "node": "Send Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Debug": {
+      "main": [
+        [
+          {
+            "node": "Send Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Response": {
+      "main": [
+        [
+          {
+            "node": "Acknowledge Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

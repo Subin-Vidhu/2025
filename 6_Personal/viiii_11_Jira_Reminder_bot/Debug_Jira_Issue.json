@@ -1,0 +1,171 @@
+{
+  "name": "Subin's Jira Debug Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "debug-jira",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Debug Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "debug-jira"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "jql": "assignee = currentUser()",
+        "options": {}
+      },
+      "id": "test-current-user",
+      "name": "Test currentUser()",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, -100],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "jql": "assignee = 'subin@aramisimaging.com'",
+        "options": {}
+      },
+      "id": "test-email-query",
+      "name": "Test Email Query",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, 0],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "jql": "assignee = 'akhila@aramisimaging.com'",
+        "options": {}
+      },
+      "id": "test-akhila-query",
+      "name": "Test Akhila Query",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, 100],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Debug Jira responses to identify the issue\nconst currentUserData = $('Test currentUser()').all();\nconst emailQueryData = $('Test Email Query').all();\nconst akhilaQueryData = $('Test Akhila Query').all();\n\nlet debugInfo = {\n  timestamp: new Date().toISOString(),\n  \n  currentUser: {\n    count: currentUserData.length,\n    firstTask: currentUserData[0]?.json?.key || 'No tasks',\n    assigneeInfo: currentUserData[0]?.json?.fields?.assignee || 'No assignee info'\n  },\n  \n  emailQuery: {\n    count: emailQueryData.length,\n    firstTask: emailQueryData[0]?.json?.key || 'No tasks',\n    assigneeInfo: emailQueryData[0]?.json?.fields?.assignee || 'No assignee info'\n  },\n  \n  akhilaQuery: {\n    count: akhilaQueryData.length,\n    firstTask: akhilaQueryData[0]?.json?.key || 'No tasks',\n    assigneeInfo: akhilaQueryData[0]?.json?.fields?.assignee || 'No assignee info'\n  }\n};\n\n// Create a detailed message\nlet message = `🔍 JIRA DEBUG RESULTS\\n\\n`;\nmessage += `⏰ Time: ${debugInfo.timestamp}\\n\\n`;\n\nmessage += `1️⃣ currentUser() Query:\\n`;\nmessage += `   Tasks found: ${debugInfo.currentUser.count}\\n`;\nmessage += `   First task: ${debugInfo.currentUser.firstTask}\\n`;\nif (debugInfo.currentUser.assigneeInfo && debugInfo.currentUser.assigneeInfo !== 'No assignee info') {\n  message += `   Assignee: ${debugInfo.currentUser.assigneeInfo.displayName} (${debugInfo.currentUser.assigneeInfo.emailAddress})\\n`;\n}\nmessage += `\\n`;\n\nmessage += `2️⃣ subin@aramisimaging.com Query:\\n`;\nmessage += `   Tasks found: ${debugInfo.emailQuery.count}\\n`;\nmessage += `   First task: ${debugInfo.emailQuery.firstTask}\\n`;\nif (debugInfo.emailQuery.assigneeInfo && debugInfo.emailQuery.assigneeInfo !== 'No assignee info') {\n  message += `   Assignee: ${debugInfo.emailQuery.assigneeInfo.displayName} (${debugInfo.emailQuery.assigneeInfo.emailAddress})\\n`;\n}\nmessage += `\\n`;\n\nmessage += `3️⃣ akhila@aramisimaging.com Query:\\n`;\nmessage += `   Tasks found: ${debugInfo.akhilaQuery.count}\\n`;\nmessage += `   First task: ${debugInfo.akhilaQuery.firstTask}\\n`;\nif (debugInfo.akhilaQuery.assigneeInfo && debugInfo.akhilaQuery.assigneeInfo !== 'No assignee info') {\n  message += `   Assignee: ${debugInfo.akhilaQuery.assigneeInfo.displayName} (${debugInfo.akhilaQuery.assigneeInfo.emailAddress})\\n`;\n}\nmessage += `\\n`;\n\n// Analysis\nmessage += `🎯 ANALYSIS:\\n`;\nif (debugInfo.currentUser.count > 0 && debugInfo.emailQuery.count === 0) {\n  message += `❌ currentUser() works but subin@aramisimaging.com doesn't\\n`;\n  message += `💡 The credential is probably linked to a different email\\n`;\n} else if (debugInfo.emailQuery.count > 0) {\n  message += `✅ subin@aramisimaging.com query works correctly\\n`;\n} else if (debugInfo.akhilaQuery.count > 0) {\n  message += `⚠️ Only Akhila's tasks found - credential issue\\n`;\n} else {\n  message += `❓ No tasks found in any query - check Jira setup\\n`;\n}\n\nreturn [{\n  json: {\n    debugInfo: debugInfo,\n    telegramMessage: message\n  }\n}];"
+      },
+      "id": "analyze-results",
+      "name": "Analyze Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  chat_id: \"589824303\",\n  text: $json.telegramMessage,\n  parse_mode: \"HTML\"\n}) }}"
+      },
+      "id": "send-debug-results",
+      "name": "Send Debug Results",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [600, 0]
+    }
+  ],
+  "connections": {
+    "Debug Webhook": {
+      "main": [
+        [
+          {
+            "node": "Test currentUser()",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Test Email Query",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Test Akhila Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test currentUser()": {
+      "main": [
+        [
+          {
+            "node": "Analyze Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Email Query": {
+      "main": [
+        [
+          {
+            "node": "Analyze Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Akhila Query": {
+      "main": [
+        [
+          {
+            "node": "Analyze Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Results": {
+      "main": [
+        [
+          {
+            "node": "Send Debug Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

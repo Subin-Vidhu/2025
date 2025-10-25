@@ -1,0 +1,192 @@
+{
+  "name": "Subin's Personal Jira Assistant - Complete",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9,14,17 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "notes": "Triggers at 9 AM, 2 PM, and 5 PM on weekdays"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 20,
+        "jql": "assignee = 'subin@aramisimaging.com' AND status IN ('In Progress', 'To Do', 'Selected for Development', 'Open') AND status NOT IN ('Done', 'Closed', 'Resolved')",
+        "options": {}
+      },
+      "id": "get-my-tasks",
+      "name": "Get My Active Tasks",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, 0],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.length }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "has-active-tasks",
+      "name": "Has Active Tasks?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [400, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process Subin's specific Jira tasks\nconst items = $input.all();\nconst issues = items.map(item => item.json);\n\nif (issues.length === 0) {\n  return [{\n    json: {\n      taskCount: 0,\n      currentlyWorking: \"No active tasks\",\n      todaysFocus: \"No tasks to focus on\",\n      hasActiveTasks: false\n    }\n  }];\n}\n\nconst formatted = issues.map(issue => ({\n  key: issue.key,\n  summary: issue.fields?.summary || 'No summary',\n  status: issue.fields?.status?.name || 'Unknown',\n  priority: issue.fields?.priority?.name || 'None',\n  assignee: issue.fields?.assignee?.displayName || 'Unassigned',\n  updated: new Date(issue.fields?.updated || Date.now()),\n  project: issue.fields?.project?.key || 'UNKNOWN',\n  timeSpent: issue.fields?.timespent || 0,\n  estimate: issue.fields?.timeoriginalestimate || 0\n}));\n\n// Find what Subin is currently working on\nconst currentWork = formatted.filter(t => t.status === 'In Progress');\nconst currentlyWorking = currentWork.length > 0 \n  ? `Currently working on: [${currentWork[0].key}] ${currentWork[0].summary}`\n  : \"No task currently in progress - start working on a high priority task!\";\n\n// Priority categorization\nconst highPriority = formatted.filter(t => ['High', 'Highest'].includes(t.priority));\nconst mediumPriority = formatted.filter(t => t.priority === 'Medium');\nconst lowPriority = formatted.filter(t => ['Low', 'Lowest'].includes(t.priority));\nconst todoTasks = formatted.filter(t => t.status === 'To Do');\n\n// Today's recommended focus (next 3-4 tasks)\nconst focusTasks = formatted\n  .filter(t => t.status !== 'In Progress') // Exclude current work\n  .sort((a, b) => {\n    // Prioritize: High priority first, then To Do status, then by updated date\n    const priorityOrder = { 'Highest': 5, 'High': 4, 'Medium': 3, 'Low': 2, 'Lowest': 1, 'None': 0 };\n    const aPriority = priorityOrder[a.priority] || 0;\n    const bPriority = priorityOrder[b.priority] || 0;\n    \n    if (aPriority !== bPriority) return bPriority - aPriority;\n    if (a.status === 'To Do' && b.status !== 'To Do') return -1;\n    if (b.status === 'To Do' && a.status !== 'To Do') return 1;\n    return b.updated - a.updated;\n  })\n  .slice(0, 3);\n\nconst todaysFocus = focusTasks.length > 0\n  ? focusTasks.map(t => `• [${t.key}] ${t.summary} (${t.priority})`).join('\\n')\n  : \"No specific tasks to focus on today\";\n\n// High priority tasks that need attention\nconst urgentTasks = highPriority.length > 0\n  ? highPriority.map(t => `[${t.key}] ${t.summary}`).join(', ')\n  : 'None';\n\n// Create focused prompt for LLM\nconst userContent = `Subin has ${formatted.length} active Jira tasks. ${currentlyWorking}. High priority tasks: ${urgentTasks}. Create a brief, motivational reminder (2-3 sentences) about what Subin should focus on today and any time logging reminders.`;\n\nreturn [{\n  json: {\n    taskCount: formatted.length,\n    currentlyWorking: currentlyWorking,\n    todaysFocus: todaysFocus,\n    urgentTasks: urgentTasks,\n    hasActiveTasks: true,\n    userContent: userContent,\n    inProgressCount: currentWork.length,\n    highPriorityCount: highPriority.length,\n    mediumPriorityCount: mediumPriority.length,\n    lowPriorityCount: lowPriority.length,\n    todoCount: todoTasks.length,\n    focusTaskKeys: focusTasks.map(t => t.key),\n    allTasks: formatted\n  }\n}];"
+      },
+      "id": "format-personal-tasks",
+      "name": "Format Personal Tasks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [600, -100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.0.196:1234/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  model: \"local-model\",\n  messages: [\n    {\n      role: \"system\",\n      content: \"You are Subin's personal productivity assistant. Create brief, actionable reminders that are motivational and specific. Always address Subin by name and focus on practical next steps.\"\n    },\n    {\n      role: \"user\",\n      content: $json.userContent\n    }\n  ],\n  temperature: 0.7,\n  max_tokens: 150\n}) }}"
+      },
+      "id": "llm-personal-reminder",
+      "name": "LLM Personal Reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [800, -100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  chat_id: \"589824303\",\n  text: \"Hello Subin!\\n\\nYour Personal Jira Assistant\\n\\n\" + (($json.choices && $json.choices.length > 0 && $json.choices[0].message && $json.choices[0].message.content) ? $json.choices[0].message.content : \"Good morning! Focus on your high priority tasks and don't forget to log your time!\") + \"\\n\\n=== CURRENT STATUS ===\\n\" + ($('Format Personal Tasks').item.json.currentlyWorking || \"No current work\") + \"\\n\\n=== TODAY'S FOCUS ===\\n\" + ($('Format Personal Tasks').item.json.todaysFocus || \"No focus tasks\") + \"\\n\\n=== QUICK STATS ===\\n• Total Active: \" + ($('Format Personal Tasks').item.json.taskCount || 0) + \"\\n• In Progress: \" + ($('Format Personal Tasks').item.json.inProgressCount || 0) + \"\\n• High Priority: \" + ($('Format Personal Tasks').item.json.highPriorityCount || 0) + \"\\n• To Do: \" + ($('Format Personal Tasks').item.json.todoCount || 0) + \"\\n\\n=== COMMANDS ===\\nReply with:\\n• /today - Show detailed focus plan\\n• /log TASK-123 2h - Log time to task\\n• /status - Check current work\\n• /next - Get next task recommendation\\n\\nAutomated reminder • \" + new Date().toLocaleDateString('en-GB') + \", \" + new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'}),\n  reply_markup: JSON.stringify({\n    inline_keyboard: [\n      [\n        {text: \"📋 Today's Plan\", callback_data: \"today_plan\"},\n        {text: \"⏰ Log Time\", callback_data: \"log_time\"}\n      ],\n      [\n        {text: \"📊 Status Check\", callback_data: \"status_check\"},\n        {text: \"➡️ Next Task\", callback_data: \"next_task\"}\n      ]\n    ]\n  })\n}) }}"
+      },
+      "id": "send-personal-reminder",
+      "name": "Send Personal Reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, -100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5bIGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  chat_id: \"589824303\",\n  text: \"All Clear, Subin! 🎉\\n\\nNo active Jira tasks assigned to you right now.\\n\\nGreat job staying on top of your work! Time to:\\n• Plan for upcoming sprints\\n• Help teammates with their tasks\\n• Take a well-deserved break\\n• Review completed work\\n\\nAutomated check • \" + new Date().toLocaleDateString('en-GB') + \", \" + new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'}),\n  reply_markup: JSON.stringify({\n    inline_keyboard: [\n      [\n        {text: \"📊 Weekly Summary\", callback_data: \"weekly_summary\"},\n        {text: \"🔍 Browse All Tasks\", callback_data: \"browse_all\"}\n      ]\n    ]\n  })\n}) }}"
+      },
+      "id": "no-tasks-message",
+      "name": "No Tasks Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [600, 100]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get My Active Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get My Active Tasks": {
+      "main": [
+        [
+          {
+            "node": "Has Active Tasks?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Active Tasks?": {
+      "main": [
+        [
+          {
+            "node": "Format Personal Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Tasks Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Personal Tasks": {
+      "main": [
+        [
+          {
+            "node": "LLM Personal Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Personal Reminder": {
+      "main": [
+        [
+          {
+            "node": "Send Personal Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

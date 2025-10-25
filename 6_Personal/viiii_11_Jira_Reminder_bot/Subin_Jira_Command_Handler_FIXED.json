@@ -1,0 +1,586 @@
+{
+  "name": "Subin's Jira Command Handler - FIXED",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "jira-commands",
+        "options": {
+          "noResponseBody": false
+        }
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook (Telegram Commands)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "jira-commands"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse incoming Telegram command\nconst body = $json.body || $json;\nlet command, text, userId, chatId;\n\n// Handle both direct messages and callback queries\nif (body.callback_query) {\n  // Button press\n  command = body.callback_query.data;\n  userId = body.callback_query.from.id;\n  chatId = body.callback_query.message.chat.id;\n  text = body.callback_query.data;\n} else if (body.message) {\n  // Direct message\n  text = body.message.text || '';\n  userId = body.message.from.id;\n  chatId = body.message.chat.id;\n  \n  // Extract command\n  if (text.startsWith('/')) {\n    const parts = text.split(' ');\n    command = parts[0].toLowerCase();\n  } else {\n    command = 'unknown';\n  }\n} else {\n  command = 'unknown';\n  text = '';\n  userId = 0;\n  chatId = 0;\n}\n\n// Only respond to Subin (your user ID)\nconst allowedUserId = 589824303;\nif (userId !== allowedUserId) {\n  return [{\n    json: {\n      command: 'unauthorized',\n      response: 'Sorry, this bot is for Subin only.',\n      chatId: chatId\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    command: command,\n    originalText: text,\n    userId: userId,\n    chatId: chatId,\n    isCallbackQuery: !!body.callback_query\n  }\n}];"
+      },
+      "id": "parse-command",
+      "name": "Parse Command",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [200, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "today-command",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "/today",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "today-button",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "today_plan",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        }
+      },
+      "id": "route-today",
+      "name": "Route: Today",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [400, -200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "log-command",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "/log",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "log-button",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "log_time",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        }
+      },
+      "id": "route-log",
+      "name": "Route: Log Time",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [400, -100]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "status-command",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "/status",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "status-button",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "status_check",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        }
+      },
+      "id": "route-status",
+      "name": "Route: Status",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [400, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "next-command",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "/next",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "next-button",
+              "leftValue": "={{ $json.command }}",
+              "rightValue": "next_task",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        }
+      },
+      "id": "route-next",
+      "name": "Route: Next Task",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [400, 100]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 15,
+        "jql": "assignee = 'subin@aramisimaging.com' AND status IN ('In Progress', 'To Do', 'Selected for Development', 'Open') AND status NOT IN ('Done', 'Closed', 'Resolved')",
+        "options": {}
+      },
+      "id": "get-tasks-today",
+      "name": "Get Tasks (Today View)",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [600, -200],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Create detailed today's plan for Subin\nconst items = $input.all();\nconst issues = items.map(item => item.json);\nconst chatId = $('Parse Command').item.json.chatId;\n\nif (issues.length === 0) {\n  return [{\n    json: {\n      chatId: chatId,\n      message: \"🎉 All Clear, Subin!\\n\\nNo active tasks today. Perfect time to:\\n• Plan ahead for upcoming work\\n• Help teammates\\n• Review and organize\\n• Take a strategic break\\n\\nYou're staying on top of things! 💪\"\n    }\n  }];\n}\n\nconst formatted = issues.map(issue => ({\n  key: issue.key,\n  summary: issue.fields?.summary || 'No summary',\n  status: issue.fields?.status?.name || 'Unknown',\n  priority: issue.fields?.priority?.name || 'None',\n  project: issue.fields?.project?.key || 'UNKNOWN',\n  estimate: issue.fields?.timeoriginalestimate || 0,\n  spent: issue.fields?.timespent || 0,\n  assignee: issue.fields?.assignee?.displayName || 'Unassigned',\n  updated: new Date(issue.fields?.updated || Date.now())\n}));\n\n// Categorize tasks\nconst inProgress = formatted.filter(t => t.status === 'In Progress');\nconst highPriority = formatted.filter(t => ['High', 'Highest'].includes(t.priority) && t.status !== 'In Progress');\nconst todo = formatted.filter(t => t.status === 'To Do');\nconst others = formatted.filter(t => !inProgress.includes(t) && !highPriority.includes(t) && !todo.includes(t));\n\n// Build detailed message\nlet message = `📋 Today's Detailed Plan for Subin\\n\\n`;\n\n// Current work\nif (inProgress.length > 0) {\n  message += `🚀 CURRENTLY WORKING ON:\\n`;\n  inProgress.forEach(task => {\n    const timeInfo = task.estimate > 0 ? ` (Est: ${Math.round(task.estimate/3600)}h` + (task.spent > 0 ? `, Spent: ${Math.round(task.spent/3600)}h)` : ')') : '';\n    message += `• [${task.key}] ${task.summary}${timeInfo}\\n`;\n  });\n  message += `\\n`;\n} else {\n  message += `⚡ NO CURRENT WORK - Start with a high priority task!\\n\\n`;\n}\n\n// High priority next\nif (highPriority.length > 0) {\n  message += `🔴 HIGH PRIORITY (Do Next):\\n`;\n  highPriority.slice(0, 3).forEach(task => {\n    const timeInfo = task.estimate > 0 ? ` (${Math.round(task.estimate/3600)}h)` : '';\n    message += `• [${task.key}] ${task.summary}${timeInfo}\\n`;\n  });\n  message += `\\n`;\n}\n\n// To Do tasks\nif (todo.length > 0) {\n  message += `📝 TO DO (${todo.length} tasks):\\n`;\n  todo.slice(0, 4).forEach(task => {\n    message += `• [${task.key}] ${task.summary}\\n`;\n  });\n  if (todo.length > 4) {\n    message += `... and ${todo.length - 4} more\\n`;\n  }\n  message += `\\n`;\n}\n\n// Other tasks\nif (others.length > 0) {\n  message += `📊 OTHER ACTIVE (${others.length} tasks):\\n`;\n  others.slice(0, 2).forEach(task => {\n    message += `• [${task.key}] ${task.summary} (${task.status})\\n`;\n  });\n  if (others.length > 2) {\n    message += `... and ${others.length - 2} more\\n`;\n  }\n}\n\n// Quick stats and recommendations\nmessage += `\\n📈 QUICK STATS:\\n`;\nmessage += `• Total Active: ${formatted.length}\\n`;\nmessage += `• In Progress: ${inProgress.length}\\n`;\nmessage += `• High Priority: ${highPriority.length}\\n`;\nmessage += `• To Do: ${todo.length}\\n\\n`;\n\n// Smart recommendations\nif (inProgress.length === 0 && highPriority.length > 0) {\n  message += `💡 RECOMMENDATION: Start with [${highPriority[0].key}] - it's high priority!\\n\\n`;\n} else if (inProgress.length > 1) {\n  message += `⚠️ FOCUS TIP: You have ${inProgress.length} tasks in progress. Consider finishing one before starting another.\\n\\n`;\n} else if (inProgress.length === 1) {\n  message += `✅ GOOD FOCUS: One task in progress. Keep it up!\\n\\n`;\n}\n\nmessage += `⏰ TIME LOGGING:\\n`;\nmessage += `Use: /log TASK-123 2h30m \"description\"\\n`;\nmessage += `Example: /log ${formatted[0]?.key || 'TASK-123'} 1h \"Fixed the bug\"\\n\\n`;\nmessage += `Generated: ${new Date().toLocaleString('en-GB')}`;\n\nreturn [{\n  json: {\n    chatId: chatId,\n    message: message\n  }\n}];"
+      },
+      "id": "format-today-plan",
+      "name": "Format Today Plan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [800, -200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Handle time logging command\nconst originalText = $('Parse Command').item.json.originalText;\nconst chatId = $('Parse Command').item.json.chatId;\nconst isCallback = $('Parse Command').item.json.isCallbackQuery;\n\nif (isCallback) {\n  // Button press - show time logging help\n  return [{\n    json: {\n      chatId: chatId,\n      message: \"⏰ Time Logging Help\\n\\nTo log time to a Jira task, use this format:\\n\\n/log TASK-123 2h30m \\\"description\\\"\\n\\nExamples:\\n• /log DEV-456 1h \\\"Fixed login bug\\\"\\n• /log FEAT-789 30m \\\"Code review\\\"\\n• /log BUG-321 2h15m \\\"Testing and debugging\\\"\\n\\nSupported time formats:\\n• 1h = 1 hour\\n• 30m = 30 minutes\\n• 1h30m = 1 hour 30 minutes\\n• 2.5h = 2 hours 30 minutes\\n\\nThe description is optional but recommended for tracking.\"\n    }\n  }];\n}\n\n// Parse time logging command\nconst parts = originalText.split(' ');\nif (parts.length < 3) {\n  return [{\n    json: {\n      chatId: chatId,\n      message: \"❌ Invalid format!\\n\\nCorrect usage:\\n/log TASK-123 2h30m \\\"description\\\"\\n\\nExample:\\n/log DEV-456 1h \\\"Fixed the bug\\\"\"\n    }\n  }];\n}\n\nconst taskKey = parts[1].toUpperCase();\nconst timeStr = parts[2];\nconst description = parts.slice(3).join(' ').replace(/^\"|\"$/g, '') || 'Time logged via Telegram bot';\n\n// Convert time string to seconds\nlet timeInSeconds = 0;\nconst timeRegex = /(\\d+(?:\\.\\d+)?)([hm])/g;\nlet match;\n\nwhile ((match = timeRegex.exec(timeStr)) !== null) {\n  const value = parseFloat(match[1]);\n  const unit = match[2];\n  \n  if (unit === 'h') {\n    timeInSeconds += value * 3600;\n  } else if (unit === 'm') {\n    timeInSeconds += value * 60;\n  }\n}\n\nif (timeInSeconds === 0) {\n  return [{\n    json: {\n      chatId: chatId,\n      message: \"❌ Invalid time format!\\n\\nSupported formats:\\n• 1h (1 hour)\\n• 30m (30 minutes)\\n• 1h30m (1 hour 30 minutes)\\n• 2.5h (2.5 hours)\"\n    }\n  }];\n}\n\nconst hours = Math.floor(timeInSeconds / 3600);\nconst minutes = Math.floor((timeInSeconds % 3600) / 60);\nconst displayTime = hours > 0 ? `${hours}h${minutes > 0 ? ` ${minutes}m` : ''}` : `${minutes}m`;\n\nreturn [{\n  json: {\n    chatId: chatId,\n    taskKey: taskKey,\n    timeInSeconds: timeInSeconds,\n    displayTime: displayTime,\n    description: description,\n    needsJiraUpdate: true\n  }\n}];"
+      },
+      "id": "parse-log-command",
+      "name": "Parse Log Command",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [600, -100]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.needsJiraUpdate }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "should-log-time",
+      "name": "Should Log Time?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [800, -100]
+    },
+    {
+      "parameters": {
+        "operation": "addWorklog",
+        "issueKey": "={{ $json.taskKey }}",
+        "timeSpent": "={{ $json.displayTime }}",
+        "comment": "={{ $json.description }}",
+        "options": {}
+      },
+      "id": "log-time-jira",
+      "name": "Log Time to Jira",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [1000, -150],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "jql": "assignee = 'subin@aramisimaging.com' AND status IN ('In Progress', 'To Do', 'Selected for Development', 'Open') AND status NOT IN ('Done', 'Closed', 'Resolved')",
+        "options": {}
+      },
+      "id": "get-tasks-status",
+      "name": "Get Tasks (Status)",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [600, 0],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "jql": "assignee = 'subin@aramisimaging.com' AND status IN ('In Progress', 'To Do', 'Selected for Development', 'Open') AND status NOT IN ('Done', 'Closed', 'Resolved')",
+        "options": {}
+      },
+      "id": "get-tasks-next",
+      "name": "Get Tasks (Next)",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [600, 100],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  chat_id: $json.chatId,\n  text: $json.message,\n  parse_mode: \"HTML\",\n  disable_web_page_preview: true,\n  reply_markup: JSON.stringify({\n    inline_keyboard: [\n      [\n        {text: \"🔄 Refresh\", callback_data: \"today_plan\"},\n        {text: \"⏰ Log Time\", callback_data: \"log_time\"}\n      ],\n      [\n        {text: \"📊 Status\", callback_data: \"status_check\"},\n        {text: \"➡️ Next Task\", callback_data: \"next_task\"}\n      ]\n    ]\n  })\n}) }}"
+      },
+      "id": "send-today-response",
+      "name": "Send Today Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, -200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  chat_id: $json.chatId,\n  text: $json.message\n}) }}"
+      },
+      "id": "send-log-response",
+      "name": "Send Log Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, -50]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Success response for time logging\nconst data = $input.first().json;\nconst parseData = $('Parse Log Command').item.json;\n\nreturn [{\n  json: {\n    chatId: parseData.chatId,\n    message: `✅ Time logged successfully!\\n\\nTask: [${parseData.taskKey}]\\nTime: ${parseData.displayTime}\\nDescription: ${parseData.description}\\n\\nLogged at: ${new Date().toLocaleString('en-GB')}`\n  }\n}];"
+      },
+      "id": "format-log-success",
+      "name": "Format Log Success",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, -150]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Create status summary for Subin\nconst items = $input.all();\nconst issues = items.map(item => item.json);\nconst chatId = $('Parse Command').item.json.chatId;\n\nif (issues.length === 0) {\n  return [{\n    json: {\n      chatId: chatId,\n      message: \"📊 Current Status: All Clear! 🎉\\n\\nNo active tasks assigned to you.\\nPerfect time to plan ahead or help teammates!\\n\\nChecked at: \" + new Date().toLocaleString('en-GB')\n    }\n  }];\n}\n\nconst formatted = issues.map(issue => ({\n  key: issue.key,\n  summary: issue.fields?.summary || 'No summary',\n  status: issue.fields?.status?.name || 'Unknown',\n  priority: issue.fields?.priority?.name || 'None'\n}));\n\nconst inProgress = formatted.filter(t => t.status === 'In Progress');\nconst todo = formatted.filter(t => t.status === 'To Do');\nconst highPriority = formatted.filter(t => ['High', 'Highest'].includes(t.priority));\n\nlet message = `📊 Subin's Current Status\\n\\n`;\n\n// Current work\nif (inProgress.length > 0) {\n  message += `🚀 CURRENTLY WORKING ON (${inProgress.length}):\\n`;\n  inProgress.forEach(task => {\n    message += `• [${task.key}] ${task.summary}\\n`;\n  });\n  message += `\\n`;\n} else {\n  message += `⚡ NO CURRENT WORK - Ready to start!\\n\\n`;\n}\n\n// Priority breakdown\nmessage += `📈 PRIORITY BREAKDOWN:\\n`;\nmessage += `• High Priority: ${highPriority.length}\\n`;\nmessage += `• To Do: ${todo.length}\\n`;\nmessage += `• Total Active: ${formatted.length}\\n\\n`;\n\n// Next action recommendation\nif (inProgress.length === 0) {\n  if (highPriority.length > 0) {\n    message += `💡 NEXT ACTION: Start [${highPriority[0].key}] (High Priority)\\n\\n`;\n  } else if (todo.length > 0) {\n    message += `💡 NEXT ACTION: Start [${todo[0].key}] (To Do)\\n\\n`;\n  }\n} else if (inProgress.length > 1) {\n  message += `⚠️ FOCUS TIP: Consider finishing current work before starting new tasks\\n\\n`;\n}\n\nmessage += `Updated: ${new Date().toLocaleString('en-GB')}`;\n\nreturn [{\n  json: {\n    chatId: chatId,\n    message: message\n  }\n}];"
+      },
+      "id": "format-status",
+      "name": "Format Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [800, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Recommend next task for Subin\nconst items = $input.all();\nconst issues = items.map(item => item.json);\nconst chatId = $('Parse Command').item.json.chatId;\n\nif (issues.length === 0) {\n  return [{\n    json: {\n      chatId: chatId,\n      message: \"🎯 Next Task Recommendation\\n\\n✨ All clear! No active tasks to work on.\\n\\nGreat job staying on top of everything!\\n\\nTime to:\\n• Plan for upcoming work\\n• Review completed tasks\\n• Help teammates\\n• Take a strategic break\"\n    }\n  }];\n}\n\nconst formatted = issues.map(issue => ({\n  key: issue.key,\n  summary: issue.fields?.summary || 'No summary',\n  status: issue.fields?.status?.name || 'Unknown',\n  priority: issue.fields?.priority?.name || 'None',\n  project: issue.fields?.project?.key || 'UNKNOWN',\n  estimate: issue.fields?.timeoriginalestimate || 0,\n  updated: new Date(issue.fields?.updated || Date.now())\n}));\n\n// Filter out current work\nconst inProgress = formatted.filter(t => t.status === 'In Progress');\nconst available = formatted.filter(t => t.status !== 'In Progress');\n\nif (available.length === 0) {\n  let message = `🎯 Next Task Recommendation\\n\\n`;\n  if (inProgress.length > 0) {\n    message += `✅ You're currently working on ${inProgress.length} task${inProgress.length > 1 ? 's' : ''}:\\n`;\n    inProgress.forEach(task => {\n      message += `• [${task.key}] ${task.summary}\\n`;\n    });\n    message += `\\n💡 Focus on completing your current work first!`;\n  } else {\n    message += `All tasks are complete! 🎉`;\n  }\n  \n  return [{\n    json: {\n      chatId: chatId,\n      message: message\n    }\n  }];\n}\n\n// Sort by priority and urgency\nconst priorityOrder = { 'Highest': 5, 'High': 4, 'Medium': 3, 'Low': 2, 'Lowest': 1, 'None': 0 };\nconst sorted = available.sort((a, b) => {\n  const aPriority = priorityOrder[a.priority] || 0;\n  const bPriority = priorityOrder[b.priority] || 0;\n  \n  if (aPriority !== bPriority) return bPriority - aPriority;\n  if (a.status === 'To Do' && b.status !== 'To Do') return -1;\n  if (b.status === 'To Do' && a.status !== 'To Do') return 1;\n  return b.updated - a.updated;\n});\n\nconst recommended = sorted[0];\nconst alternatives = sorted.slice(1, 3);\n\nlet message = `🎯 Next Task Recommendation\\n\\n`;\n\nif (inProgress.length > 0) {\n  message += `⚡ CURRENT WORK (${inProgress.length}):\\n`;\n  inProgress.forEach(task => {\n    message += `• [${task.key}] ${task.summary}\\n`;\n  });\n  message += `\\n`;\n}\n\nmessage += `🔥 RECOMMENDED NEXT:\\n`;\nmessage += `[${recommended.key}] ${recommended.summary}\\n`;\nmessage += `Priority: ${recommended.priority} | Status: ${recommended.status}\\n`;\nif (recommended.estimate > 0) {\n  message += `Estimated: ${Math.round(recommended.estimate/3600)}h\\n`;\n}\nmessage += `\\n`;\n\n// Why this task?\nlet reason = '';\nif (recommended.priority === 'Highest' || recommended.priority === 'High') {\n  reason = '🔴 High priority task - tackle this first!';\n} else if (recommended.status === 'To Do') {\n  reason = '📝 Ready to start - clearly defined and waiting!';\n} else {\n  reason = '⭐ Best match based on priority and status';\n}\nmessage += `Why this task? ${reason}\\n\\n`;\n\nif (alternatives.length > 0) {\n  message += `📋 ALTERNATIVES:\\n`;\n  alternatives.forEach(task => {\n    message += `• [${task.key}] ${task.summary} (${task.priority})\\n`;\n  });\n  message += `\\n`;\n}\n\nmessage += `💡 TIP: Use /log ${recommended.key} 30m \"Started working\" to begin tracking time!\\n\\n`;\nmessage += `Generated: ${new Date().toLocaleString('en-GB')}`;\n\nreturn [{\n  json: {\n    chatId: chatId,\n    message: message\n  }\n}];"
+      },
+      "id": "format-next-task",
+      "name": "Format Next Task",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [800, 100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  chat_id: $json.chatId,\n  text: $json.message,\n  reply_markup: JSON.stringify({\n    inline_keyboard: [\n      [\n        {text: \"📋 Today's Plan\", callback_data: \"today_plan\"},\n        {text: \"⏰ Log Time\", callback_data: \"log_time\"}\n      ],\n      [\n        {text: \"🔄 Refresh Status\", callback_data: \"status_check\"},\n        {text: \"➡️ Another Next\", callback_data: \"next_task\"}\n      ]\n    ]\n  })\n}) }}"
+      },
+      "id": "send-status-response",
+      "name": "Send Status Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  chat_id: $json.chatId,\n  text: $json.message,\n  reply_markup: JSON.stringify({\n    inline_keyboard: [\n      [\n        {text: \"📋 Today's Plan\", callback_data: \"today_plan\"},\n        {text: \"⏰ Log Time\", callback_data: \"log_time\"}\n      ],\n      [\n        {text: \"📊 Status\", callback_data: \"status_check\"},\n        {text: \"🔄 Another Next\", callback_data: \"next_task\"}\n      ]\n    ]\n  })\n}) }}"
+      },
+      "id": "send-next-response",
+      "name": "Send Next Response",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 100]
+    }
+  ],
+  "connections": {
+    "Webhook (Telegram Commands)": {
+      "main": [
+        [
+          {
+            "node": "Parse Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Command": {
+      "main": [
+        [
+          {
+            "node": "Route: Today",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Route: Log Time",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Route: Status",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Route: Next Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: Today": {
+      "main": [
+        [
+          {
+            "node": "Get Tasks (Today View)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: Log Time": {
+      "main": [
+        [
+          {
+            "node": "Parse Log Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: Status": {
+      "main": [
+        [
+          {
+            "node": "Get Tasks (Status)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: Next Task": {
+      "main": [
+        [
+          {
+            "node": "Get Tasks (Next)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tasks (Today View)": {
+      "main": [
+        [
+          {
+            "node": "Format Today Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Today Plan": {
+      "main": [
+        [
+          {
+            "node": "Send Today Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Log Command": {
+      "main": [
+        [
+          {
+            "node": "Should Log Time?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Log Time?": {
+      "main": [
+        [
+          {
+            "node": "Log Time to Jira",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Log Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Time to Jira": {
+      "main": [
+        [
+          {
+            "node": "Format Log Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tasks (Status)": {
+      "main": [
+        [
+          {
+            "node": "Format Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tasks (Next)": {
+      "main": [
+        [
+          {
+            "node": "Format Next Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Log Success": {
+      "main": [
+        [
+          {
+            "node": "Send Log Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Status": {
+      "main": [
+        [
+          {
+            "node": "Send Status Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Next Task": {
+      "main": [
+        [
+          {
+            "node": "Send Next Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

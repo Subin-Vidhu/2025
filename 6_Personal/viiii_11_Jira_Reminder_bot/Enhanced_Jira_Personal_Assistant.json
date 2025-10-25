@@ -1,0 +1,195 @@
+{
+  "name": "Personal Jira Assistant with Time Logging",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9,14,17 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "notes": "Triggers at 9 AM, 2 PM, and 5 PM on weekdays"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 20,
+        "jql": "assignee = currentUser() AND status != Done AND status != Closed AND status != Resolved",
+        "options": {}
+      },
+      "id": "get-my-tasks",
+      "name": "Get My Active Tasks",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, 0],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.length }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "has-active-tasks",
+      "name": "Has Active Tasks?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [400, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get current user info and format tasks\nconst items = $input.all();\nconst issues = items.map(item => item.json);\n\n// Get user info from first task\nconst currentUser = issues[0]?.fields?.assignee?.displayName || 'User';\nconst userEmail = issues[0]?.fields?.assignee?.emailAddress || '';\n\nconst formatted = issues.map(issue => ({\n  key: issue.key,\n  summary: issue.fields?.summary || 'No summary',\n  status: issue.fields?.status?.name || 'Unknown',\n  priority: issue.fields?.priority?.name || 'None',\n  timeSpent: issue.fields?.timespent || 0,\n  originalEstimate: issue.fields?.timeoriginalestimate || 0,\n  remainingEstimate: issue.fields?.timeestimate || 0,\n  projectKey: issue.fields?.project?.key || 'UNKNOWN'\n}));\n\n// Categorize by priority\nconst highPriority = formatted.filter(t => t.priority === 'High' || t.priority === 'Highest');\nconst mediumPriority = formatted.filter(t => t.priority === 'Medium');\nconst lowPriority = formatted.filter(t => t.priority === 'Low' || t.priority === 'Lowest');\nconst noPriority = formatted.filter(t => t.priority === 'None' || !t.priority);\n\nconst taskList = formatted.map(t => \n  `• [${t.key}] ${t.summary} (${t.status} - ${t.priority})`\n).join('\\n');\n\nconst userContent = `Hello ${currentUser}! You have ${formatted.length} active Jira tasks assigned to you:\\n\\nHIGH PRIORITY (${highPriority.length}):\\n${highPriority.map(t => `• [${t.key}] ${t.summary}`).join('\\n') || 'None'}\\n\\nMEDIUM PRIORITY (${mediumPriority.length}):\\n${mediumPriority.map(t => `• [${t.key}] ${t.summary}`).join('\\n') || 'None'}\\n\\nLOW PRIORITY (${lowPriority.length}):\\n${lowPriority.map(t => `• [${t.key}] ${t.summary}`).join('\\n') || 'None'}\\n\\nCreate a personalized, actionable reminder for ${currentUser}. Focus on which tasks to prioritize today and suggest which ones need time logging. Keep it motivational and specific with task keys.`;\n\nreturn [{\n  json: {\n    currentUser: currentUser,\n    userEmail: userEmail,\n    taskCount: formatted.length,\n    taskList: taskList,\n    rawTasks: formatted,\n    highPriority: highPriority,\n    mediumPriority: mediumPriority,\n    lowPriority: lowPriority,\n    userContent: userContent,\n    hasActiveTasks: true\n  }\n}];"
+      },
+      "id": "format-personal-tasks",
+      "name": "Format Personal Tasks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [600, -100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.0.196:1234/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  model: \"local-model\",\n  messages: [\n    {\n      role: \"system\",\n      content: \"You are a personal productivity assistant for Jira users. Create motivational, actionable reminders that help users focus on their most important tasks. Always include specific task keys and be encouraging.\"\n    },\n    {\n      role: \"user\",\n      content: $json.userContent\n    }\n  ],\n  temperature: 0.7,\n  max_tokens: 400\n}) }}"
+      },
+      "id": "llm-personal-summary",
+      "name": "LLM Personal Summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [800, -100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  chat_id: \"589824303\",\n  text: \"👋 *Hello \" + $('Format Personal Tasks').item.json.currentUser + \"!*\\n\\n🔔 *Your Personal Jira Assistant*\\n\\n\" + ($json.choices && $json.choices[0] && $json.choices[0].message ? $json.choices[0].message.content : \"Unable to generate reminder. Please check your tasks manually.\") + \"\\n\\n📊 *Quick Stats:*\\n• Total Active Tasks: \" + $('Format Personal Tasks').item.json.taskCount + \"\\n• High Priority: \" + $('Format Personal Tasks').item.json.highPriority.length + \"\\n• Medium Priority: \" + $('Format Personal Tasks').item.json.mediumPriority.length + \"\\n\\n💡 *Quick Actions:*\\n• Reply with task key (e.g., PROJ-123) to log time\\n• Use /today to see today's focus\\n• Use /log [KEY] [TIME] to quick log\\n\\n_Automated reminder • \" + $now.format('DD/MM/YYYY, HH:mm') + \"_\",\n  parse_mode: \"Markdown\",\n  reply_markup: JSON.stringify({\n    inline_keyboard: [\n      [\n        {text: \"📝 Log Time\", callback_data: \"log_time\"},\n        {text: \"📋 Show All Tasks\", callback_data: \"show_tasks\"}\n      ],\n      [\n        {text: \"⏰ Today's Focus\", callback_data: \"today_focus\"},\n        {text: \"📊 Weekly Summary\", callback_data: \"weekly_summary\"}\n      ]\n    ]\n  })\n}) }}"
+      },
+      "id": "send-personal-reminder",
+      "name": "Send Personal Reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, -100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  chat_id: \"589824303\",\n  text: \"✅ *All Clear!*\\n\\nNo active Jira tasks assigned to you. You're all caught up! 🎉\\n\\n🏆 *Great job staying on top of your work!*\\n\\nEnjoy your productive day and remember to:\\n• Take breaks ☕\\n• Plan for upcoming sprints 📅\\n• Help teammates if needed 🤝\\n\\n_Automated check • \" + $now.format('DD/MM/YYYY, HH:mm') + \"_\",\n  parse_mode: \"Markdown\",\n  reply_markup: JSON.stringify({\n    inline_keyboard: [\n      [\n        {text: \"📊 Weekly Summary\", callback_data: \"weekly_summary\"},\n        {text: \"🔍 Browse All Tasks\", callback_data: \"browse_all\"}\n      ]\n    ]\n  })\n}) }}"
+      },
+      "id": "no-tasks-celebration",
+      "name": "No Tasks Celebration",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [600, 100]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get My Active Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get My Active Tasks": {
+      "main": [
+        [
+          {
+            "node": "Has Active Tasks?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Active Tasks?": {
+      "main": [
+        [
+          {
+            "node": "Format Personal Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Tasks Celebration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Personal Tasks": {
+      "main": [
+        [
+          {
+            "node": "LLM Personal Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Personal Summary": {
+      "main": [
+        [
+          {
+            "node": "Send Personal Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "instanceId": "enhanced-personal-jira-assistant"
+  }
+}

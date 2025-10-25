@@ -1,0 +1,345 @@
+{
+  "name": "JQL Format Tester - Find Correct Subin Query",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds", 
+              "secondsInterval": 10
+            }
+          ]
+        }
+      },
+      "id": "trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 3,
+        "jql": "assignee = currentUser()",
+        "options": {}
+      },
+      "id": "test-current-user",
+      "name": "Test: currentUser()",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, -300],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 3,
+        "jql": "assignee = 'subin@aramisimaging.com'",
+        "options": {}
+      },
+      "id": "test-email",
+      "name": "Test: Email Format",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, -250],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 3,
+        "jql": "assignee = 'SUBIN S'",
+        "options": {}
+      },
+      "id": "test-subin-s",
+      "name": "Test: SUBIN S",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, -200],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 3,
+        "jql": "assignee = 'Subin S'",
+        "options": {}
+      },
+      "id": "test-subin-s-proper",
+      "name": "Test: Subin S",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, -150],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 3,
+        "jql": "assignee = 'subin'",
+        "options": {}
+      },
+      "id": "test-subin-lowercase",
+      "name": "Test: subin",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, -100],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 3,
+        "jql": "assignee = 'Subin'",
+        "options": {}
+      },
+      "id": "test-subin-proper",
+      "name": "Test: Subin",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, -50],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 3,
+        "jql": "assignee = 'Subin Vidhu'",
+        "options": {}
+      },
+      "id": "test-full-name",
+      "name": "Test: Subin Vidhu",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, 0],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "jql": "project in (PROJECTKEY1, PROJECTKEY2) AND assignee = currentUser()",
+        "options": {}
+      },
+      "id": "test-multi-project",
+      "name": "Test: Multi-Project",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, 50],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 20,
+        "jql": "assignee = currentUser() ORDER BY updated DESC",
+        "options": {}
+      },
+      "id": "get-all-user-tasks",
+      "name": "Get All User Tasks",
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [200, 100],
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "pgUQDXug0CqSuSyX",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Comprehensive JQL format analysis\nconst results = {\n  currentUser: $('Test: currentUser()').all(),\n  email: $('Test: Email Format').all(),\n  subinS: $('Test: SUBIN S').all(),\n  subinSProper: $('Test: Subin S').all(),\n  subinLower: $('Test: subin').all(),\n  subinProper: $('Test: Subin').all(),\n  fullName: $('Test: Subin Vidhu').all(),\n  multiProject: $('Test: Multi-Project').all(),\n  allTasks: $('Get All User Tasks').all()\n};\n\n// Extract unique projects and assignee info\nconst allTasksData = results.allTasks.map(item => item.json);\nconst projects = [...new Set(allTasksData.map(task => task.fields?.project?.key).filter(Boolean))];\nconst assigneeInfo = allTasksData[0]?.fields?.assignee;\n\n// Build comprehensive report\nlet report = `🔍 COMPREHENSIVE JQL FORMAT ANALYSIS\\n\\n`;\nreport += `⏰ Test Time: ${new Date().toLocaleString('en-GB')}\\n\\n`;\n\n// Test results\nreport += `📊 QUERY RESULTS:\\n`;\nreport += `1️⃣ currentUser(): ${results.currentUser.length} tasks\\n`;\nreport += `2️⃣ 'subin@aramisimaging.com': ${results.email.length} tasks\\n`;\nreport += `3️⃣ 'SUBIN S': ${results.subinS.length} tasks\\n`;\nreport += `4️⃣ 'Subin S': ${results.subinSProper.length} tasks\\n`;\nreport += `5️⃣ 'subin': ${results.subinLower.length} tasks\\n`;\nreport += `6️⃣ 'Subin': ${results.subinProper.length} tasks\\n`;\nreport += `7️⃣ 'Subin Vidhu': ${results.fullName.length} tasks\\n`;\nreport += `8️⃣ Multi-Project: ${results.multiProject.length} tasks\\n`;\nreport += `9️⃣ All User Tasks: ${results.allTasks.length} tasks\\n\\n`;\n\n// Assignee information\nif (assigneeInfo) {\n  report += `👤 ASSIGNEE INFO (from currentUser()):\\n`;\n  report += `   Display Name: ${assigneeInfo.displayName || 'Not available'}\\n`;\n  report += `   Email: ${assigneeInfo.emailAddress || 'Not available'}\\n`;\n  report += `   Account ID: ${assigneeInfo.accountId || 'Not available'}\\n`;\n  report += `   Username: ${assigneeInfo.name || 'Not available'}\\n\\n`;\n}\n\n// Project analysis\nif (projects.length > 0) {\n  report += `🏗️ PROJECTS YOU'RE ASSIGNED TO:\\n`;\n  projects.forEach(project => {\n    const projectTasks = allTasksData.filter(t => t.fields?.project?.key === project).length;\n    report += `   • ${project}: ${projectTasks} tasks\\n`;\n  });\n  report += `\\n`;\n}\n\n// Recommendations\nreport += `💡 RECOMMENDATIONS:\\n`;\n\n// Find the working format\nconst workingFormats = [];\nif (results.currentUser.length > 0) workingFormats.push('currentUser()');\nif (results.email.length > 0) workingFormats.push('subin@aramisimaging.com');\nif (results.subinS.length > 0) workingFormats.push('SUBIN S');\nif (results.subinSProper.length > 0) workingFormats.push('Subin S');\nif (results.subinLower.length > 0) workingFormats.push('subin');\nif (results.subinProper.length > 0) workingFormats.push('Subin');\nif (results.fullName.length > 0) workingFormats.push('Subin Vidhu');\n\nif (workingFormats.length > 0) {\n  report += `✅ WORKING FORMATS:\\n`;\n  workingFormats.forEach(format => {\n    const count = format === 'currentUser()' ? results.currentUser.length :\n                  format === 'subin@aramisimaging.com' ? results.email.length :\n                  format === 'SUBIN S' ? results.subinS.length :\n                  format === 'Subin S' ? results.subinSProper.length :\n                  format === 'subin' ? results.subinLower.length :\n                  format === 'Subin' ? results.subinProper.length :\n                  format === 'Subin Vidhu' ? results.fullName.length : 0;\n    report += `   • assignee = '${format}' (${count} tasks)\\n`;\n  });\n  report += `\\n`;\n  \n  // Recommend best format\n  const bestFormat = workingFormats[0];\n  report += `🎯 RECOMMENDED JQL:\\n`;\n  if (projects.length > 1) {\n    const projectList = projects.join(', ');\n    report += `assignee = '${bestFormat}' AND project in (${projectList}) AND status IN ('In Progress', 'To Do', 'Selected for Development', 'Open')\\n\\n`;\n  } else {\n    report += `assignee = '${bestFormat}' AND status IN ('In Progress', 'To Do', 'Selected for Development', 'Open')\\n\\n`;\n  }\n} else {\n  report += `❌ NO WORKING FORMATS FOUND\\n`;\n  report += `   This suggests a credential or permission issue\\n\\n`;\n}\n\n// Additional troubleshooting\nif (results.allTasks.length === 0) {\n  report += `🚨 TROUBLESHOOTING:\\n`;\n  report += `   • No tasks found with currentUser() - check Jira permissions\\n`;\n  report += `   • Verify the credential is linked to the correct account\\n`;\n  report += `   • Check if you have any assigned tasks in Jira web interface\\n\\n`;\n}\n\nreturn {\n  json: {\n    report: report,\n    workingFormats: workingFormats,\n    projects: projects,\n    assigneeInfo: assigneeInfo,\n    taskCounts: {\n      currentUser: results.currentUser.length,\n      email: results.email.length,\n      subinS: results.subinS.length,\n      subinSProper: results.subinSProper.length,\n      subinLower: results.subinLower.length,\n      subinProper: results.subinProper.length,\n      fullName: results.fullName.length,\n      allTasks: results.allTasks.length\n    }\n  }\n};"
+      },
+      "id": "analyze-results",
+      "name": "Analyze JQL Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8483914760:AAEEp8Tccbc5blGme5bZOxI-dr1e6WbRopM/sendMessage",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  chat_id: \"589824303\",\n  text: $json.report,\n  parse_mode: \"HTML\"\n}) }}"
+      },
+      "id": "send-telegram-report",
+      "name": "Send Report to Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [600, 0]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get All User Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All User Tasks": {
+      "main": [
+        [
+          {
+            "node": "Test: currentUser()",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test: currentUser()": {
+      "main": [
+        [
+          {
+            "node": "Test: Email Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test: Email Format": {
+      "main": [
+        [
+          {
+            "node": "Test: SUBIN S",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test: SUBIN S": {
+      "main": [
+        [
+          {
+            "node": "Test: Subin S",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test: Subin S": {
+      "main": [
+        [
+          {
+            "node": "Test: subin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test: subin": {
+      "main": [
+        [
+          {
+            "node": "Test: Subin",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test: Subin": {
+      "main": [
+        [
+          {
+            "node": "Test: Subin Vidhu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test: Subin Vidhu": {
+      "main": [
+        [
+          {
+            "node": "Test: Multi-Project",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test: Multi-Project": {
+      "main": [
+        [
+          {
+            "node": "Analyze JQL Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze JQL Results": {
+      "main": [
+        [
+          {
+            "node": "Send Report to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

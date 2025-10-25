@@ -1,5 +1,5 @@
 {
-  "name": "Jira Reminder to Telegram",
+  "name": "Jira Reminder to Telegram - FIXED",
   "nodes": [
     {
       "parameters": {
@@ -26,7 +26,7 @@
       "parameters": {
         "operation": "getAll",
         "limit": 20,
-        "jql": "assignee = 'subin.vidhu@company.com' AND status IN ('In Progress', 'To Do', 'Selected for Development') AND status != Done AND status != Closed",
+        "jql": "assignee = currentUser() AND status != Done AND status != Closed",
         "options": {}
       },
       "id": "55f81e82-cccb-4611-b469-79805d570301",
@@ -68,7 +68,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Format Jira issues for LLM\nconst items = $input.all();\nconst issues = items.map(item => item.json);\n\nif (issues.length === 0) {\n  return [{\n    json: {\n      taskCount: 0,\n      taskList: \"No active tasks assigned to you\",\n      rawTasks: [],\n      hasActiveTasks: false,\n      currentUser: \"Subin\"\n    }\n  }];\n}\n\n// Force current user to be Subin for now\nconst currentUser = \"Subin\";\nconst userEmail = issues[0]?.fields?.assignee?.emailAddress || \"\";\n\nconsole.log('Processing tasks for user:', currentUser);\nconsole.log('Total issues found:', issues.length);\n\nconst formatted = issues.map(issue => ({\n  key: issue.key,\n  summary: issue.fields?.summary || 'No summary',\n  status: issue.fields?.status?.name || 'Unknown',\n  priority: issue.fields?.priority?.name || 'None',\n  assignee: issue.fields?.assignee?.displayName || 'Unassigned',\n  timeSpent: issue.fields?.timespent || 0,\n  originalEstimate: issue.fields?.timeoriginalestimate || 0\n}));\n\n// Categorize by priority\nconst highPriority = formatted.filter(t => t.priority === 'High' || t.priority === 'Highest');\nconst mediumPriority = formatted.filter(t => t.priority === 'Medium');\nconst lowPriority = formatted.filter(t => t.priority === 'Low' || t.priority === 'Lowest');\nconst noPriority = formatted.filter(t => t.priority === 'None' || !t.priority);\n\nconsole.log('Priority breakdown:', {\n  high: highPriority.length,\n  medium: mediumPriority.length,\n  low: lowPriority.length,\n  none: noPriority.length\n});\n\nconst taskList = formatted.map(t => \n  `• [${t.key}] ${t.summary} (${t.status} - ${t.priority})`\n).join('\\n');\n\n// Create a simple, focused prompt\nconst userContent = `Hello ${currentUser}! You have ${formatted.length} active Jira tasks. High priority: ${highPriority.length}, Medium: ${mediumPriority.length}, Low: ${lowPriority.length}. Create a brief reminder (2-3 sentences) about what to focus on today.`;\n\nconsole.log('User content for LLM:', userContent);\n\nreturn [{\n  json: {\n    currentUser: currentUser,\n    userEmail: userEmail,\n    taskCount: formatted.length,\n    taskList: taskList,\n    rawTasks: formatted,\n    hasActiveTasks: true,\n    userContent: userContent,\n    highPriorityCount: highPriority.length,\n    mediumPriorityCount: mediumPriority.length,\n    lowPriorityCount: lowPriority.length + noPriority.length\n  }\n}];"
+        "jsCode": "// Format Jira issues for LLM\nconst items = $input.all();\nconst issues = items.map(item => item.json);\n\nif (issues.length === 0) {\n  return [{\n    json: {\n      taskCount: 0,\n      taskList: \"No active tasks assigned to you\",\n      rawTasks: [],\n      hasActiveTasks: false,\n      currentUser: \"Subin\"\n    }\n  }];\n}\n\n// Force current user to be Subin\nconst currentUser = \"Subin\";\n\nconst formatted = issues.map(issue => ({\n  key: issue.key,\n  summary: issue.fields?.summary || 'No summary',\n  status: issue.fields?.status?.name || 'Unknown',\n  priority: issue.fields?.priority?.name || 'None',\n  assignee: issue.fields?.assignee?.displayName || 'Unassigned'\n}));\n\n// Categorize by priority\nconst highPriority = formatted.filter(t => t.priority === 'High' || t.priority === 'Highest');\nconst mediumPriority = formatted.filter(t => t.priority === 'Medium');\nconst lowPriority = formatted.filter(t => t.priority === 'Low' || t.priority === 'Lowest');\nconst noPriority = formatted.filter(t => t.priority === 'None' || !t.priority);\n\nconst taskList = formatted.map(t => \n  `• [${t.key}] ${t.summary} (${t.status} - ${t.priority})`\n).join('\\n');\n\n// Create a simple prompt for the LLM\nconst userContent = `Hello Subin! You have ${formatted.length} active Jira tasks. High priority: ${highPriority.length}, Medium: ${mediumPriority.length}, Low: ${lowPriority.length + noPriority.length}. Create a brief motivational reminder (2-3 sentences) about what to focus on today.`;\n\nreturn [{\n  json: {\n    currentUser: currentUser,\n    taskCount: formatted.length,\n    taskList: taskList,\n    rawTasks: formatted,\n    hasActiveTasks: true,\n    userContent: userContent,\n    highPriorityCount: highPriority.length,\n    mediumPriorityCount: mediumPriority.length,\n    lowPriorityCount: lowPriority.length + noPriority.length\n  }\n}];"
       },
       "id": "dbe583ee-1d51-470a-91a0-7da4c4c70cff",
       "name": "Format Tasks",
@@ -114,7 +114,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({\n  chat_id: \"589824303\",\n  text: \"� *Hello \" + ($('Format Tasks').item.json.currentUser || \"Subin\") + \"!*\\n\\n🔔 *Your Personal Jira Assistant*\\n\\n\" + ($json.choices && $json.choices[0] && $json.choices[0].message ? $json.choices[0].message.content : \"Unable to generate reminder. Please check your tasks manually.\") + \"\\n\\n📊 *Quick Stats:*\\n• Total Active Tasks: \" + ($('Format Tasks').item.json.taskCount || 0) + \"\\n• High Priority: \" + ($('Format Tasks').item.json.highPriorityCount || 0) + \"\\n• Medium Priority: \" + ($('Format Tasks').item.json.mediumPriorityCount || 0) + \"\\n• Low Priority: \" + ($('Format Tasks').item.json.lowPriorityCount || 0) + \"\\n\\n💡 *Quick Actions:*\\n• Reply with task key (e.g., PROJ-123) to log time\\n• Use /today to see today's focus\\n• Use /log [KEY] [TIME] to quick log\\n\\n_Automated reminder • \" + new Date().toLocaleDateString('en-GB') + \", \" + new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'}) + \"_\",\n  parse_mode: \"Markdown\"\n}) }}",
+        "body": "={{ JSON.stringify({\n  chat_id: \"589824303\",\n  text: \"Hello Subin!\\n\\nYour Personal Jira Assistant\\n\\n\" + (($json.choices && $json.choices.length > 0 && $json.choices[0].message && $json.choices[0].message.content) ? $json.choices[0].message.content : \"Good morning! You have \" + ($('Format Tasks').item.json.taskCount || 0) + \" active tasks to work on. Focus on high priority items first!\") + \"\\n\\nQuick Stats:\\n• Total Active Tasks: \" + ($('Format Tasks').item.json.taskCount || 0) + \"\\n• High Priority: \" + ($('Format Tasks').item.json.highPriorityCount || 0) + \"\\n• Medium Priority: \" + ($('Format Tasks').item.json.mediumPriorityCount || 0) + \"\\n• Low Priority: \" + ($('Format Tasks').item.json.lowPriorityCount || 0) + \"\\n\\nQuick Actions:\\n• Reply with task key (e.g., PROJ-123) to log time\\n• Use /today to see today's focus\\n• Use /log [KEY] [TIME] to quick log\\n\\nAutomated reminder • \" + new Date().toLocaleDateString('en-GB') + \", \" + new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'})\n}) }}",
         "options": {}
       },
       "id": "59d5c0e1-53c8-45e0-9442-17af7ac419a1",
@@ -133,7 +133,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({\n  chat_id: \"589824303\",\n  text: \"✅ *All Clear, Subin!*\\n\\nNo active Jira tasks assigned to you. You're all caught up! 🎉\\n\\n_Automated check • \" + new Date().toLocaleDateString('en-GB') + \", \" + new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'}) + \"_\",\n  parse_mode: \"Markdown\"\n}) }}",
+        "body": "={{ JSON.stringify({\n  chat_id: \"589824303\",\n  text: \"All Clear, Subin!\\n\\nNo active Jira tasks assigned to you. You're all caught up!\\n\\nAutomated check • \" + new Date().toLocaleDateString('en-GB') + \", \" + new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'})\n}) }}",
         "options": {}
       },
       "id": "25423b7d-9eb7-49d5-a1e2-7d7fe188656b",
@@ -215,10 +215,10 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "9cfae579-d786-4e34-ba24-9b76f99f6183",
+  "versionId": "fixed-version-clean",
   "meta": {
     "instanceId": "1fe0ea1b32dc2f6d9b6fe3272518c0432f5c36aee139d9a4cf93e49f008b9d58"
   },
-  "id": "IdtS6CkfBujz1auQ",
+  "id": "FixedJiraReminder",
   "tags": []
 }
