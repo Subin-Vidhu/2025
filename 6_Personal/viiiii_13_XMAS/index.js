@@ -306,6 +306,439 @@ mainTl
 
 mainTl.add(starTl, 0);
 
+// Animate Santa and Sleigh - Moving all around the page
+var santaTl = gsap.timeline({ repeat: -1, repeatDelay: 2 });
+santaTl
+  .set(".santaGroup", { x: -150, y: 50, opacity: 0, scale: 0.8, rotation: -15 })
+  .to(".santaGroup", {
+    duration: 0.5,
+    opacity: 1,
+    ease: "power2.out"
+  })
+  // Complex path moving around the entire page
+  .to(".santaGroup", {
+    duration: 3,
+    x: 200,
+    y: 80,
+    rotation: 5,
+    ease: "power1.inOut"
+  })
+  .to(".santaGroup", {
+    duration: 3,
+    x: 500,
+    y: 40,
+    rotation: -10,
+    ease: "power1.inOut"
+  })
+  .to(".santaGroup", {
+    duration: 3,
+    x: 750,
+    y: 100,
+    rotation: 15,
+    ease: "power1.inOut"
+  })
+  .to(".santaGroup", {
+    duration: 3,
+    x: 950,
+    y: 60,
+    rotation: 10,
+    ease: "power1.inOut"
+  })
+  .to(".santaGroup", {
+    duration: 0.5,
+    opacity: 0,
+    ease: "power2.in"
+  });
+
+// Animate Reindeers - Moving all around with different paths
+var reindeerTl1 = gsap.timeline({ repeat: -1, repeatDelay: 3 });
+reindeerTl1
+  .set(".reindeerGroup1", { x: -100, y: 100, opacity: 0, scale: 0.7, rotation: -12 })
+  .to(".reindeerGroup1", {
+    duration: 0.5,
+    opacity: 1,
+    ease: "power2.out"
+  })
+  .to(".reindeerGroup1", {
+    duration: 2.5,
+    x: 150,
+    y: 120,
+    rotation: 8,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup1", {
+    duration: 2.5,
+    x: 400,
+    y: 80,
+    rotation: -5,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup1", {
+    duration: 2.5,
+    x: 650,
+    y: 110,
+    rotation: 12,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup1", {
+    duration: 2.5,
+    x: 900,
+    y: 90,
+    rotation: 8,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup1", {
+    duration: 0.5,
+    opacity: 0,
+    ease: "power2.in"
+  });
+
+var reindeerTl2 = gsap.timeline({ repeat: -1, repeatDelay: 4 });
+reindeerTl2
+  .set(".reindeerGroup2", { x: 950, y: 120, opacity: 0, scale: 0.7, rotation: 12 })
+  .to(".reindeerGroup2", {
+    duration: 0.5,
+    opacity: 1,
+    ease: "power2.out"
+  })
+  .to(".reindeerGroup2", {
+    duration: 2.5,
+    x: 700,
+    y: 100,
+    rotation: -8,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup2", {
+    duration: 2.5,
+    x: 450,
+    y: 130,
+    rotation: 5,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup2", {
+    duration: 2.5,
+    x: 200,
+    y: 90,
+    rotation: -12,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup2", {
+    duration: 2.5,
+    x: -50,
+    y: 110,
+    rotation: -8,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup2", {
+    duration: 0.5,
+    opacity: 0,
+    ease: "power2.in"
+  });
+
+var reindeerTl3 = gsap.timeline({ repeat: -1, repeatDelay: 2.5 });
+reindeerTl3
+  .set(".reindeerGroup3", { x: 400, y: -50, opacity: 0, scale: 0.6, rotation: 0 })
+  .to(".reindeerGroup3", {
+    duration: 0.5,
+    opacity: 1,
+    ease: "power2.out"
+  })
+  .to(".reindeerGroup3", {
+    duration: 2,
+    x: 300,
+    y: 70,
+    rotation: -10,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup3", {
+    duration: 2,
+    x: 600,
+    y: 50,
+    rotation: 10,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup3", {
+    duration: 2,
+    x: 500,
+    y: 130,
+    rotation: -5,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup3", {
+    duration: 2,
+    x: 200,
+    y: 100,
+    rotation: 8,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup3", {
+    duration: 2,
+    x: 800,
+    y: 80,
+    rotation: -8,
+    ease: "power1.inOut"
+  })
+  .to(".reindeerGroup3", {
+    duration: 0.5,
+    opacity: 0,
+    ease: "power2.in"
+  });
+
+// Animate Presents
+var presentsTl = gsap.timeline({ delay: 8, repeat: -1, repeatDelay: 5 });
+presentsTl
+  .from(".presentsGroup", {
+    duration: 1,
+    opacity: 0,
+    y: 20,
+    scale: 0.5,
+    ease: "back.out(1.7)",
+    stagger: 0.2
+  })
+  .to(".present1, .present2, .present3", {
+    duration: 0.3,
+    scale: 1.1,
+    yoyo: true,
+    repeat: 1,
+    ease: "power2.inOut",
+    stagger: 0.1
+  })
+  .to(".present1Bow, .present2Bow, .present3Bow", {
+    duration: 0.5,
+    rotation: 360,
+    transformOrigin: "50% 50%",
+    repeat: 2,
+    ease: "power2.inOut",
+    stagger: 0.1
+  }, "-=0.5")
+  .to(".presentsGroup", {
+    duration: 0.5,
+    opacity: 0,
+    delay: 2
+  });
+
+// Continuous sparkle on presents
+gsap.to(".present1Bow, .present2Bow, .present3Bow", {
+  duration: 2,
+  scale: 1.2,
+  opacity: 0.8,
+  repeat: -1,
+  yoyo: true,
+  ease: "sine.inOut",
+  stagger: 0.3
+});
+
+// Create and animate snowflakes - Falling all around the page
+function createSnowflakes() {
+  var snowflakesContainer = select(".snowflakesContainer");
+  var numSnowflakes = 50; // More snowflakes
+  
+  for (var i = 0; i < numSnowflakes; i++) {
+    var snowflake = select("#snowflake").cloneNode(true);
+    snowflake.setAttribute("class", "snowflakeInstance");
+    snowflake.setAttribute("id", "snowflake" + i);
+    snowflakesContainer.appendChild(snowflake);
+    
+    // Start from random positions across the entire width
+    var startX = gsap.utils.random(-50, 850);
+    var startY = gsap.utils.random(-200, -50);
+    var duration = gsap.utils.random(10, 20);
+    // Snowflakes drift horizontally as they fall
+    var endX = startX + gsap.utils.random(-100, 100);
+    var endY = 650; // Fall past the bottom
+    var scale = gsap.utils.random(0.2, 1);
+    var opacity = gsap.utils.random(0.5, 1);
+    var rotationSpeed = gsap.utils.random(-360, 360);
+    
+    gsap.set(snowflake, {
+      x: startX,
+      y: startY,
+      scale: scale,
+      opacity: opacity,
+      transformOrigin: "50% 50%"
+    });
+    
+    // Create continuous falling animation
+    var tl = gsap.timeline({ repeat: -1, delay: gsap.utils.random(0, 8) });
+    tl.to(snowflake, {
+      duration: duration,
+      x: endX,
+      y: endY,
+      rotation: rotationSpeed,
+      ease: "none" // Linear fall
+    })
+    .set(snowflake, {
+      x: gsap.utils.random(-50, 850), // Reset to random X position
+      y: gsap.utils.random(-200, -50), // Reset above screen
+      rotation: 0
+    });
+  }
+}
+
+// Animate reindeer antlers and legs
+function animateReindeer() {
+  // Reindeer 1 antlers
+  gsap.to(".antlers1", {
+    duration: 0.6,
+    rotation: 6,
+    transformOrigin: "50% 50%",
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+  
+  // Reindeer 2 antlers
+  gsap.to(".antlers2", {
+    duration: 0.6,
+    rotation: -6,
+    transformOrigin: "50% 50%",
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+  
+  // Reindeer 3 antlers
+  gsap.to(".antlers3", {
+    duration: 0.6,
+    rotation: 6,
+    transformOrigin: "50% 50%",
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+  
+  // Reindeer ears twitching
+  gsap.to(".reindeerEar1, .reindeerEar3, .reindeerEar5", {
+    duration: 0.3,
+    rotation: -10,
+    transformOrigin: "50% 50%",
+    repeat: -1,
+    repeatDelay: 2,
+    yoyo: true,
+    ease: "power2.inOut"
+  });
+  
+  gsap.to(".reindeerEar2, .reindeerEar4, .reindeerEar6", {
+    duration: 0.3,
+    rotation: 10,
+    transformOrigin: "50% 50%",
+    repeat: -1,
+    repeatDelay: 2,
+    yoyo: true,
+    ease: "power2.inOut"
+  });
+  
+  // Reindeer noses glow
+  gsap.to(".reindeerNose1, .reindeerNose2", {
+    duration: 1.2,
+    scale: 1.3,
+    opacity: 0.9,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+  
+  // Rudolph's nose - extra glow!
+  gsap.to(".reindeerNose3", {
+    duration: 0.7,
+    scale: 1.4,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+  
+  gsap.to(".reindeerNose3Glow", {
+    duration: 0.7,
+    scale: 1.6,
+    opacity: 0.7,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+  
+  // Reindeer legs moving (running motion)
+  gsap.to(".leg1, .leg4, .leg7", {
+    duration: 0.4,
+    y: -2,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+    stagger: 0.1
+  });
+  
+  gsap.to(".leg2, .leg5, .leg8", {
+    duration: 0.4,
+    y: 2,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+    stagger: 0.1
+  });
+}
+
+// Animate Santa's hat and bag
+function animateSanta() {
+  gsap.to(".santaHat", {
+    duration: 0.4,
+    y: -2,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+  
+  gsap.to(".hatPom", {
+    duration: 0.3,
+    scale: 1.1,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+  
+  gsap.to(".santaBag", {
+    duration: 0.6,
+    rotation: 8,
+    transformOrigin: "50% 50%",
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+  
+  // Santa waving (subtle)
+  gsap.to(".santaBody", {
+    duration: 2.5,
+    rotation: 3,
+    transformOrigin: "50% 50%",
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+  
+  // Santa's eyes blinking
+  gsap.to(".santaEye1, .santaEye2", {
+    duration: 0.1,
+    scaleY: 0.1,
+    repeat: -1,
+    repeatDelay: 3,
+    yoyo: true,
+    ease: "power2.inOut"
+  });
+  
+  // Sleigh runners moving
+  gsap.to(".sleighRunner1, .sleighRunner2", {
+    duration: 0.5,
+    rotation: 5,
+    transformOrigin: "50% 50%",
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut"
+  });
+}
+
+// Initialize all animations
+createSnowflakes();
+animateReindeer();
+animateSanta();
+
 // Make the animation loop
 mainTl.repeat(-1);
 mainTl.repeatDelay(2);

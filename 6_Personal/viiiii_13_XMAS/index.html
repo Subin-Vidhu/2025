@@ -72,6 +72,11 @@
 
             </filter>
 
+            <!-- Snowflake pattern -->
+            <g id="snowflake" class="snowflake">
+                <path d="M0,0 L0,8 M-4,-4 L4,4 M-4,4 L4,-4 M-6,0 L6,0" stroke="#FFFFFF" stroke-width="1" opacity="0.8"/>
+            </g>
+
         </defs>
         <g class="whole">
 
@@ -92,6 +97,168 @@
                 <path d="M408.12,83.45l-17.78,8.94,3.72-19.55-14-14.15,19.74-2.5,9.13-17.68,8.48,18L437,59.73l-14.5,13.63,3,19.67Z" fill="#C89568" />
             </g>
             <circle class="sparkle" fill="url(#dotGrad)" cx="0" cy="0" r="50" />
+
+            <!-- Santa and Sleigh - More Realistic -->
+            <g class="santaGroup" opacity="0">
+                <!-- Sleigh - More detailed -->
+                <path class="sleigh" d="M30,200 Q40,195 50,200 L70,200 Q80,195 90,200 L110,200 Q120,195 130,200 L150,200 Q160,195 170,200 L170,210 Q160,215 150,210 L130,210 Q120,215 110,210 L90,210 Q80,215 70,210 L50,210 Q40,215 30,210 Z" fill="#8B4513" stroke="#654321" stroke-width="1.5"/>
+                <path class="sleighDetail" d="M50,200 L50,205 M70,200 L70,205 M90,200 L90,205 M110,200 L110,205 M130,200 L130,205 M150,200 L150,205" stroke="#654321" stroke-width="1"/>
+                <!-- Sleigh runners -->
+                <ellipse class="sleighRunner1" cx="50" cy="210" rx="8" ry="3" fill="#654321"/>
+                <ellipse class="sleighRunner2" cx="150" cy="210" rx="8" ry="3" fill="#654321"/>
+                
+                <!-- Santa Body - More detailed -->
+                <ellipse class="santaBody" cx="100" cy="190" rx="28" ry="22" fill="#DC143C" stroke="#B22222" stroke-width="1"/>
+                <!-- Santa Belt -->
+                <rect class="santaBelt" x="75" y="185" width="50" height="8" fill="#000000"/>
+                <circle class="beltBuckle" cx="100" cy="189" r="4" fill="#FFD700"/>
+                <!-- Santa Arms -->
+                <ellipse class="santaArm1" cx="75" cy="185" rx="8" ry="15" fill="#DC143C"/>
+                <ellipse class="santaArm2" cx="125" cy="185" rx="8" ry="15" fill="#DC143C"/>
+                <!-- Santa Gloves -->
+                <circle class="santaGlove1" cx="75" cy="200" r="6" fill="#FFFFFF"/>
+                <circle class="santaGlove2" cx="125" cy="200" r="6" fill="#FFFFFF"/>
+                
+                <!-- Santa Head -->
+                <circle class="santaHead" cx="100" cy="165" r="18" fill="#FFDBAC" stroke="#E6C99A" stroke-width="1"/>
+                <!-- Santa Eyes -->
+                <circle class="santaEye1" cx="93" cy="162" r="2" fill="#000000"/>
+                <circle class="santaEye2" cx="107" cy="162" r="2" fill="#000000"/>
+                <!-- Santa Nose -->
+                <ellipse class="santaNose" cx="100" cy="168" rx="3" ry="2.5" fill="#FFB6C1"/>
+                <!-- Santa Mouth -->
+                <path class="santaMouth" d="M95,172 Q100,175 105,172" stroke="#000000" stroke-width="1.5" fill="none"/>
+                
+                <!-- Santa Hat - More detailed -->
+                <path class="santaHat" d="M82,165 L100,145 L118,165 L115,165 L115,175 L85,175 L85,165 Z" fill="#DC143C" stroke="#B22222" stroke-width="1"/>
+                <ellipse class="hatTrim" cx="100" cy="165" rx="18" ry="3" fill="#FFFFFF"/>
+                <circle class="hatPom" cx="100" cy="145" r="6" fill="#FFFFFF"/>
+                <circle class="hatPomShine" cx="98" cy="143" r="2" fill="#F0F0F0" opacity="0.8"/>
+                
+                <!-- Santa Beard - More detailed -->
+                <path class="santaBeard" d="M100,175 Q85,195 75,185 Q85,190 100,190 Q115,190 125,185 Q115,195 100,175" fill="#FFFFFF" stroke="#F0F0F0" stroke-width="0.5"/>
+                <path class="beardDetail" d="M100,180 Q90,188 85,183 M100,180 Q110,188 115,183" stroke="#E0E0E0" stroke-width="0.5" fill="none"/>
+                
+                <!-- Santa Bag - More detailed -->
+                <ellipse class="santaBag" cx="145" cy="200" rx="14" ry="18" fill="#8B4513" stroke="#654321" stroke-width="1.5"/>
+                <path class="bagTop" d="M131,200 Q145,192 159,200" stroke="#654321" stroke-width="2.5" fill="none"/>
+                <path class="bagStrap" d="M145,200 Q150,195 155,200" stroke="#654321" stroke-width="2" fill="none"/>
+                <!-- Bag contents peek -->
+                <circle class="bagGift1" cx="140" cy="198" r="3" fill="#FF6B6B"/>
+                <circle class="bagGift2" cx="150" cy="202" r="2.5" fill="#4ECDC4"/>
+            </g>
+
+            <!-- Reindeers - More Detailed -->
+            <g class="reindeerGroup1" opacity="0">
+                <!-- Reindeer 1 Body -->
+                <ellipse class="reindeerBody1" cx="30" cy="180" rx="22" ry="16" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+                <!-- Reindeer Head -->
+                <ellipse class="reindeerHead1" cx="12" cy="168" rx="14" ry="11" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+                <!-- Reindeer Snout -->
+                <ellipse class="reindeerSnout1" cx="8" cy="172" rx="5" ry="4" fill="#A0522D"/>
+                <!-- Reindeer Eyes -->
+                <circle class="reindeerEye1" cx="10" cy="166" r="2" fill="#000000"/>
+                <circle class="reindeerEye2" cx="14" cy="166" r="2" fill="#000000"/>
+                <!-- Reindeer Ears -->
+                <ellipse class="reindeerEar1" cx="5" cy="162" rx="4" ry="6" fill="#654321"/>
+                <ellipse class="reindeerEar2" cx="19" cy="162" rx="4" ry="6" fill="#654321"/>
+                <!-- Antlers - More detailed -->
+                <path class="antlers1" d="M8,160 L3,148 L5,150 M8,160 L6,150 L4,145 M12,160 L17,148 L15,150 M12,160 L14,150 L16,145" stroke="#654321" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <!-- Nose -->
+                <circle class="reindeerNose1" cx="8" cy="172" r="2.5" fill="#FF0000"/>
+                <!-- Neck -->
+                <ellipse class="reindeerNeck1" cx="20" cy="175" rx="8" ry="10" fill="#8B4513"/>
+                <!-- Legs - More detailed -->
+                <rect class="leg1" x="18" y="192" width="5" height="14" fill="#654321" rx="2"/>
+                <rect class="leg2" x="28" y="192" width="5" height="14" fill="#654321" rx="2"/>
+                <rect class="leg3" x="38" y="192" width="5" height="14" fill="#654321" rx="2"/>
+                <!-- Hooves -->
+                <ellipse class="hoof1" cx="20.5" cy="206" rx="3" ry="2" fill="#000000"/>
+                <ellipse class="hoof2" cx="30.5" cy="206" rx="3" ry="2" fill="#000000"/>
+                <ellipse class="hoof3" cx="40.5" cy="206" rx="3" ry="2" fill="#000000"/>
+            </g>
+
+            <g class="reindeerGroup2" opacity="0">
+                <!-- Reindeer 2 Body -->
+                <ellipse class="reindeerBody2" cx="170" cy="180" rx="22" ry="16" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+                <!-- Reindeer Head -->
+                <ellipse class="reindeerHead2" cx="188" cy="168" rx="14" ry="11" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+                <!-- Reindeer Snout -->
+                <ellipse class="reindeerSnout2" cx="192" cy="172" rx="5" ry="4" fill="#A0522D"/>
+                <!-- Reindeer Eyes -->
+                <circle class="reindeerEye3" cx="190" cy="166" r="2" fill="#000000"/>
+                <circle class="reindeerEye4" cx="186" cy="166" r="2" fill="#000000"/>
+                <!-- Reindeer Ears -->
+                <ellipse class="reindeerEar3" cx="195" cy="162" rx="4" ry="6" fill="#654321"/>
+                <ellipse class="reindeerEar4" cx="181" cy="162" rx="4" ry="6" fill="#654321"/>
+                <!-- Antlers -->
+                <path class="antlers2" d="M192,160 L197,148 L195,150 M192,160 L194,150 L196,145 M188,160 L183,148 L185,150 M188,160 L186,150 L184,145" stroke="#654321" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <!-- Nose -->
+                <circle class="reindeerNose2" cx="192" cy="172" r="2.5" fill="#FF0000"/>
+                <!-- Neck -->
+                <ellipse class="reindeerNeck2" cx="180" cy="175" rx="8" ry="10" fill="#8B4513"/>
+                <!-- Legs -->
+                <rect class="leg4" x="162" y="192" width="5" height="14" fill="#654321" rx="2"/>
+                <rect class="leg5" x="172" y="192" width="5" height="14" fill="#654321" rx="2"/>
+                <rect class="leg6" x="182" y="192" width="5" height="14" fill="#654321" rx="2"/>
+                <!-- Hooves -->
+                <ellipse class="hoof4" cx="164.5" cy="206" rx="3" ry="2" fill="#000000"/>
+                <ellipse class="hoof5" cx="174.5" cy="206" rx="3" ry="2" fill="#000000"/>
+                <ellipse class="hoof6" cx="184.5" cy="206" rx="3" ry="2" fill="#000000"/>
+            </g>
+
+            <g class="reindeerGroup3" opacity="0">
+                <!-- Reindeer 3 (Rudolph) Body -->
+                <ellipse class="reindeerBody3" cx="30" cy="200" rx="20" ry="15" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+                <!-- Reindeer Head -->
+                <ellipse class="reindeerHead3" cx="12" cy="188" rx="13" ry="10" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+                <!-- Reindeer Snout -->
+                <ellipse class="reindeerSnout3" cx="8" cy="192" rx="5" ry="4" fill="#A0522D"/>
+                <!-- Reindeer Eyes -->
+                <circle class="reindeerEye5" cx="10" cy="186" r="2" fill="#000000"/>
+                <circle class="reindeerEye6" cx="14" cy="186" r="2" fill="#000000"/>
+                <!-- Reindeer Ears -->
+                <ellipse class="reindeerEar5" cx="5" cy="182" rx="4" ry="6" fill="#654321"/>
+                <ellipse class="reindeerEar6" cx="19" cy="182" rx="4" ry="6" fill="#654321"/>
+                <!-- Antlers -->
+                <path class="antlers3" d="M8,180 L3,168 L5,170 M8,180 L6,170 L4,165 M12,180 L17,168 L15,170 M12,180 L14,170 L16,165" stroke="#654321" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <!-- Big red nose (Rudolph!) -->
+                <circle class="reindeerNose3" cx="8" cy="192" r="4" fill="#FF0000"/>
+                <circle class="reindeerNose3Glow" cx="8" cy="192" r="6" fill="#FF4444" opacity="0.5"/>
+                <circle class="reindeerNose3Shine" cx="7" cy="191" r="1.5" fill="#FFAAAA" opacity="0.8"/>
+                <!-- Neck -->
+                <ellipse class="reindeerNeck3" cx="20" cy="195" rx="7" ry="9" fill="#8B4513"/>
+                <!-- Legs -->
+                <rect class="leg7" x="20" y="212" width="5" height="14" fill="#654321" rx="2"/>
+                <rect class="leg8" x="30" y="212" width="5" height="14" fill="#654321" rx="2"/>
+                <!-- Hooves -->
+                <ellipse class="hoof7" cx="22.5" cy="226" rx="3" ry="2" fill="#000000"/>
+                <ellipse class="hoof8" cx="32.5" cy="226" rx="3" ry="2" fill="#000000"/>
+            </g>
+
+            <!-- Presents under tree -->
+            <g class="presentsGroup" opacity="0">
+                <!-- Present 1 -->
+                <rect class="present1" x="320" y="480" width="40" height="30" fill="#FF6B6B" stroke="#DC143C" stroke-width="2"/>
+                <rect class="present1Bow" x="335" y="475" width="10" height="10" fill="#FFD700"/>
+                <line class="present1Ribbon" x1="340" y1="480" x2="340" y2="510" stroke="#FFD700" stroke-width="2"/>
+                <line class="present1Ribbon2" x1="320" y1="495" x2="360" y2="495" stroke="#FFD700" stroke-width="2"/>
+                
+                <!-- Present 2 -->
+                <rect class="present2" x="380" y="490" width="35" height="25" fill="#4ECDC4" stroke="#2E8B8B" stroke-width="2"/>
+                <rect class="present2Bow" x="390" y="485" width="8" height="8" fill="#FFD700"/>
+                <line class="present2Ribbon" x1="397.5" y1="490" x2="397.5" y2="515" stroke="#FFD700" stroke-width="2"/>
+                <line class="present2Ribbon2" x1="380" y1="502.5" x2="415" y2="502.5" stroke="#FFD700" stroke-width="2"/>
+                
+                <!-- Present 3 -->
+                <rect class="present3" x="450" y="485" width="30" height="30" fill="#AA96DA" stroke="#8B7BAE" stroke-width="2"/>
+                <rect class="present3Bow" x="460" y="480" width="10" height="10" fill="#FFD700"/>
+                <line class="present3Ribbon" x1="465" y1="485" x2="465" y2="515" stroke="#FFD700" stroke-width="2"/>
+                <line class="present3Ribbon2" x1="450" y1="500" x2="480" y2="500" stroke="#FFD700" stroke-width="2"/>
+            </g>
+
+            <!-- Snowflakes container -->
+            <g class="snowflakesContainer"></g>
 
         </g>
     </svg>

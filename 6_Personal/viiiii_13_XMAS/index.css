@@ -67,3 +67,39 @@ svg {
 svg * {
     transition: opacity 0.3s ease;
 }
+
+/* Santa and Reindeer styles */
+.santaGroup, .reindeerGroup1, .reindeerGroup2 {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+.santaGroup {
+    transform-origin: center center;
+}
+
+.reindeerGroup1, .reindeerGroup2, .reindeerGroup3 {
+    transform-origin: center center;
+}
+
+.presentsGroup {
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+.snowflakeInstance {
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
+    pointer-events: none;
+}
+
+/* Enhanced Santa details */
+.santaGroup {
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+}
+
+.santaEye1, .santaEye2 {
+    transform-origin: center center;
+}
+
+/* Enhanced reindeer details */
+.reindeerGroup1, .reindeerGroup2, .reindeerGroup3 {
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+}
