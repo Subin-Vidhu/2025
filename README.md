@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: Day 2/21 - Winter Arc
+- New Life: Day 0
 
 ---
 Order of Projects
