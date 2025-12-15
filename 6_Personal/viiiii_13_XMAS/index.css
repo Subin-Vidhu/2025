@@ -5,7 +5,7 @@
 }
 
 body {
-    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f0f1e 100%);
+    background: linear-gradient(135deg, #FFB347 0%, #FFA07A 30%, #87CEEB 70%, #4A5568 100%);
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -14,8 +14,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
-body,
-html {
+body, html {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -23,83 +22,78 @@ html {
 }
 
 svg {
-    width: 90%;
-    max-width: 900px;
-    height: 90%;
-    max-height: 700px;
-    visibility: hidden;
-    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.3));
+    width: 100%;
+    max-width: 1400px;
+    height: 100%;
+    max-height: 800px;
+    visibility: visible;
 }
 
-.sparkle {
-    mix-blend-mode: screen;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+/* Scene elements */
+.scene {
+    filter: drop-shadow(0 5px 20px rgba(0, 0, 0, 0.3));
 }
 
-.particle {
-    filter: drop-shadow(0 0 3px currentColor);
+/* Tree silhouette */
+.treeSilhouette {
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.6));
 }
 
-.tree {
-    filter: drop-shadow(0 0 20px rgba(203, 152, 102, 0.4));
+/* Sleigh team */
+.sleighTeam {
+    filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.4));
 }
 
-.treeStar {
-    filter: drop-shadow(0 0 15px rgba(200, 149, 104, 0.6));
-    animation: starGlow 2s ease-in-out infinite alternate;
+/* Reindeer */
+.reindeer1, .reindeer2, .reindeer3, .reindeer4, 
+.reindeer5, .reindeer6, .reindeer7, .reindeer8 {
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
 }
 
-@keyframes starGlow {
+/* Sleigh */
+.sleighGroup {
+    filter: drop-shadow(0 5px 15px rgba(220, 20, 60, 0.5));
+}
+
+/* Harness bells glow */
+circle[fill="url(#goldGlow)"] {
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9));
+    animation: bellGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes bellGlow {
     0% {
-        filter: drop-shadow(0 0 15px rgba(200, 149, 104, 0.6));
+        filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7));
     }
     100% {
-        filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.9));
+        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 1));
     }
 }
 
-/* Dark theme enhancements */
-.whole {
-    filter: brightness(1.1) contrast(1.05);
+/* Main harness */
+.mainHarness {
+    filter: drop-shadow(0 2px 5px rgba(220, 20, 60, 0.4));
+}
+
+/* Snowflakes */
+.snowflakeInstance {
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9));
+    pointer-events: none;
+}
+
+/* Santa's pointing finger */
+.sleighGroup line[stroke="#FFDBAC"] {
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+}
+
+/* Gifts */
+.sleighGroup rect[fill="#FF6B6B"],
+.sleighGroup rect[fill="#4ECDC4"],
+.sleighGroup rect[fill="#FFD700"] {
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.3));
 }
 
 /* Smooth transitions */
 svg * {
     transition: opacity 0.3s ease;
-}
-
-/* Santa and Reindeer styles */
-.santaGroup, .reindeerGroup1, .reindeerGroup2 {
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
-}
-
-.santaGroup {
-    transform-origin: center center;
-}
-
-.reindeerGroup1, .reindeerGroup2, .reindeerGroup3 {
-    transform-origin: center center;
-}
-
-.presentsGroup {
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
-}
-
-.snowflakeInstance {
-    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
-    pointer-events: none;
-}
-
-/* Enhanced Santa details */
-.santaGroup {
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
-}
-
-.santaEye1, .santaEye2 {
-    transform-origin: center center;
-}
-
-/* Enhanced reindeer details */
-.reindeerGroup1, .reindeerGroup2, .reindeerGroup3 {
-    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
 }
