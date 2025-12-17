@@ -7,3 +7,7 @@ Module 1 glossary - [here](https://www.coursera.org/learn/building-deep-learning
 Module 2 summary - [here](https://www.coursera.org/learn/building-deep-learning-models-with-tensorflow/supplement/cPnaA/summary-and-highlights-advanced-cnns-in-keras)
 
 Module 2 glossary - [here](https://www.coursera.org/learn/building-deep-learning-models-with-tensorflow/ungradedWidget/wiShZ/glossary-advanced-cnns-in-keras)
+
+Module 3 Summary - [here](https://www.coursera.org/learn/building-deep-learning-models-with-tensorflow/supplement/snYmh/summary-and-highlights-transformers-in-keras)
+
+Module 3 Glossary - [here](https://www.coursera.org/learn/building-deep-learning-models-with-tensorflow/ungradedWidget/0ouGI/glossary-transformers-in-keras)
