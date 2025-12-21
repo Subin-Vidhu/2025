@@ -19,3 +19,7 @@ Module 4 Glossary - [here](https://www.coursera.org/learn/building-deep-learning
 Module 5 Summary - [here](https://www.coursera.org/learn/building-deep-learning-models-with-tensorflow/supplement/mgv3e/summary-and-highlights-advanced-keras-techniques)
 
 Module 5 Glossary - [here](https://www.coursera.org/learn/building-deep-learning-models-with-tensorflow/ungradedWidget/QVWwN/glossary-advanced-keras-techniques)
+
+Module 6 Summary - [here](https://www.coursera.org/learn/building-deep-learning-models-with-tensorflow/supplement/ygrc4/summary-and-highlights-introduction-to-reinforcement-learning-with-keras)
+
+Module 6 Glossary - [here](https://www.coursera.org/learn/building-deep-learning-models-with-tensorflow/ungradedWidget/i7PQp/glossary-introduction-to-reinforcement-learning-with-keras)
