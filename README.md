@@ -7,7 +7,7 @@
 
 --- 
 
-- New Life: LAST
+- New Life: 2026-01
 
 ---
 Order of Projects
